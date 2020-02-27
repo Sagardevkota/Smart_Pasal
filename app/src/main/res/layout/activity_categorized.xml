@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+
+
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+
+    tools:context=".categorizedActivity">
+
+
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+        <Spinner
+            android:id="@+id/spSort"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:spinnerMode="dropdown" />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvCategory"
+
+            android:background="#fff"
+            android:fontFamily="sans-serif-condensed-medium"
+            android:gravity="top"
+            android:padding="16dp"
+            android:text="Category"
+            android:textColor="@android:color/background_dark"
+            android:textAlignment="center"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+
+        <GridView
+            android:id="@+id/LVNews"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnWidth="110dp"
+            android:horizontalSpacing="5dp"
+            android:verticalSpacing="5dp"
+            android:numColumns="2"
+            android:background="#fff"
+            android:dividerHeight="0dp"
+
+
+
+            />
+
+
+
+    </LinearLayout>
+    <FrameLayout
+        android:id="@+id/progressBarHolder"
+        android:animateLayoutChanges="true"
+        android:visibility="gone"
+
+        android:background="#fff"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ImageView
+            android:id="@+id/bouncing_image"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:layout_gravity="center"
+            android:src="@drawable/robot"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="150dp"
+            android:fontFamily="@font/fauna_one"
+
+            android:text="Loading"
+            android:textColor="@color/design_default_color_on_secondary"
+            android:textSize="36sp"
+            android:textStyle="bold" />
+
+
+    </FrameLayout>
+
+
+</FrameLayout>

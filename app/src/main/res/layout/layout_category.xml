@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="100dp"
+
+                android:fontFamily="@font/actor"
+                android:gravity="center"
+                android:text="Categories"
+                android:textColor="@color/design_default_color_on_secondary"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvShopMore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:text="SHOP MORE>>"
+                android:textColor="@color/design_default_color_error" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvSneakers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/ic_sneakers"
+                android:gravity="center"
+                android:text="#Sneakers"
+                android:textColor="@color/design_default_color_on_secondary" />
+
+            <TextView
+                android:id="@+id/tvJackets"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/ic_jacket"
+                android:gravity="center"
+                android:text="#Jackets"
+                android:textColor="@color/design_default_color_on_secondary" />
+
+            <TextView
+                android:id="@+id/tvWatch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/ic_watch"
+                android:gravity="center"
+                android:text="#watch"
+                android:textColor="@color/design_default_color_on_secondary" />
+
+            <TextView
+                android:id="@+id/tvBag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/ic_bagpack"
+                android:gravity="center"
+                android:text="#Bagpack"
+                android:textColor="@color/design_default_color_on_secondary" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvPhones"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/ic_phone"
+                android:gravity="center"
+                android:text="#Phones"
+                android:textColor="@color/design_default_color_on_secondary" />
+
+            <TextView
+                android:id="@+id/tvSunGlasses"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/ic_sunglasses"
+                android:gravity="center"
+                android:text="#Glasses"
+                android:textColor="@color/design_default_color_on_secondary" />
+
+            <TextView
+                android:id="@+id/tvLaptops"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/ic_laptop"
+                android:gravity="center"
+                android:text="#Laptop"
+                android:textColor="@color/design_default_color_on_secondary" />
+
+            <TextView
+                android:id="@+id/tvTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/ic_tv"
+                android:gravity="center"
+                android:text="#Television"
+                android:textColor="@color/design_default_color_on_secondary" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

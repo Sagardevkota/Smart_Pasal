@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:title="SHOP BY CATEGORY">
+        <menu>
+            <item
+                android:title="Clothes,Shoes,Watches"
+
+                android:id="@+id/nav_logout2"
+                />
+            <item
+                android:title="Electronic, Computers, Office"
+
+                android:id="@+id/nav_logout3"
+                />
+        </menu>
+        </item>
+
+
+</group>
+    <item
+        android:title="HELP AND SETTINGS">
+        <menu>
+
+            <item
+                android:title="account"
+                android:id="@+id/nav_home"
+                android:icon="@drawable/ic_account"
+                />
+            <item
+                android:title="settings"
+                android:id="@+id/nav_settings"
+                android:icon="@drawable/ic_settings_cell_black_24dp"
+                />
+            <item
+                android:title="logout"
+                android:icon="@drawable/ic_logout"
+                android:id="@+id/nav_logout"
+                />
+        </menu>
+    </item>
+
+</menu>

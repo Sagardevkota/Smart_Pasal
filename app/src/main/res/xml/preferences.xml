@@ -1,0 +1,46 @@
+<androidx.preference.PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory xmlns:app="http://schemas.android.com/apk/res-auto"
+        app:key="sync"
+        app:title="Tools"
+        >
+        <SwitchPreferenceCompat
+            app:key="notifications"
+            app:title="Enable message notifications"/>
+        <Preference
+            app:key="Address"
+            app:title="Address Book"
+            app:summary="Manage shipping/Billing address"/>
+
+
+        <ListPreference
+            app:key="Language"
+            app:title="Language"
+            app:summary="Choose language"
+            android:entryValues="@array/pref_language_values"
+            android:entries="@array/pref_language_entries"
+            android:defaultValue="@string/pref_language_default_value"
+            />
+
+        <Preference
+            app:key="feedback"
+            app:title="Send feedback"
+            app:summary="Report technical issues or suggest new features"/>
+
+    </PreferenceCategory>
+    <PreferenceCategory xmlns:app="http://schemas.android.com/apk/res-auto"
+        app:key="about"
+        app:title="About"
+        >
+
+
+        <Preference
+            app:key="version"
+            app:title="Build Version"
+            app:summary="v 1.0"/>
+
+
+
+    </PreferenceCategory>
+
+</androidx.preference.PreferenceScreen>

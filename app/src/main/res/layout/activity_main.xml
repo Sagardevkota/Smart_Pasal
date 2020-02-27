@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorAccent"
+    app:defaultNavHost="true"
+    android:orientation="vertical"
+    android:padding="16dp"
+
+    tools:context=".MainActivity">
+
+
+
+    <ImageView
+        android:id="@+id/robot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="20dp"
+        android:src="@drawable/robot"
+        />
+
+    <TextView
+        android:id="@+id/logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:fontFamily="cursive"
+        android:text="S-Mart"
+        android:textColor="#fff"
+        android:textSize="80sp"
+        android:textStyle="bold"
+        android:layout_marginStart="60dp"
+        />
+
+    <TextView
+        android:id="@+id/slogan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="150dp"
+
+        android:text="Shop Smart"
+        android:textAlignment="textStart"
+        android:textColor="@color/design_default_color_background"
+        android:textSize="24sp"
+         />
+
+
+</LinearLayout>
+
+

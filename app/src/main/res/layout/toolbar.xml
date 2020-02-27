@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.appbar.MaterialToolbar
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/custom_toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="150dp"
+    android:background="@drawable/ic_toolbar"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:popupTheme="@style/ThemeOverlay.MaterialComponents.Dark"
+    android:gravity="center"
+    app:menu="@menu/setting_menu"
+
+
+    >
+
+
+
+        <EditText
+            android:id="@+id/etSearch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="50dp"
+            android:focusableInTouchMode="false"
+            android:inputType="none"
+            android:background="#fff"
+            android:drawableEnd="@drawable/ic_search"
+            android:hint="Search in S-Mart"
+            android:padding="3dp"
+
+            />
+
+
+</com.google.android.material.appbar.MaterialToolbar>
