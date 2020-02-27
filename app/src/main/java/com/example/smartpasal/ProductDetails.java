@@ -244,7 +244,7 @@ public class ProductDetails extends AppCompatActivity {
 
 
         }catch (Exception ex){
-            Log.d(TAG, "ConvertInputToStringNoChange: ",ex.getMessage());
+
         }
 
         return linereultcal;
