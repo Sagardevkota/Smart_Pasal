@@ -14,9 +14,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,6 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -70,17 +74,23 @@ public class home extends Fragment {
     TextView tvSunglasses;
     TextView tvWatches;
     TextView tvBags;
-    GridView LVNews;
-    MyCustomAdapter myadapter;
-    ArrayList<ProductsAdapterItems> listnewsData = new ArrayList<ProductsAdapterItems>();
+    RecyclerView endless_view;
+
+    ArrayList<ProductItems> listnewsData = new ArrayList<ProductItems>();
     ScrollView mScrollView;
     GridView lvlist;
     FrameLayout progressBarHolder;
     ImageView bouncing_image;
     Animation bounce_animation;
     View v;
-    Integer page_number=1;
-    Integer item_count=6;
+    GridLayoutManager layoutManager;
+    RecyclerView.Adapter myadapter;
+
+    public int page_number=1;
+
+    private boolean isLoading=true;
+    private int current_items,total_items,scrolled_out_items;
+
 
 
 
@@ -95,7 +105,15 @@ public class home extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         v= inflater.inflate(R.layout.fragment_home, container, false);
-        lvlist = (GridView)v.findViewById(R.id.LVNews);
+        endless_view=v.findViewById(R.id.endless_view);
+        layoutManager=new GridLayoutManager(getContext(),2);
+        endless_view.setLayoutManager(layoutManager);
+        myadapter=new ListAdapterItems(listnewsData,getContext());
+
+
+        endless_view.setHasFixedSize(true);
+        endless_view.setAdapter(myadapter);
+
 
         verified=v.findViewById(R.id.verified);
         tvSneakers=v.findViewById(R.id.tvSneakers);
@@ -194,17 +212,68 @@ public class home extends Fragment {
           //Product listview
 
 
-        myadapter = new MyCustomAdapter(listnewsData);
-        lvlist.setAdapter(myadapter);
 
-
-        String Producturl = "http://idealytik.com/SmartPasalWebServices/ProductLists.php?page_number="+page_number+"&item_count="+item_count;
+        String Producturl = "http://idealytik.com/SmartPasalWebServices/ProductLists.php?page_number="+page_number;
         new MyAsyncTaskgetNews1().execute(Producturl);
+
+        endless_view.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                current_items=layoutManager.getChildCount();
+                total_items=layoutManager.getItemCount();
+                scrolled_out_items=layoutManager.findFirstVisibleItemPosition();
+                if (dy>0){
+                    if (isLoading&&(current_items+scrolled_out_items==total_items) ){
+                        isLoading=false;
+
+                        //fetch data
+
+                        Toast.makeText(getContext(),"Fetching Data",Toast.LENGTH_SHORT).show();
+
+                        fetchData();
+
+
+
+
+
+
+
+                    }
+
+
+
+                }
+            }
+
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState== AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
+                    isLoading=true;
+                }
+
+
+            }
+        });
+
 
 
 
         return v;
     }
+
+    private void fetchData() {
+
+
+        page_number++;
+
+        String Producturl = "http://idealytik.com/SmartPasalWebServices/ProductLists.php?page_number="+page_number;
+        new MyAsyncTaskgetNews1().execute(Producturl);
+
+
+    }
+
     // get news from server
     public class MyAsyncTaskgetNews extends AsyncTask<String, String, String> {
         @Override
@@ -304,115 +373,15 @@ public class home extends Fragment {
 
         return linereultcal;
     }
-    private class MyCustomAdapter extends BaseAdapter {
-
-
-        public ArrayList<ProductsAdapterItems> listnewsDataAdpater ;
-
-        public MyCustomAdapter(ArrayList<ProductsAdapterItems>  listnewsDataAdpater) {
-            this.listnewsDataAdpater=listnewsDataAdpater;
-        }
-
-
-        @Override
-        public int getCount() {
-            return listnewsDataAdpater.size();
-        }
-
-        @Override
-        public String getItem(int position) {
-            return null;
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(final int position, View convertView, ViewGroup parent)
-        {
-            LayoutInflater mInflater = getLayoutInflater();
-            final View myView = mInflater.inflate(R.layout.layout_product_lists, null);
-
-            final ProductsAdapterItems s = listnewsDataAdpater.get(position);
-            TextView tvProduct_Name=( TextView)myView.findViewById(R.id.tvProduct_Name);
-            tvProduct_Name.setText(s.tvName);
-            TextView tvFixed_Price=( TextView)myView.findViewById(R.id.tvFixed_Price);
-            tvFixed_Price.setText("Rs. "+ s.fixed_price);
-            TextView tvMarked_Price=( TextView)myView.findViewById(R.id.tvMarked_Price);
-            tvMarked_Price.setText("Rs. "+s.marked_price);
-            tvMarked_Price.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-
-
-
-            ImageView ivImg=(ImageView)myView.findViewById(R.id.ivImg);
-
-
-            myView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent=new Intent(getContext(),ProductDetails.class);
-                    intent.putExtra("product_id",s.user_id);
-                    intent.putExtra("product_name",s.tvName);
-                    intent.putExtra("product_photo",s.picture_path);
-                    intent.putExtra("fixed_price",s.fixed_price);
-                    intent.putExtra("marked_price",s.marked_price);
-                    intent.putExtra("brand",s.brand);
-                    intent.putExtra("desc",s.desc);
-                    intent.putExtra("sku",s.sku);
-
-                    startActivity(intent);
-
-                }
-            });
 
 
 
 
-
-
-            try{
-                String url=s.picture_path;
-
-                Picasso.get()
-                        .load(url)
-                        .fit()
-                        .into(ivImg, new Callback() {
-                            @Override
-                            public void onSuccess() {
-                                Log.d("Load","Successfull");
-
-                            }
-
-                            @Override
-                            public void onError(Exception e) {
-                                Log.d("Load",e.getMessage());
-                                     }
-                        });}
-            catch (Exception e){
-                Log.d("error",e.getMessage());
-            }
-
-            return myView;
-        }
-
-
-
-
-
-    }
     public class MyAsyncTaskgetNews1 extends AsyncTask<String, String, String> {
         @Override
         protected void onPreExecute() {
             //before works
-            progressBarHolder = v.findViewById(R.id.progressBarHolder);
-            progressBarHolder.setVisibility(View.VISIBLE);
-            bouncing_image=v.findViewById(R.id.bouncing_image);
 
-            bounce_animation= AnimationUtils.loadAnimation(getContext(),R.anim.bounce_animation);
-
-            bouncing_image.setAnimation(bounce_animation);
 
         }
         @Override
@@ -428,7 +397,7 @@ public class home extends Fragment {
                 //waiting for 7000ms for response
                 urlConnection.setConnectTimeout(7000);//set timeout to 5 seconds
                 urlConnection.setDoOutput(true);
-                urlConnection.setUseCaches(false);
+
 
 
                 try {
@@ -451,21 +420,18 @@ public class home extends Fragment {
         protected void onProgressUpdate(String... progress) {
 
             try {
-                JSONObject json = new JSONObject(progress[0]);
-                //display response data
+                JSONArray userInfo = new JSONArray(progress[0]);
 
-                if (json.getString("msg").equals("Loading")) {
-                    JSONArray userInfo = new JSONArray(json.getString("user_info"));
 
                     for (int i = 0; i < userInfo.length(); i++) {
                         JSONObject userCredentials = userInfo.getJSONObject(i);
 
-                        listnewsData.add(new ProductsAdapterItems(userCredentials.getString("name"),userCredentials.getString("picture_path"),userCredentials.getString("product_id"),userCredentials.getString("marked_price"),userCredentials.getString("fixed_price"),userCredentials.getString("brand"),userCredentials.getString("desc"),userCredentials.getString("sku")));
+                        listnewsData.add(new ProductItems(userCredentials.getString("name"),userCredentials.getString("picture_path"),userCredentials.getString("product_id"),userCredentials.getString("marked_price"),userCredentials.getString("fixed_price"),userCredentials.getString("brand"),userCredentials.getString("desc"),userCredentials.getString("sku")));
 
 
                     }
 
-                }
+
 
 
 
@@ -484,7 +450,7 @@ public class home extends Fragment {
 
             catch (Exception ex) {
                 Log.d("error is", ex.getMessage());
-                Toast.makeText(getContext(),ex.getMessage(),Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(),"End of items",Toast.LENGTH_LONG).show();
             }
 
         }
@@ -492,8 +458,7 @@ public class home extends Fragment {
 
         protected void onPostExecute(String  result2){
 
-            progressBarHolder.setVisibility(View.GONE);
-            bounce_animation.cancel();
+
 
         }
 

@@ -29,6 +29,7 @@ dependencies {
     implementation 'com.github.nikartm:image-support:1.0.5'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.navigation:navigation-fragment:2.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.2.0-alpha01'
     implementation 'androidx.preference:preference:1.0.0'
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'androidx.navigation:navigation-ui:2.0.0'

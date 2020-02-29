@@ -303,6 +303,9 @@ public class cartActivity extends AppCompatActivity {
 
             try {
                 //display response data
+
+
+
                 JSONArray userInfo = new JSONArray(progress[0]);
                 for (int i = 0; i < userInfo.length(); i++) {
                     JSONObject userCredentials = userInfo.getJSONObject(i);
