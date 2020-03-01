@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.Manifest;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -11,16 +12,27 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.TextInputLayout;
 
 import net.gotev.uploadservice.MultipartUploadRequest;
 import net.gotev.uploadservice.ServerResponse;
@@ -32,15 +44,26 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
 public class RegisterActivity extends AppCompatActivity {
-    EditText etEmail;
-    EditText etPassword1;
-    EditText etPassword2;
-    EditText etPhone;
+
+    TextInputLayout etPassword1;
+    TextInputLayout etPassword2;
+
+    TextInputLayout etEmail;
+    TextInputLayout etDelivery;
+    TextInputLayout etPhone;
+
+
+    TextView getLocation;
     SharedPreferences sp;
+    final private  int REQUEST_CODE_ASK_PERMISSIONS=123;
+    FusedLocationProviderClient fusedLocationClient;
+    Pattern addregex = Pattern.compile("^([\\d-]{0,}[\\s-]{0,}[\\d/]+)[\\s]{0,}");
     private static final Pattern PASSWORD_PATTERN =
             Pattern.compile("^" +
                     "(?=.*[0-9])" +         //at least 1 digit
@@ -59,10 +82,18 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        etEmail = (EditText) findViewById(R.id.etEmail);
-        etPassword1 = (EditText) findViewById(R.id.etPassword);
-        etPassword2 = (EditText) findViewById(R.id.etPassword2);
-        etPhone = (EditText) findViewById(R.id.etPhone);
+        etEmail =  findViewById(R.id.etEmail);
+        etPassword1 =  findViewById(R.id.etPassword);
+        etPassword2 =  findViewById(R.id.etPassword2);
+        etPhone =  findViewById(R.id.etPhone);
+        etDelivery=findViewById(R.id.etDelivery);
+        getLocation=findViewById(R.id.getLocation);
+        getLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                checkPermission();
+            }
+        });
 
 
 
@@ -73,7 +104,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private boolean validateEmail() {
-        String emailInput = etEmail.getText().toString().trim();
+        String emailInput = etEmail.getEditText().getText().toString().trim();
 
         if (emailInput.isEmpty()) {
             etEmail.setError("Field can't be empty");
@@ -87,11 +118,27 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
+    private boolean validateDelivery() {
+        String emailInput = etEmail.getEditText().getText().toString().trim();
+
+        if (emailInput.isEmpty()) {
+            etDelivery.setError("Field can't be empty");
+            return false;
+        }
+        else if (!addregex.matcher(emailInput).matches()) {
+            etDelivery.setError("Please enter a valid street address");
+            return false;
+        }
+        else {
+            etDelivery.setError(null);
+            return true;
+        }
+    }
 
 
 
     private boolean validatePassword1() {
-        String passwordInput1 = etPassword1.getText().toString().trim();
+        String passwordInput1 = etPassword1.getEditText().getText().toString().trim();
 
         if (passwordInput1.isEmpty()) {
             etPassword1.setError("Field can't be empty");
@@ -114,7 +161,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private boolean validatePhone() {
-        String phone = etPhone.getText().toString().trim();
+        String phone = etPhone.getEditText().getText().toString().trim();
 
         if (phone.isEmpty()) {
             etPhone.setError("Field can't be empty");
@@ -135,7 +182,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private boolean validatePassword2() {
-        String passwordInput2 = etPassword2.getText().toString().trim();
+        String passwordInput2 = etPassword2.getEditText().getText().toString().trim();
 
         if (passwordInput2.isEmpty()) {
             etPassword2.setError("Field can't be empty");
@@ -158,8 +205,8 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private boolean confirmPassword(){
-        String passwordInput1 = etPassword1.getText().toString().trim();
-        String passwordInput2 = etPassword2.getText().toString().trim();
+        String passwordInput1 = etPassword1.getEditText().getText().toString().trim();
+        String passwordInput2 = etPassword2.getEditText().getText().toString().trim();
         if (!passwordInput1.equals(passwordInput2)){
             etPassword2.setError("Password donot match");
             return false;}
@@ -180,7 +227,7 @@ public class RegisterActivity extends AppCompatActivity {
 
 
 
-        if ( !validateEmail()  | !validatePassword1() | !validatePassword2() | !confirmPassword()| !validatePhone())
+        if ( !validateEmail()  | !validatePassword1() | !validatePassword2() | !confirmPassword()| !validatePhone()|!validateDelivery() )
         {
         }
 
@@ -192,9 +239,10 @@ uploadData();
     }
     private void uploadData() {
 
-        final  String  email = etEmail.getText().toString().trim();
-        final  String  password = etPassword1.getText().toString().trim();
-        final  String  phone = etPhone.getText().toString().trim();
+        final  String  email = etEmail.getEditText().getText().toString().trim();
+        final  String  password = etPassword1.getEditText().getText().toString().trim();
+        final  String  phone = etPhone.getEditText().getText().toString().trim();
+        final String delivery=etDelivery.getEditText().getText().toString().trim();
 
         try {
             String uploadId = UUID.randomUUID().toString();
@@ -202,6 +250,7 @@ uploadData();
                     .addParameter("email", email)
                     .addParameter("password", password)
                     .addParameter("phone", phone)
+                    .addParameter("delivery_address", delivery)
 
                     .setDelegate(new UploadStatusDelegate() {
                         @Override
@@ -296,7 +345,7 @@ uploadData();
 
 
         sp.edit().putString("userID", id).apply();
-     sp.edit().putString("email",email).apply();
+       sp.edit().putString("email",email).apply();
         sp.edit().putBoolean("logged", true).apply();
         MaterialAlertDialogBuilder alert=new MaterialAlertDialogBuilder(this,R.style.AlertDialog);
         alert.setMessage("A confirmation email has been sent to your email..Please verify before you are able to purchase any product").setTitle("Account Verification").setPositiveButton("Continue Shopping", new DialogInterface.OnClickListener() {
@@ -313,6 +362,82 @@ uploadData();
 
 
 
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_ASK_PERMISSIONS:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    checkPermission();
+                    Toast.makeText(getApplicationContext(),"Access permitted",Toast.LENGTH_SHORT).show();
+
+                } else {
+                    // Permission Denied
+                    Toast.makeText( getApplicationContext(),"Access denied" , Toast.LENGTH_SHORT)
+                            .show();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    private void checkPermission() {
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(getApplicationContext(),Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+        ){//Can add more as per requirement
+
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},
+                    123);
+        }
+        else
+        {
+            getLocation();
+        }
+    }
+
+    private void getLocation() {
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(getApplicationContext());
+        fusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                Double latitude=location.getLatitude();
+                Double longitude=location.getLongitude();
+                getCompleteAddressString(latitude,longitude);
+            }
+        });
+    }
+
+    private String getCompleteAddressString(double LATITUDE, double LONGITUDE) {
+        String strAdd = "";
+        Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(LATITUDE, LONGITUDE, 1);
+            if (addresses != null) {
+                Address returnedAddress = addresses.get(0);
+                StringBuilder strReturnedAddress = new StringBuilder("");
+
+                for (int i = 0; i <= returnedAddress.getMaxAddressLineIndex(); i++) {
+                    strReturnedAddress.append(returnedAddress.getAddressLine(i)).append("\n");
+                }
+                strAdd = strReturnedAddress.toString();
+                etDelivery.getEditText().setText(strAdd);
+                Toast.makeText(getApplicationContext(),strAdd,Toast.LENGTH_LONG).show();
+                Log.d("My Current location", strReturnedAddress.toString());
+            } else {
+                Log.d("My Current loction ", "No Address returned!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(),e.getMessage(),Toast.LENGTH_LONG).show();
+            Log.d("My Current loction ", "Canont get Address!");
+        }
+        return strAdd;
     }
 }
 

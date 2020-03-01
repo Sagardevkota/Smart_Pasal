@@ -67,7 +67,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:drawableLeft="@drawable/ic_email_black_24dp"
+            android:drawableLeft="@drawable/ic_email_24px"
             android:drawablePadding="10dp"
             android:text="Email"
 
@@ -98,7 +98,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:drawableStart="@drawable/ic_phone_colordark"
+            android:drawableStart="@drawable/ic_phone_24px"
             android:text="Phone"
             android:drawablePadding="10dp"
             android:textSize="18sp" />
@@ -117,6 +117,44 @@
 
             android:textColor="@color/design_default_color_on_secondary"
             android:textSize="18sp" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/colorPrimaryDark" />
+
+        <TextView
+            android:id="@+id/tvtext1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:drawableStart="@drawable/ic_location_on_24px"
+            android:text="Delivery Address"
+            android:drawablePadding="10dp"
+            android:textSize="18sp" />
+
+        <EditText
+            android:id="@+id/etDelivery"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:cursorVisible="true"
+            android:hint="Enter Delivery address"
+            android:layout_marginStart="35dp"
+            android:layout_marginTop="10dp"
+
+
+
+
+            android:textColor="@color/design_default_color_on_secondary"
+            android:textSize="18sp" />
+
+           <Button
+               android:id="@+id/getLocation"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_gravity="center"
+               android:text="Get Current Location"
+               />
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"

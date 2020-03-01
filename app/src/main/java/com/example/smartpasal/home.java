@@ -17,15 +17,18 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
@@ -35,6 +38,7 @@ import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -77,7 +81,7 @@ public class home extends Fragment {
     RecyclerView endless_view;
 
     ArrayList<ProductItems> listnewsData = new ArrayList<ProductItems>();
-    ScrollView mScrollView;
+    NestedScrollView mScrollView;
     GridView lvlist;
     FrameLayout progressBarHolder;
     ImageView bouncing_image;
@@ -90,6 +94,8 @@ public class home extends Fragment {
 
     private boolean isLoading=true;
     private int current_items,total_items,scrolled_out_items;
+    ProgressBar progressBar;
+
 
 
 
@@ -107,6 +113,7 @@ public class home extends Fragment {
         v= inflater.inflate(R.layout.fragment_home, container, false);
         endless_view=v.findViewById(R.id.endless_view);
         layoutManager=new GridLayoutManager(getContext(),2);
+        mScrollView=v.findViewById(R.id.mScrollview);
         endless_view.setLayoutManager(layoutManager);
         myadapter=new ListAdapterItems(listnewsData,getContext());
 
@@ -215,45 +222,21 @@ public class home extends Fragment {
 
         String Producturl = "http://idealytik.com/SmartPasalWebServices/ProductLists.php?page_number="+page_number;
         new MyAsyncTaskgetNews1().execute(Producturl);
+        endless_view.setNestedScrollingEnabled(false);
 
-        endless_view.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+        mScrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
             @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                current_items=layoutManager.getChildCount();
-                total_items=layoutManager.getItemCount();
-                scrolled_out_items=layoutManager.findFirstVisibleItemPosition();
-                if (dy>0){
-                    if (isLoading&&(current_items+scrolled_out_items==total_items) ){
-                        isLoading=false;
+            public void onScrollChanged() {
+                View view = (View)mScrollView.getChildAt(mScrollView.getChildCount() - 1);
 
-                        //fetch data
+                int diff = (view.getBottom() - (mScrollView.getHeight() + mScrollView
+                        .getScrollY()));
 
-                        Toast.makeText(getContext(),"Fetching Data",Toast.LENGTH_SHORT).show();
-
-                        fetchData();
-
-
-
-
-
-
-
-                    }
-
-
-
+                if (diff == 0) {
+                    fetchData();
+                    // your pagination code
                 }
-            }
-
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                if (newState== AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
-                    isLoading=true;
-                }
-
-
             }
         });
 
@@ -263,13 +246,22 @@ public class home extends Fragment {
         return v;
     }
 
+
     private void fetchData() {
 
+        progressBar=v.findViewById(R.id.progress_bar);
+        progressBar.setVisibility(View.VISIBLE);
+         new Handler().postDelayed(new Runnable() {
+             @Override
+             public void run() {
 
-        page_number++;
+                 page_number++;
+                 String Producturl = "http://idealytik.com/SmartPasalWebServices/ProductLists.php?page_number="+page_number;
+                 new MyAsyncTaskgetNews1().execute(Producturl);
+                 progressBar.setVisibility(View.GONE);
+             }
+         },5000);
 
-        String Producturl = "http://idealytik.com/SmartPasalWebServices/ProductLists.php?page_number="+page_number;
-        new MyAsyncTaskgetNews1().execute(Producturl);
 
 
     }
@@ -383,6 +375,7 @@ public class home extends Fragment {
             //before works
 
 
+
         }
         @Override
         protected String  doInBackground(String... params) {
@@ -449,12 +442,10 @@ public class home extends Fragment {
 
 
             catch (Exception ex) {
-                Log.d("error is", ex.getMessage());
-                Toast.makeText(getContext(),"End of items",Toast.LENGTH_LONG).show();
-            }
+    }
+
 
         }
-
 
         protected void onPostExecute(String  result2){
 

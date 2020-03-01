@@ -7,7 +7,7 @@
         android:id="@+id/cart"
         app:showAsAction="always"
         app:actionLayout="@layout/badge_layout"
-        android:icon="@drawable/ic_shopping_cart_blue"
+        android:icon="@drawable/ic_shopping_cart_24px"
         />
 
 </menu>

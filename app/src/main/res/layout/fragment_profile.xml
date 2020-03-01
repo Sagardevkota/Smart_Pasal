@@ -88,7 +88,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:drawableLeft="@drawable/ic_email_black_24dp"
+                android:drawableLeft="@drawable/ic_email_24px"
                 android:drawablePadding="10dp"
                 android:text="Email"
 
@@ -117,7 +117,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:drawableStart="@drawable/ic_phone_colordark"
+            android:drawableStart="@drawable/ic_phone_24px"
             android:text="Phone"
             android:drawablePadding="10dp"
             android:textSize="18sp" />
@@ -140,17 +140,29 @@
             android:layout_marginTop="10dp"
             android:background="@color/colorPrimaryDark" />
 
+
+
         <TextView
-            android:id="@+id/tvVerified"
+            android:id="@+id/tvShowDelivery"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
-
+            android:layout_gravity="center"
+            android:drawableLeft="@drawable/ic_location_on_24px"
             android:layout_marginTop="10dp"
-            android:drawableStart="@drawable/ic_verified"
             android:drawablePadding="10dp"
+            android:text="Delivery Address"
 
-android:layout_marginBottom="10dp"
+
+            android:textSize="18sp" />
+
+
+        <TextView
+            android:id="@+id/tvDelivery"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="35dp"
+            android:layout_marginTop="10dp"
+            android:text="Not Provided"
 
 
             android:textColor="@color/design_default_color_on_secondary"
@@ -159,8 +171,25 @@ android:layout_marginBottom="10dp"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
             android:background="@color/colorPrimaryDark" />
+
+        <TextView
+            android:id="@+id/tvVerified"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+
+            android:layout_marginTop="20dp"
+            android:drawableStart="@drawable/ic_verified"
+            android:drawablePadding="10dp"
+
+
+
+
+            android:textColor="@color/design_default_color_on_secondary"
+            android:textSize="18sp" />
+
+
 
         <TextView
             android:id="@+id/tvNote"
@@ -176,6 +205,10 @@ android:layout_marginBottom="10dp"
             android:textAllCaps="false"
             android:textColor="#ff00"
             android:textSize="18sp" />
+
+
+
+
     </LinearLayout>
 
 

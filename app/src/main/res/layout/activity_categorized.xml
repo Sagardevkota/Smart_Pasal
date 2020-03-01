@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mScrollview"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:fillViewport="true"
 
 
 
@@ -57,40 +60,55 @@
 
 
             />
+        <FrameLayout
+            android:id="@+id/progressBarHolder"
+            android:animateLayoutChanges="true"
+            android:visibility="gone"
+
+            android:background="#fff"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/bouncing_image"
+                android:layout_width="250dp"
+                android:layout_height="250dp"
+                android:layout_gravity="center"
+                android:src="@drawable/robot"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="150dp"
+                android:fontFamily="@font/fauna_one"
+
+                android:text="Loading"
+                android:textColor="@color/design_default_color_on_secondary"
+                android:textSize="36sp"
+                android:textStyle="bold" />
+
+
+        </FrameLayout>
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="50dp"
+            android:layout_marginStart="150dp"
+            android:layout_marginEnd="250dp"
+            android:keepScreenOn="false"
+
+
+            android:visibility="gone"
+
+            />
 
 
 
     </LinearLayout>
-    <FrameLayout
-        android:id="@+id/progressBarHolder"
-        android:animateLayoutChanges="true"
-        android:visibility="gone"
-
-        android:background="#fff"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <ImageView
-            android:id="@+id/bouncing_image"
-            android:layout_width="250dp"
-            android:layout_height="250dp"
-            android:layout_gravity="center"
-            android:src="@drawable/robot"
-            />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="150dp"
-            android:fontFamily="@font/fauna_one"
-
-            android:text="Loading"
-            android:textColor="@color/design_default_color_on_secondary"
-            android:textSize="36sp"
-            android:textStyle="bold" />
 
 
-    </FrameLayout>
 
-
-</FrameLayout>
+</androidx.core.widget.NestedScrollView>

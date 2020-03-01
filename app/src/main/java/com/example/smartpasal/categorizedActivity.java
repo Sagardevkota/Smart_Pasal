@@ -3,6 +3,7 @@ package com.example.smartpasal;
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.widget.NestedScrollView;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -13,10 +14,12 @@ import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
@@ -29,6 +32,7 @@ import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -59,6 +63,11 @@ public class categorizedActivity extends AppCompatActivity {
     FrameLayout progressBarHolder;
     Animation bounce_animation;
     ImageView bouncing_image;
+    NestedScrollView mScrollView;
+    ProgressBar progressBar;
+    int page_number=1;
+
+    String sorting="";
 
 
     @Override
@@ -68,11 +77,25 @@ public class categorizedActivity extends AppCompatActivity {
 
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mScrollView=findViewById(R.id.mScrollview);
+        mScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+
+                if (scrollY == (v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight())) {
+                  fetchData();
+                }
+
+            }
+        }
+
+        );
 
 
 
 
-        final Bundle b = getIntent().getExtras();
+
+      b = getIntent().getExtras();
            //Cart listview
         lvlist = (GridView) findViewById(R.id.LVNews);
         myadapter = new MyCustomAdapter(listnewsData);
@@ -83,6 +106,7 @@ public class categorizedActivity extends AppCompatActivity {
         arr.add("Popularity");
         arr.add("Price low to high");
         arr.add("Price high to low");
+
         ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(this,android.R.layout.simple_dropdown_item_1line,arr);
         spSort.setAdapter(arrayAdapter);
         spSort.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -90,8 +114,9 @@ public class categorizedActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (arr.get(position).equals("Popularity"))
                 {
+                    sorting=arr.get(position).toString();
 
-                    String url= "http://idealytik.com/SmartPasalWebServices/CategoryLists.php?category=" +b.getString("category", "")+"&sorting=Popularity";
+                    String url= "http://idealytik.com/SmartPasalWebServices/CategoryLists.php?category=" +b.getString("category", "")+"&sorting=Popularity&page_number="+page_number;
 
                     new MyAsyncTaskgetNews().execute(url);
                     Toast.makeText(getApplicationContext(),"Popularity",Toast.LENGTH_LONG).show();
@@ -100,8 +125,9 @@ public class categorizedActivity extends AppCompatActivity {
                 }
                 if (arr.get(position).equals("Price low to high"))
                 {
+                    sorting=arr.get(position).toString();
 
-                    String url= "http://idealytik.com/SmartPasalWebServices/CategoryLists.php?category=" +b.getString("category", "")+"&sorting=Price low to high";
+                    String url= "http://idealytik.com/SmartPasalWebServices/CategoryLists.php?category=" +b.getString("category", "")+"&sorting=Price low to high&page_number="+page_number;
                     new MyAsyncTaskgetNews().execute(url);
                     Toast.makeText(getApplicationContext(),"Price low to high",Toast.LENGTH_LONG).show();
                     listnewsData.clear();
@@ -109,8 +135,9 @@ public class categorizedActivity extends AppCompatActivity {
                 }
                 if (arr.get(position).equals("Price high to low"))
                 {
+                    sorting=arr.get(position).toString();
 
-                    String url= "http://idealytik.com/SmartPasalWebServices/CategoryLists.php?category=" +b.getString("category", "")+"&sorting=Price high to low";
+                    String url= "http://idealytik.com/SmartPasalWebServices/CategoryLists.php?category=" +b.getString("category", "")+"&sorting=Price high to low &page_number="+page_number;
                     new MyAsyncTaskgetNews().execute(url);
 
                     Toast.makeText(getApplicationContext(),"Price high to low",Toast.LENGTH_LONG).show();
@@ -127,6 +154,25 @@ public class categorizedActivity extends AppCompatActivity {
         });
 
 
+
+
+
+    }
+
+    private void fetchData() {
+        b=getIntent().getExtras();
+        progressBar=findViewById(R.id.progress_bar);
+        progressBar.setVisibility(View.VISIBLE);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                page_number++;
+                String Producturl = "http://idealytik.com/SmartPasalWebServices/CategoryLists.php"+b.getString("category", "")+"&sorting="+sorting+"&page_number="+page_number;
+                new MyAsyncTaskgetNews().execute(Producturl);
+                progressBar.setVisibility(View.GONE);
+            }
+        },5000);
 
 
 
@@ -300,6 +346,7 @@ public class categorizedActivity extends AppCompatActivity {
 
             } catch (Exception ex) {
                 Log.d("error is", ex.getMessage());
+                Toast.makeText(getApplicationContext(),"End of items",Toast.LENGTH_SHORT).show();
             }
 
         }

@@ -6,7 +6,7 @@
         <item
             android:title="home"
             android:id="@+id/bottom_nav_home"
-            android:icon="@drawable/ic_home"
+            android:icon="@drawable/ic_home_24px"
             />
         <item
             android:title="scan"
@@ -16,7 +16,7 @@
         <item
             android:title="cart"
             android:id="@+id/bottom_nav_cart"
-            android:icon="@drawable/ic_cart"
+            android:icon="@drawable/ic_shopping_cart_24px"
             xmlns:app="http://schemas.android.com/apk/res-auto"
             app:actionLayout="@layout/badge_layout"
             />

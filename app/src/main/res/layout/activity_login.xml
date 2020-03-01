@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView
+
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/linearLayout"
@@ -7,7 +9,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#fff"
-    app:passwordToggleEnabled="true"
+    android:fillViewport="true"
+
     android:elevation="4dp"
     tools:context=".LoginActivity">
 
@@ -37,52 +40,101 @@
             android:padding="20dp">
 
             <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:fontFamily="@font/text_me_one"
+                android:text="Welcome to S-Mart"
+                android:textColor="#FF5722"
+                android:textSize="30sp"
+                android:textStyle="bold|normal" />
+
+            <TextView
                 android:id="@+id/textView2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:layout_marginBottom="10dp"
 
-                android:fontFamily="monospace"
+
+                android:fontFamily="@font/text_me_one"
                 android:text="Email"
-                android:textColor="#009688"
+                android:textColor="#FF5722"
                 android:textSize="20dp" />
 
-            <EditText
+
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/etEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:drawableStart="@drawable/ic_email_black_24dp"
-                android:ems="10"
-                android:hint="Enter your email address"
-                android:inputType="textEmailAddress"
-                android:textAlignment="center"
-                tools:layout_editor_absoluteY="731dp" />
+                app:errorEnabled="true"
+
+                android:background="#fff"
+                app:placeholderTextColor="#000"
+                >
+
+                <androidx.appcompat.widget.AppCompatEditText
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:drawableStart="@drawable/ic_email_24px"
+                    android:drawablePadding="10dp"
+                    android:gravity="center"
+                    android:background="#fff"
+                    android:textColor="#000"
+
+                    android:textAlignment="center"
+                    app:passwordToggleTint="@color/colorPrimary"
+                    android:hint="Enter Email"
+                    android:inputType="textEmailAddress"
+
+                    android:maxLines="1" />
+
+            </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
                 android:id="@+id/textView4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:layout_marginBottom="10dp"
-                android:fontFamily="monospace"
+
+                android:fontFamily="@font/text_me_one"
                 android:text="Password"
-                android:textColor="#009688"
+                android:textColor="#FF5722"
                 android:textSize="20dp" />
 
-            <EditText
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/etPassword"
                 android:layout_width="match_parent"
-                android:layout_height="44dp"
-                android:layout_marginBottom="20dp"
-                android:drawableStart="@drawable/ic_lock_black_24dp"
-                android:ems="10"
-                android:hint="Enter your password"
-                android:inputType="textPassword"
+                android:layout_height="wrap_content"
+                app:errorEnabled="true"
 
-                android:textAlignment="center"
-                app:passwordToggleTint="@color/colorPrimary" />
+                android:background="#fff"
+
+
+                app:passwordToggleEnabled="true">
+
+                <androidx.appcompat.widget.AppCompatEditText
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:drawableStart="@drawable/ic_lock_24px"
+                    android:drawablePadding="10dp"
+                    android:gravity="center"
+                    android:background="#fff"
+                    android:textColor="#000"
+
+                    android:textAlignment="center"
+                    app:passwordToggleTint="@color/colorPrimary"
+                    android:hint="Enter Password"
+                    android:inputType="textPassword"
+
+                    android:maxLines="1" />
+
+            </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
                 android:id="@+id/textView3"
@@ -91,18 +143,20 @@
                 android:layout_gravity="end"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="10dp"
+                android:fontFamily="@font/text_me_one"
                 android:onClick="regClick"
                 android:text="Forgot Password?"
-                android:textColor="#E91E63"
+                android:textColor="#FF5722"
                 android:textSize="18sp" />
 
             <Button
                 android:id="@+id/loginClick"
-                android:layout_width="150dp"
+                android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="10dp"
+                android:fontFamily="@font/text_me_one"
                 android:onClick="buLogin"
                 android:text="Log In"
                 android:textColor="#ffffff"
@@ -110,7 +164,7 @@
                 android:textStyle="bold"
                 tools:layout_editor_absoluteY="746dp" />
             <com.google.android.gms.common.SignInButton
-                android:layout_width="150dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:id="@+id/btn_google_login"
@@ -135,14 +189,15 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:layout_marginTop="20dp"
+                android:fontFamily="@font/text_me_one"
                 android:onClick="regClick"
-                android:text="CREATE AN ACCOUNT"
 
-                android:textColor="#E91E63"
+                android:text="CREATE AN ACCOUNT"
+                android:textColor="#FF5722"
                 android:textSize="15sp" />
 
 
         </LinearLayout>
     </RelativeLayout>
 
-</LinearLayout>
+</androidx.core.widget.NestedScrollView>

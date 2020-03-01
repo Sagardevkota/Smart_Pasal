@@ -28,6 +28,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -46,6 +48,8 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     SignInButton Google_sign_in;
     GoogleApiClient googleApiClient;
     public static int Req_code=1000;
+    TextInputLayout etEmail;
+    TextInputLayout etPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,10 +87,10 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     }
 
     public void buLogin(View view){
-        final EditText etEmail= findViewById(R.id.etEmail);
-        final String email=etEmail.getText().toString().trim();
-        final EditText   etPassword= findViewById(R.id.etPassword);
-        final String password=etPassword.getText().toString().trim();;
+         etEmail= findViewById(R.id.etEmail);
+        final String email=etEmail.getEditText().getText().toString().trim();
+          etPassword= findViewById(R.id.etPassword);
+        final String password=etPassword.getEditText().getText().toString().trim();;
         if ((email.length()> 0)
                 && (password.length()> 0)) {
             String url = "http://idealytik.com/SmartPasalWebServices/Login.php?email=" + email + "&password=" + password;
@@ -257,7 +261,7 @@ hideProgressDialog();
     @Override
     public void onBackPressed() {
 
-        AlertDialog.Builder alert=new AlertDialog.Builder(this);
+        MaterialAlertDialogBuilder alert=new MaterialAlertDialogBuilder(this,R.style.AlertDialog);
         alert.setMessage("Are you sure you want to exit?").setTitle("Confirmation").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

@@ -9,6 +9,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -69,6 +70,11 @@ public class HomeActivity extends AppCompatActivity {
      public static Integer count;
 
     @Override
+    public void onAttachFragment(@NonNull Fragment fragment) {
+        super.onAttachFragment(fragment);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.setting_menu_settings:
@@ -95,6 +101,7 @@ public class HomeActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.setting_menu,menu);
         return super.onCreateOptionsMenu(menu);
     }
+
 
 
     @Override

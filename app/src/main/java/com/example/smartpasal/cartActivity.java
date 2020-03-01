@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,6 +54,7 @@ public class cartActivity extends AppCompatActivity {
     FrameLayout progressBarHolder;
     Animation bounce_animation;
     ImageView bouncing_image;
+    LinearLayout calculateLayout;
 
 
     @Override
@@ -68,6 +70,8 @@ public class cartActivity extends AppCompatActivity {
 
         String url = "http://idealytik.com/SmartPasalWebServices/CartLists.php?id="+sp.getString("userID","");
         new MyAsyncTaskgetNews().execute(url);
+        calculateLayout=findViewById(R.id.calcualteLayout);
+
         //Cart listview
         lvlist = (ListView) findViewById(R.id.LVNews);
 
@@ -141,6 +145,7 @@ public class cartActivity extends AppCompatActivity {
             buIncrease.setBackgroundColor(Color.parseColor("#ffffff"));
             buIncrease.setTextColor(Color.BLACK);
             tvTotalCosts = findViewById(R.id.tvTotalCosts);
+            calculateLayout.setVisibility(View.VISIBLE);
             buDelete.setEnabled(false);
 
             buDecrease.setEnabled(false);

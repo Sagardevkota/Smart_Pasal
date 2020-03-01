@@ -42,6 +42,7 @@ public class Profile extends Fragment {
     TextView tvEmail;
     TextView tvPhone;
     TextView tvVerified;
+    TextView tvDelivery;
     Button buEdit;
     FrameLayout progressBarHolder;
     Animation bounce_animation;
@@ -120,8 +121,12 @@ public class Profile extends Fragment {
                     tvEmail= v.findViewById(R.id.tvEmail);
                     tvPhone= v.findViewById(R.id.tvPhone);
                     buEdit=v.findViewById(R.id.buEdit);
+                    tvDelivery=v.findViewById(R.id.tvDelivery);
                     final String email=userCredentials.getString("email");
                   final   String phone=userCredentials.getString("phone");
+                  String delivery_address=userCredentials.getString("delivery_address");
+                  tvDelivery.setText(delivery_address);
+
                     tvEmail.setText(email);
                     tvPhone.setText(phone);
                     tvVerified= v.findViewById(R.id.tvVerified);
