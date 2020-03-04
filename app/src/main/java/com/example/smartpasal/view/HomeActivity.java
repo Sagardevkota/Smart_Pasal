@@ -1,4 +1,4 @@
-package com.example.smartpasal;
+package com.example.smartpasal.view;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
@@ -9,31 +9,30 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.SearchView;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.smartpasal.fragment.Profile;
+import com.example.smartpasal.R;
+import com.example.smartpasal.fragment.Settings;
+import com.example.smartpasal.fragment.cart;
+import com.example.smartpasal.fragment.home;
+import com.example.smartpasal.fragment.order;
+import com.example.smartpasal.fragment.scan;
 import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInApi;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -127,7 +126,7 @@ etSearch=findViewById(R.id.etSearch);
 etSearch.setOnClickListener(new View.OnClickListener() {
     @Override
     public void onClick(View view) {
-        Intent intent=new Intent(getApplicationContext(),searchList.class);
+        Intent intent=new Intent(getApplicationContext(), searchList.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }

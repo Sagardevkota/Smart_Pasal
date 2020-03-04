@@ -11,7 +11,7 @@
 
 
 
-    tools:context=".home">
+    tools:context=".fragment.home">
 
 
     <LinearLayout

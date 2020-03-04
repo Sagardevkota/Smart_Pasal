@@ -11,27 +11,27 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".SettingsActivity" android:parentActivityName=".HomeActivity"></activity>
+        <activity android:name=".view.SettingsActivity" android:parentActivityName=".view.HomeActivity"></activity>
         <activity
-            android:name=".categorizedActivity"
-            android:parentActivityName=".HomeActivity"
+            android:name=".view.categorizedActivity"
+            android:parentActivityName=".view.HomeActivity"
             android:theme="@style/AppTheme.DarkActionBar" />
         <activity
-            android:name=".cartActivity"
-            android:parentActivityName=".ProductDetails"
+            android:name=".view.cartActivity"
+            android:parentActivityName=".view.ProductDetails"
             android:theme="@style/AppTheme.DarkActionBar" />
         <activity
-            android:name=".searchList"
-            android:parentActivityName=".HomeActivity" />
+            android:name=".view.searchList"
+            android:parentActivityName=".view.HomeActivity" />
         <activity
-            android:name=".ProductDetails"
-            android:parentActivityName=".HomeActivity" />
-        <activity android:name=".HomeActivity" android:parentActivityName=".MainActivity"  />
+            android:name=".view.ProductDetails"
+            android:parentActivityName=".view.HomeActivity" />
+        <activity android:name=".view.HomeActivity" android:parentActivityName=".view.MainActivity"  />
         <activity
-            android:name=".RegisterActivity"
-            android:parentActivityName=".LoginActivity" />
-        <activity android:name=".LoginActivity" />
-        <activity android:name=".MainActivity">
+            android:name=".view.RegisterActivity"
+            android:parentActivityName=".view.LoginActivity" />
+        <activity android:name=".view.LoginActivity" />
+        <activity android:name=".view.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

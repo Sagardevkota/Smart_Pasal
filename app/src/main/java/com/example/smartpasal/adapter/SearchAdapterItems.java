@@ -1,4 +1,4 @@
-package com.example.smartpasal;
+package com.example.smartpasal.adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,38 +13,41 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.smartpasal.view.ProductDetails;
+import com.example.smartpasal.R;
+import com.example.smartpasal.model.SearchItems;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-public class ListAdapterItems extends RecyclerView.Adapter<ListAdapterItems.Myviewholder> {
+public class SearchAdapterItems extends RecyclerView.Adapter<SearchAdapterItems.Myviewholder> {
+    public ArrayList<SearchItems> searchItems=new ArrayList<>();
 
-
-    public ArrayList<ProductItems> productItems;
     Context context;
 
-
-    public ListAdapterItems(ArrayList<ProductItems> productItems,Context context) {
-        this.productItems=productItems;
+    public  SearchAdapterItems(ArrayList<SearchItems> searchItems,Context context){
         this.context=context;
+        this.searchItems=searchItems;
+
     }
+
+
 
 
 
     @NonNull
     @Override
     public Myviewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_product_lists, parent, false);
-        Myviewholder view = new Myviewholder(v);
+        View v= LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_search_lists,parent,false);
+        Myviewholder view=new Myviewholder(v);
         return view;
-
     }
 
     @Override
     public void onBindViewHolder(@NonNull Myviewholder holder, int position) {
-        final ProductItems currentItem=productItems.get(position);
+
+        final SearchItems currentItem=searchItems.get(position);
 
         holder.tvProduct_Name.setText(currentItem.tvName);
         holder.tvMarked_Price.setText("Rs. "+currentItem.marked_price);
@@ -54,7 +57,9 @@ public class ListAdapterItems extends RecyclerView.Adapter<ListAdapterItems.Myvi
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(context,ProductDetails.class);
+                Intent intent=new Intent(context, ProductDetails.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra("product_id",currentItem.user_id);
 
                 intent.putExtra("product_name",currentItem.tvName );
                 intent.putExtra("fixed_price",currentItem.fixed_price);
@@ -97,13 +102,14 @@ public class ListAdapterItems extends RecyclerView.Adapter<ListAdapterItems.Myvi
             Log.d("error",e.getMessage());
         }
 
+
     }
 
     @Override
     public int getItemCount() {
-        return productItems.size();
+        return searchItems.size();
     }
-    public static class Myviewholder extends RecyclerView.ViewHolder {
+    public class Myviewholder extends RecyclerView.ViewHolder   {
         TextView tvProduct_Name;
         TextView tvFixed_Price;
         TextView tvMarked_Price;
@@ -112,8 +118,6 @@ public class ListAdapterItems extends RecyclerView.Adapter<ListAdapterItems.Myvi
 
         public Myviewholder(@NonNull View itemView) {
             super(itemView);
-
-
             tvProduct_Name=( TextView)itemView.findViewById(R.id.tvProduct_Name);
 
             tvFixed_Price=( TextView)itemView.findViewById(R.id.tvFixed_Price);
@@ -124,9 +128,9 @@ public class ListAdapterItems extends RecyclerView.Adapter<ListAdapterItems.Myvi
 
 
             ivImg=(ImageView)itemView.findViewById(R.id.ivImg);
-
-
         }
     }
+
+
 
 }

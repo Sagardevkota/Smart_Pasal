@@ -1,33 +1,30 @@
-package com.example.smartpasal;
+package com.example.smartpasal.fragment;
 
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.os.Bundle;
+
+import androidx.fragment.app.Fragment;
+
 import android.util.Log;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.FrameLayout;
-import android.widget.GridView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.smartpasal.model.CartAdapterItems;
+import com.example.smartpasal.R;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -42,67 +39,59 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class cartActivity extends AppCompatActivity {
+
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class cart extends Fragment {
     ListView LVNews;
     MyCustomAdapter myadapter;
     ArrayList<CartAdapterItems> listnewsData = new ArrayList<CartAdapterItems>();
     ListView lvlist;
     Bundle b;
-    int qty = 1;
+    int qty=1;
+    Integer fixed_price;
     TextView tvTotalCosts;
     SharedPreferences sp;
+    View v;
     FrameLayout progressBarHolder;
     Animation bounce_animation;
     ImageView bouncing_image;
-    LinearLayout calculateLayout;
+    ImageView ivDelete;
+
+
+
+    public cart() {
+        // Required empty public constructor
+    }
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cart);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("My Cart");
-        Bundle b = getIntent().getExtras();
-        sp=getSharedPreferences("s-martlogin", Context.MODE_PRIVATE);
-
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        v= inflater.inflate(R.layout.fragment_cart, container, false);
+        sp=getActivity().getSharedPreferences("s-martlogin", Context.MODE_PRIVATE);
 
         String url = "http://idealytik.com/SmartPasalWebServices/CartLists.php?id="+sp.getString("userID","");
         new MyAsyncTaskgetNews().execute(url);
-        calculateLayout=findViewById(R.id.calcualteLayout);
-
-        //Cart listview
-        lvlist = (ListView) findViewById(R.id.LVNews);
-
+        //Product listview
+        lvlist = (ListView) v.findViewById(R.id.LVNews);
         myadapter = new MyCustomAdapter(listnewsData);
         lvlist.setAdapter(myadapter);
-
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
-    }
+        return v;
 
 
-    @Override
-    public void onBackPressed() {
-        this.finish();
-        super.onBackPressed();
     }
 
     private class MyCustomAdapter extends BaseAdapter {
 
 
-        public ArrayList<CartAdapterItems> listnewsDataAdpater;
+        public ArrayList<CartAdapterItems> listnewsDataAdpater ;
 
-        public MyCustomAdapter(ArrayList<CartAdapterItems> listnewsDataAdpater) {
-            this.listnewsDataAdpater = listnewsDataAdpater;
-
+        public MyCustomAdapter(ArrayList<CartAdapterItems>  listnewsDataAdpater) {
+            this.listnewsDataAdpater=listnewsDataAdpater;
         }
-
 
 
         @Override
@@ -112,7 +101,6 @@ public class cartActivity extends AppCompatActivity {
 
         @Override
         public String getItem(int position) {
-
             return null;
         }
 
@@ -122,53 +110,46 @@ public class cartActivity extends AppCompatActivity {
         }
 
         @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent)
+        {
             LayoutInflater mInflater = getLayoutInflater();
             final View myView = mInflater.inflate(R.layout.layout_cart_lists, null);
 
-
             final CartAdapterItems s = listnewsDataAdpater.get(position);
-            TextView tvProduct_Name = (TextView) myView.findViewById(R.id.tvProduct_Name);
+            TextView tvProduct_Name=( TextView)myView.findViewById(R.id.tvProduct_Name);
             tvProduct_Name.setText(s.tvName);
-            TextView tvFixed_Price = (TextView) myView.findViewById(R.id.tvFixed_Price);
-            tvFixed_Price.setText("Rs. " + s.fixed_price);
-            final Button buIncrease = myView.findViewById(R.id.buIncrease);
-            final Button buDecrease = myView.findViewById(R.id.buDecrease);
-            final TextView tvQty = myView.findViewById(R.id.tvQty);
-            CheckBox checkitem = myView.findViewById(R.id.checkItems);
-            final Button buDelete = findViewById(R.id.buDelete);
-            final Button buCheckOut = findViewById(R.id.buCheckOut);
-
+            TextView tvFixed_Price=( TextView)myView.findViewById(R.id.tvFixed_Price);
+            tvFixed_Price.setText("Rs. "+ s.fixed_price);
+            fixed_price=Integer.valueOf(s.fixed_price);
+            final Button buIncrease=myView.findViewById(R.id.buIncrease);
+            final Button buDecrease=myView.findViewById(R.id.buDecrease);
+            final TextView tvQty=myView.findViewById(R.id.tvQty);
+           ivDelete=myView.findViewById(R.id.ivDelete);
+            final Button buDelete = v.findViewById(R.id.buDelete);
+            final Button buCheckOut =v. findViewById(R.id.buCheckOut);
 
             buDecrease.setBackgroundColor(Color.parseColor("#ffffff"));
             buDecrease.setTextColor(Color.BLACK);
             buIncrease.setBackgroundColor(Color.parseColor("#ffffff"));
             buIncrease.setTextColor(Color.BLACK);
-            tvTotalCosts = findViewById(R.id.tvTotalCosts);
-            calculateLayout.setVisibility(View.VISIBLE);
+            tvTotalCosts = v.findViewById(R.id.tvTotalCosts);
             buDelete.setEnabled(false);
 
             buDecrease.setEnabled(false);
             buCheckOut.setEnabled(false);
-
-            checkitem.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            ivDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    if (compoundButton.isChecked()) {
-                        buCheckOut.setEnabled(true);
-                        buDelete.setEnabled(true);
-                        buDelete.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                String url = "http://idealytik.com/SmartPasalWebServices/RemoveFromCart.php?product_id=" + s.user_id+ "&id=" +sp.getString("userID","");
-                                new MyAsyncTaskgetNews1().execute(url);
+                public void onClick(View view) {
+                    String url = "http://idealytik.com/SmartPasalWebServices/RemoveFromCart.php?product_id=" + s.user_id+ "&id=" +sp.getString("userID","");
+                    new MyAsyncTaskgetNews1().execute(url);
 
-                                listnewsData.remove(position);
-                                myadapter.notifyDataSetChanged();
+                    listnewsData.remove(position);
+                    myadapter.notifyDataSetChanged();
+
+                }
+            });
 
 
-                            }
-                        });
                         Integer TotalPrice = qty * Integer.valueOf(s.fixed_price);
                         tvTotalCosts.setText("Rs. " + String.valueOf(TotalPrice));
 
@@ -210,23 +191,24 @@ public class cartActivity extends AppCompatActivity {
                             }
                         });
 
-                             } else
-                    {  tvTotalCosts.setText("Rs.0");
-                        buCheckOut.setEnabled(false);
-                    buDelete.setEnabled(false);}
 
 
-                }
-            });
 
 
-            buDecrease.setEnabled(false);
-
-            ImageView ivImg = (ImageView) myView.findViewById(R.id.ivImg);
 
 
-            try {
-                String url = s.picture_path;
+            ImageView ivImg=(ImageView)myView.findViewById(R.id.ivImg);
+
+
+
+
+
+
+
+
+
+            try{
+                String url=s.picture_path;
 
                 Picasso.get()
                         .load(url)
@@ -234,45 +216,34 @@ public class cartActivity extends AppCompatActivity {
                         .into(ivImg, new Callback() {
                             @Override
                             public void onSuccess() {
-                                Log.d("Load", "Successfull");
+                                Log.d("Load","Successfull");
 
                             }
 
                             @Override
                             public void onError(Exception e) {
-                                Log.d("Load", e.getMessage());
+                                Log.d("Load",e.getMessage());
                             }
-                        });
-            } catch (Exception e) {
-                Log.d("Cartlist error", e.getMessage());
+                        });}
+            catch (Exception e){
+                Log.d("error",e.getMessage());
             }
-
 
             return myView;
         }
 
 
+
+
+
     }
-
-
-
-
-
     public class MyAsyncTaskgetNews extends AsyncTask<String, String, String> {
         @Override
         protected void onPreExecute() {
             //before works
-            progressBarHolder = findViewById(R.id.progressBarHolder);
-            progressBarHolder.setVisibility(View.VISIBLE);
-            bouncing_image=findViewById(R.id.bouncing_image);
-
-            bounce_animation= AnimationUtils.loadAnimation(getApplicationContext(),R.anim.bounce_animation);
-
-            bouncing_image.setAnimation(bounce_animation);
         }
-
         @Override
-        protected String doInBackground(String... params) {
+        protected String  doInBackground(String... params) {
             // TODO Auto-generated method stub
             try {
                 String NewsData;
@@ -280,11 +251,10 @@ public class cartActivity extends AppCompatActivity {
                 URL url = new URL(params[0]);
                 //make connect with url and send request
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                //waiting for 7000ms for response
-                urlConnection.setConnectTimeout(7000);//set timeout to 5 seconds
                 urlConnection.setDoOutput(true);
                 urlConnection.setUseCaches(false);
-
+                //waiting for 7000ms for response
+                urlConnection.setConnectTimeout(7000);//set timeout to 5 seconds
 
                 try {
                     //getting the response data
@@ -298,24 +268,23 @@ public class cartActivity extends AppCompatActivity {
                     urlConnection.disconnect();
                 }
 
-            } catch (Exception ex) {
-                Log.d("error", ex.getMessage());
+            }catch (Exception ex){
+                Log.d("error",ex.getMessage());
             }
             return null;
         }
-
         protected void onProgressUpdate(String... progress) {
 
             try {
+
+
+
                 //display response data
-
-
-
                 JSONArray userInfo = new JSONArray(progress[0]);
                 for (int i = 0; i < userInfo.length(); i++) {
                     JSONObject userCredentials = userInfo.getJSONObject(i);
 
-                    listnewsData.add(new CartAdapterItems(userCredentials.getString("name"), userCredentials.getString("picture_path"), userCredentials.getString("product_id"), userCredentials.getString("marked_price"), userCredentials.getString("fixed_price")));
+                    listnewsData.add(new CartAdapterItems(userCredentials.getString("name"),userCredentials.getString("picture_path"),userCredentials.getString("product_id"),userCredentials.getString("marked_price"),userCredentials.getString("fixed_price")));
 
 
                 }
@@ -324,18 +293,24 @@ public class cartActivity extends AppCompatActivity {
                 myadapter.notifyDataSetChanged();
                 //display response data
 
-            } catch (Exception ex) {
-                Log.d("Cartlist error is", ex.getMessage());
+            }
+
+
+
+
+            catch (Exception ex) {
+                Log.d("error is", ex.getMessage());
             }
 
         }
 
 
-        protected void onPostExecute(String result2) {
+        protected void onPostExecute(String  result2){
 
-progressBarHolder.setVisibility(View.GONE);
-bounce_animation.cancel();
+
         }
+
+
 
 
     }
@@ -343,21 +318,20 @@ bounce_animation.cancel();
     // this method convert any stream to string
     public static String ConvertInputToStringNoChange(InputStream inputStream) {
 
-        BufferedReader bureader = new BufferedReader(new InputStreamReader(inputStream));
-        String line;
-        String linereultcal = "";
+        BufferedReader bureader=new BufferedReader( new InputStreamReader(inputStream));
+        String line ;
+        String linereultcal="";
 
-        try {
-            while ((line = bureader.readLine()) != null) {
+        try{
+            while((line=bureader.readLine())!=null) {
 
-                linereultcal += line;
+                linereultcal+=line;
 
             }
             inputStream.close();
 
 
-        } catch (Exception ex) {
-        }
+        }catch (Exception ex){}
 
         return linereultcal;
     }
@@ -366,11 +340,11 @@ bounce_animation.cancel();
         @Override
         protected void onPreExecute() {
             //before works
-            progressBarHolder = findViewById(R.id.progressBarHolder);
+            progressBarHolder = v.findViewById(R.id.progressBarHolder);
             progressBarHolder.setVisibility(View.VISIBLE);
-            bouncing_image=findViewById(R.id.bouncing_image);
+            bouncing_image=v.findViewById(R.id.bouncing_image);
 
-            bounce_animation= AnimationUtils.loadAnimation(getApplicationContext(),R.anim.bounce_animation);
+            bounce_animation= AnimationUtils.loadAnimation(getContext(),R.anim.bounce_animation);
 
             bouncing_image.setAnimation(bounce_animation);
         }
@@ -410,7 +384,7 @@ bounce_animation.cancel();
             try {
                 JSONObject json = new JSONObject(progress[0]);
                 if (json.getString("msg").equalsIgnoreCase("Item removed from cart")) {
-                    Toast.makeText(getApplicationContext(), "Item is removed from cart", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), "Item is removed from cart", Toast.LENGTH_LONG).show();
                 }
 
 
@@ -429,4 +403,5 @@ bounce_animation.cancel();
 
 
     }
+
 }

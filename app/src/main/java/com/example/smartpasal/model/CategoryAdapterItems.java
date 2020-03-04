@@ -1,4 +1,4 @@
-package com.example.smartpasal;
+package com.example.smartpasal.model;
 
 public class CategoryAdapterItems {
 
@@ -20,7 +20,7 @@ public class CategoryAdapterItems {
 
 
     //for news details
-    CategoryAdapterItems( String tvName, String picture_path ,String user_id,String marked_price,String fixed_price,String brand, String desc,String sku,String category)
+   public CategoryAdapterItems( String tvName, String picture_path ,String user_id,String marked_price,String fixed_price,String brand, String desc,String sku,String category)
     {
 
         this. tvName=tvName;

@@ -1,4 +1,4 @@
-package com.example.smartpasal;
+package com.example.smartpasal.fragment;
 
 
 import android.Manifest;
@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.example.smartpasal.R;
 import com.google.zxing.Result;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;

@@ -1,9 +1,12 @@
-package com.example.smartpasal;
+package com.example.smartpasal.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.os.Bundle;
+
+import com.example.smartpasal.R;
+import com.example.smartpasal.fragment.SettingsFragment;
 
 public class SettingsActivity extends AppCompatActivity {
 

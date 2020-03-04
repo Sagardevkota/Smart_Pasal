@@ -1,8 +1,7 @@
-package com.example.smartpasal;
+package com.example.smartpasal.view;
 
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.widget.ImageViewCompat;
 
 import android.content.Intent;
 import android.media.MediaPlayer;
@@ -12,6 +11,8 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.example.smartpasal.R;
 
 public class MainActivity extends AppCompatActivity {
     Animation topAnim,bottomAnim;
@@ -41,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
             public void run() {
 
-                Intent i = new Intent(MainActivity.this,LoginActivity.class);
+                Intent i = new Intent(MainActivity.this, LoginActivity.class);
 
                 startActivity(i);
 

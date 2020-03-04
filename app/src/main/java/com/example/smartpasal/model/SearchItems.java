@@ -1,8 +1,8 @@
-package com.example.smartpasal;
+package com.example.smartpasal.model;
 
 
 
-public class ProductItems {
+public class SearchItems {
 
     public String tvName;
 
@@ -19,7 +19,7 @@ public class ProductItems {
 
 
     //for news details
-    ProductItems(String tvName, String picture_path, String user_id, String marked_price, String fixed_price, String brand, String desc, String sku) {
+    public SearchItems(String tvName, String picture_path, String user_id, String marked_price, String fixed_price, String brand, String desc, String sku) {
 
         this.tvName = tvName;
 

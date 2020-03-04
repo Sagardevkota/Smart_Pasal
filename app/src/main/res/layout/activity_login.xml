@@ -12,7 +12,7 @@
     android:fillViewport="true"
 
     android:elevation="4dp"
-    tools:context=".LoginActivity">
+    tools:context=".view.LoginActivity">
 
 
     <RelativeLayout

@@ -1,4 +1,4 @@
-package com.example.smartpasal;
+package com.example.smartpasal.model;
 
 public class CartAdapterItems {
 
@@ -17,7 +17,7 @@ public class CartAdapterItems {
 
 
     //for news details
-    CartAdapterItems( String tvName, String picture_path ,String user_id,String marked_price,String fixed_price)
+   public CartAdapterItems( String tvName, String picture_path ,String user_id,String marked_price,String fixed_price)
     {
 
         this. tvName=tvName;

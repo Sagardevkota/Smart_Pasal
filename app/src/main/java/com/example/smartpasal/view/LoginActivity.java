@@ -1,12 +1,10 @@
-package com.example.smartpasal;
+package com.example.smartpasal.view;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,15 +12,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.smartpasal.R;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInApi;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
@@ -82,7 +78,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
     public void regClick(View view){
 
-        Intent intent=new Intent(this,RegisterActivity.class);
+        Intent intent=new Intent(this, RegisterActivity.class);
         startActivity(intent);
     }
 
@@ -286,7 +282,7 @@ hideProgressDialog();
     }
 
     public void goToHomeActivity(){
-        Intent i = new Intent(this,HomeActivity.class);
+        Intent i = new Intent(this, HomeActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);
     }

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
 
-    tools:context=".searchList">
+    tools:context=".view.searchList">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -30,6 +30,26 @@
             android:hint="Search in S-Mart"
             android:inputType="textPersonName" />
 
+
+
     </LinearLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/endless_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        />
+
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            />
+
+
+
+
 
 </LinearLayout>

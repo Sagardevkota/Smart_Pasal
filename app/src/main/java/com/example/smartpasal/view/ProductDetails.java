@@ -1,6 +1,5 @@
-package com.example.smartpasal;
+package com.example.smartpasal.view;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -17,18 +16,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-import ru.nikartm.support.BadgePosition;
+
 import ru.nikartm.support.ImageBadgeView;
 
-import com.google.android.material.badge.BadgeDrawable;
-import com.google.android.material.badge.BadgeUtils;
+import com.example.smartpasal.R;
+import com.example.smartpasal.view.HomeActivity;
+import com.example.smartpasal.view.cartActivity;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
@@ -66,7 +64,7 @@ public class ProductDetails extends AppCompatActivity {
         badgeView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(getApplicationContext(),cartActivity.class);
+                Intent intent=new Intent(getApplicationContext(), cartActivity.class);
 
                 startActivity(intent);
 

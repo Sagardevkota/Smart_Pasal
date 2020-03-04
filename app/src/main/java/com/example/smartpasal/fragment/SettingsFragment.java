@@ -1,9 +1,11 @@
-package com.example.smartpasal;
+package com.example.smartpasal.fragment;
 
 import android.os.Bundle;
 
 import androidx.preference.PreferenceFragment;
 import androidx.preference.PreferenceFragmentCompat;
+
+import com.example.smartpasal.R;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
 
