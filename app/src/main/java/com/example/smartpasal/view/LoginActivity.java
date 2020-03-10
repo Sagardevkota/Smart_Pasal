@@ -46,6 +46,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     public static int Req_code=1000;
     TextInputLayout etEmail;
     TextInputLayout etPassword;
+    String APi_key="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,6 +172,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 //waiting for 7000ms for response
                 urlConnection.setConnectTimeout(7000);//set timeout to 5 seconds
+                urlConnection.setRequestProperty("API_key",APi_key);
 
                 try {
                     //getting the response data

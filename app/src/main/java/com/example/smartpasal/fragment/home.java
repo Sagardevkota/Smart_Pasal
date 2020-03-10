@@ -4,6 +4,7 @@ package com.example.smartpasal.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -27,9 +28,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.smartpasal.adapter.ListAdapterItems;
+import com.example.smartpasal.adapter.SliderAdapterExample;
 import com.example.smartpasal.model.ProductItems;
 import com.example.smartpasal.R;
+import com.example.smartpasal.model.SliderItems;
 import com.example.smartpasal.view.categorizedActivity;
+import com.smarteist.autoimageslider.IndicatorAnimations;
+import com.smarteist.autoimageslider.SliderAnimations;
+import com.smarteist.autoimageslider.SliderView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -41,8 +47,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-
-
+import java.util.List;
 
 
 /**
@@ -77,6 +82,7 @@ public class home extends Fragment {
     private boolean isLoading=true;
 
     ProgressBar progressBar;
+    private List<SliderItems> mSliderItems = new ArrayList<>();
 
 
 
@@ -93,6 +99,26 @@ public class home extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         v= inflater.inflate(R.layout.fragment_home, container, false);
+        SliderView sliderView = v.findViewById(R.id.imageSlider);
+
+        SliderAdapterExample adapter = new SliderAdapterExample(getContext());
+
+        sliderView.setSliderAdapter(adapter);
+        adapter.addItem(new SliderItems("first_image","https://cdn.accentuate.io/27542519867/5482824892475/VIPFlashsale-Desktop.jpg","2"));
+        adapter.addItem(new SliderItems("second_image","https://gpcdn.ams3.cdn.digitaloceanspaces.com/promotions/honor-10-lite-rs1-sale.png","2"));
+
+        adapter.addItem(new SliderItems("third_image","https://i1.wp.com/www.igeekphone.com/wp-content/uploads/2017/11/gdggdg.png","2"));
+
+
+
+        sliderView.setIndicatorAnimation(IndicatorAnimations.WORM); //set indicator animation by using SliderLayout.IndicatorAnimations. :WORM or THIN_WORM or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!
+        sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
+        sliderView.setAutoCycleDirection(SliderView.AUTO_CYCLE_DIRECTION_BACK_AND_FORTH);
+        sliderView.setIndicatorSelectedColor(Color.WHITE);
+        sliderView.setIndicatorUnselectedColor(Color.GRAY);
+        sliderView.setScrollTimeInSec(4); //set scroll delay in seconds :
+        sliderView.startAutoCycle();
+
         endless_view=v.findViewById(R.id.endless_view);
         layoutManager=new GridLayoutManager(getContext(),2);
         mScrollView=v.findViewById(R.id.mScrollview);
