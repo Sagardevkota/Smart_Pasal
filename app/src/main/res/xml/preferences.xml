@@ -3,27 +3,26 @@
     <PreferenceCategory xmlns:app="http://schemas.android.com/apk/res-auto"
         app:key="sync"
         app:title="Tools"
+
         >
         <SwitchPreferenceCompat
             app:key="notifications"
-            app:title="Enable message notifications"/>
-        <Preference
-            app:key="Address"
-            app:title="Address Book"
-            app:summary="Manage shipping/Billing address"/>
+            app:title="Enable message notifications"
+            app:icon="@drawable/ic_notifications_24px"
+            android:defaultValue="true"
+            android:summaryOn="You will receive notifications from admin"
+            android:summaryOff="You wont receive notifications from admin"
 
 
-        <ListPreference
-            app:key="Language"
-            app:title="Language"
-            app:summary="Choose language"
-            android:entryValues="@array/pref_language_values"
-            android:entries="@array/pref_language_entries"
-            android:defaultValue="@string/pref_language_default_value"
+
+
+
             />
+
 
         <Preference
             app:key="feedback"
+            app:icon="@drawable/ic_feedback_24px"
             app:title="Send feedback"
             app:summary="Report technical issues or suggest new features"/>
 
@@ -36,6 +35,7 @@
 
         <Preference
             app:key="version"
+            app:icon="@drawable/ic_build_24px"
             app:title="Build Version"
             app:summary="v 1.0"/>
 

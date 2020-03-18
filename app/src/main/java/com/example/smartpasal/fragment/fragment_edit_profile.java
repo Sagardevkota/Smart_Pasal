@@ -27,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.smartpasal.R;
+import com.example.smartpasal.view.MainActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -196,6 +197,8 @@ buSave.setOnClickListener(new View.OnClickListener() {
                 urlConnection.setRequestProperty("http.keepAlive", "false");
                 //waiting for 7000ms for response
                 urlConnection.setConnectTimeout(7000);//set timeout to 5 seconds
+
+                urlConnection.setRequestProperty("APIKEY", MainActivity.Smart_api_key);
 
 
                 try {

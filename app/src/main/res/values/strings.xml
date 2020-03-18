@@ -21,6 +21,8 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <string name="pref_language_default_value">English</string>
+
     <string-array name="pref_language_entries">
         <item>English</item>
         <item>Nepali</item>
@@ -28,12 +30,85 @@
 
     </string-array>
 
-    <string name="pref_language_default_value">English</string>
-    
     <string-array name="pref_language_values">
         <item>English</item>
         <item>Nepali</item>
 
 
     </string-array>
+
+
+    //Expandable listview items
+    <string-array name="heading_titles">
+        <item>Mens Fashion</item>
+        <item>Womens Fashion</item>
+        <item>Babys Fashion</item>
+        <item>Electronics</item>
+        <item>Software</item>
+        <item>Help And Settings</item>
+
+
+    </string-array>
+    <string-array name="h1_items">
+        <item>Jackets</item>
+        <item>Shoes</item>
+        <item>Watches</item>
+
+    </string-array>
+    <string-array name="h2_items">
+        <item>Jackets</item>
+        <item>Shoes</item>
+        <item>Watches</item>
+
+    </string-array>
+    <string-array name="h3_items">
+        <item>Jackets</item>
+        <item>Shoes</item>
+        <item>Watches</item>
+
+    </string-array>
+    <string-array name="h4_items">
+        <item>Computers And Accessories</item>
+        <item>Cell Phones And Accessories</item>
+        <item>Video Games And Consoles</item>
+        <item>Television And Video</item>
+        <item>Headphones</item>
+
+    </string-array>
+    <string-array name="h5_items">
+        <item>Antivirus And Security</item>
+        <item>Design And Illustration</item>
+        <item>Games</item>
+        <item>Music</item>
+        <item>Operating System</item>
+    </string-array>
+
+    <string-array name="h6_items">
+        <item>Account</item>
+        <item>Settings</item>
+        <item>Logout</item>
+
+    </string-array>
+
+    <string name="app_info">
+             S-Mart is an online shopping app.It is developed by students from GCES college.
+        You can buy any products from this app.  \n  \n
+
+             It was being developed since 2019 and launched in 2020.
+        it is licensed by Nepal government and registered to a company, S-Mart. \n  \n
+
+              In our app, Customers can create account and search for any products, add to
+        cart and place order.Our customer can pay the cash on delivery and can return
+        product within 7 days if product is not good.Delivery charges ia also free of
+        cost.SO our customer need not worry about transportation fee and stuffs.They
+        can just pay when they receive product  \n  \n
+
+    </string>
+
+    <string name="sagar_email">sagardevkota55@gmail.com</string>
+
+    <string name="asim_email">pdl.acim46@gmail.com</string>
+
+    <string name="sagar_contact">9846710086</string>
+
 </resources>

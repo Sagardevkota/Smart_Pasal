@@ -87,13 +87,15 @@ public class ProductDetails extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.transparent_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+
 
 
 
 
         Bundle b=getIntent().getExtras();
         tvProduct_name=findViewById(R.id.tvProduct_Name);
+        getSupportActionBar().setTitle(b.getString("product_name","Product"));
         tvFixed_price=findViewById(R.id.tvFixed_price);
         tvMarked_price=findViewById(R.id.tvMarked_price);
         tvBrand=findViewById(R.id.tvBrand);
@@ -168,6 +170,8 @@ public class ProductDetails extends AppCompatActivity {
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 //waiting for 7000ms for response
                 urlConnection.setConnectTimeout(7000);//set timeout to 5 seconds
+
+                urlConnection.setRequestProperty("APIKEY",MainActivity.Smart_api_key);
 
                 try {
                     //getting the response data

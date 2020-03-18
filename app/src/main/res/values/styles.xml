@@ -14,11 +14,16 @@
     <style name="AppTheme.DarkActionBar">
         <item name="windowActionBar">true</item>
         <item name="windowNoTitle">false</item>
+
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="android:textColorPrimary">@color/White </item>
         <item name="colorAccent">@color/colorAccent</item>
 
     </style>
+
+
+
     <style name="AppTheme.TransparentActionBar" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <item name="windowActionBar">true</item>
 
@@ -29,7 +34,13 @@
 
     </style>
 
+    <style name="DialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/dialog_slide_up</item>
+        <item name="android:windowExitAnimation">@anim/dialog_slide_down</item>
+    </style>
+
     <style name="AlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="android:windowAnimationStyle">@style/DialogAnimation</item>
         <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
     </style>
     <style name="NegativeButtonStyle" parent="Widget.MaterialComponents.Button.TextButton">

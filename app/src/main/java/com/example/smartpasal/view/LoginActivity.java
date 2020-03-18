@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -36,6 +37,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
@@ -46,7 +49,8 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     public static int Req_code=1000;
     TextInputLayout etEmail;
     TextInputLayout etPassword;
-    String APi_key="";
+    String email;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,10 +142,11 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     private void handleResult(GoogleSignInResult result) {
         if (result.isSuccess()){
             GoogleSignInAccount account=result.getSignInAccount();
-            String email=account.getEmail();
+             email=account.getEmail().toString();
             String img_url=account.getPhotoUrl().toString();
             String id=account.getId();
             sp.edit().putString("user_photo",img_url).apply();
+            sp.edit().putString("email",email).apply();
             RegisterViaGoogle(email,img_url);
 
 
@@ -172,7 +177,9 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 //waiting for 7000ms for response
                 urlConnection.setConnectTimeout(7000);//set timeout to 5 seconds
-                urlConnection.setRequestProperty("API_key",APi_key);
+
+                urlConnection.setRequestProperty("APIKEY",MainActivity.Smart_api_key);
+
 
                 try {
                     //getting the response data
@@ -195,7 +202,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 JSONObject json= new JSONObject(progress[0]);
                 //display response data
 
-                if (json.getString("msg").equals("Valid credentials")) {
+                if (json.getString("msg").equals("Successfull")) {
                     String msg="Logging you in";
 
                     JSONArray userInfo=new JSONArray( json.getString("user_info"));
@@ -292,6 +299,7 @@ hideProgressDialog();
 
 
         if (sp.getBoolean("logged",true)){
+            Toast.makeText(getApplicationContext(),"Welcome back "+sp.getString("email",""),Toast.LENGTH_LONG).show();
             goToHomeActivity();
         }
 
@@ -320,6 +328,8 @@ hideProgressDialog();
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 //waiting for 7000ms for response
                 urlConnection.setConnectTimeout(7000);//set timeout to 5 seconds
+
+                urlConnection.setRequestProperty("APIKEY",MainActivity.Smart_api_key);
 
                 try {
                     //getting the response data

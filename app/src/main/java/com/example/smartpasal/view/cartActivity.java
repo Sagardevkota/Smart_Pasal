@@ -52,7 +52,9 @@ public class cartActivity extends AppCompatActivity {
     ImageView bouncing_image;
     LinearLayout calculateLayout;
     ImageView ivDelete;
-    Integer TotalPrice;
+
+    Integer Totalprice=0;
+
 
 
 
@@ -80,6 +82,23 @@ public class cartActivity extends AppCompatActivity {
         myadapter = new MyCustomAdapter(listnewsData);
 
         lvlist.setAdapter(myadapter);
+
+         Button buCheckOut = findViewById(R.id.buCheckOut);
+
+
+
+         buCheckOut.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+                 Integer finaltotal=0;
+                 for (int i = 0; i < listnewsData.size(); i++) {
+                     finaltotal +=Integer.valueOf(listnewsData.get(i).fixed_price) ;
+                 }
+
+                 Toast.makeText(getApplicationContext(),"Total Price is"+finaltotal,Toast.LENGTH_LONG ).show();
+             }
+         });
+
 
 
 
@@ -128,30 +147,27 @@ public class cartActivity extends AppCompatActivity {
             Integer totalPrice=0;
 
 
+
             for (int i = 0; i < listnewsDataAdpater.size(); i++) {
                 totalPrice +=Integer.valueOf(listnewsDataAdpater.get(i).fixed_price) ;
             }
-              TotalPrice=totalPrice;
 
 
 
-            return TotalPrice;
+
+            return totalPrice;
         }
 
-        public  void updateTotal(String msg,Integer amount){
 
-            if (msg.equalsIgnoreCase("Decrease")){
-                TotalPrice=TotalPrice-amount;
+        public  void updateTotal(Integer amount){
 
-            }
-            if (msg.equalsIgnoreCase("Increase")){
-                TotalPrice=TotalPrice+amount;
-                   }
+            Totalprice=Totalprice+amount;
+
 
 
         }
         public Integer getTotal(){
-            return TotalPrice;
+            return Totalprice;
         }
 
 
@@ -174,25 +190,22 @@ public class cartActivity extends AppCompatActivity {
             final CartAdapterItems s = listnewsDataAdpater.get(position);
             TextView tvProduct_Name = (TextView) myView.findViewById(R.id.tvProduct_Name);
             tvProduct_Name.setText(s.tvName);
-            TextView tvFixed_Price = (TextView) myView.findViewById(R.id.tvFixed_Price);
+            final TextView tvFixed_Price = (TextView) myView.findViewById(R.id.tvFixed_Price);
             tvFixed_Price.setText("Rs. " + s.fixed_price);
             final Button buIncrease = myView.findViewById(R.id.buIncrease);
             final Button buDecrease = myView.findViewById(R.id.buDecrease);
             final TextView tvQty = myView.findViewById(R.id.tvQty);
             ivDelete=myView.findViewById(R.id.ivDelete);
-            final Button buDelete = findViewById(R.id.buDelete);
-            final Button buCheckOut = findViewById(R.id.buCheckOut);
 
             buDecrease.setBackgroundColor(Color.parseColor("#ffffff"));
             buDecrease.setTextColor(Color.BLACK);
             buIncrease.setBackgroundColor(Color.parseColor("#ffffff"));
             buIncrease.setTextColor(Color.BLACK);
-               calculateLayout.setVisibility(View.VISIBLE);
-            buDelete.setEnabled(false);
+
+
 
             buDecrease.setEnabled(false);
-            buCheckOut.setEnabled(false);
-            tvTotalCosts.setText(String.valueOf(myadapter.grandTotal()));
+
              ivDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -226,16 +239,13 @@ public class cartActivity extends AppCompatActivity {
                                 }
                                 tvQty.setText(String.valueOf(qty));
 
-                                Integer price=myadapter.grandTotal();
 
-                                price=price+ (qty-1)*Integer.valueOf(listnewsDataAdpater.get(position).fixed_price);
-                                Toast.makeText(getApplicationContext(),"new Price is"+price,Toast.LENGTH_SHORT).show();
+                              Integer TotalPrice = qty * Integer.valueOf(s.fixed_price);
 
-
-
+                                tvFixed_Price.setText("Rs. "+String.valueOf(TotalPrice));
+                                updateTotal(TotalPrice);
 
 
-                                tvTotalCosts.setText(String.valueOf(price));
 
 
 
@@ -252,17 +262,20 @@ public class cartActivity extends AppCompatActivity {
                                     buDecrease.setEnabled(false);
                                 }
                                 tvQty.setText(String.valueOf(qty));
-                                Integer price=myadapter.grandTotal();
-                                price=price-qty*Integer.valueOf(listnewsDataAdpater.get(position).fixed_price);
+
+                                Integer TotalPrice = qty * Integer.valueOf(s.fixed_price);
+
+                                tvFixed_Price.setText("Rs. "+String.valueOf(TotalPrice));
+                                updateTotal(TotalPrice);
 
 
 
-                                tvTotalCosts.setText(String.valueOf(price));
-                                Toast.makeText(getApplicationContext(),"new Price is"+price,Toast.LENGTH_SHORT).show();
 
 
                             }
                         });
+
+
 
 
 
@@ -331,6 +344,8 @@ public class cartActivity extends AppCompatActivity {
                 urlConnection.setConnectTimeout(7000);//set timeout to 5 seconds
                 urlConnection.setDoOutput(true);
                 urlConnection.setUseCaches(false);
+
+                urlConnection.setRequestProperty("APIKEY",MainActivity.Smart_api_key);
 
 
                 try {
@@ -433,6 +448,8 @@ bounce_animation.cancel();
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 //waiting for 7000ms for response
                 urlConnection.setConnectTimeout(7000);//set timeout to 5 seconds
+
+                urlConnection.setRequestProperty("APIKEY",MainActivity.Smart_api_key);
 
                 try {
                     //getting the response data

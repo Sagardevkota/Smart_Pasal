@@ -6,6 +6,7 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:menu="@menu/app_bar_menu"
+    app:titleTextColor="#000"
 
     android:background="#fff"
     >

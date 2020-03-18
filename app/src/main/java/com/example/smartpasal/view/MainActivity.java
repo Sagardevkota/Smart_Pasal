@@ -12,6 +12,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.smartpasal.MyFirebaseMessagingService;
 import com.example.smartpasal.R;
 
 public class MainActivity extends AppCompatActivity {
@@ -19,11 +20,13 @@ public class MainActivity extends AppCompatActivity {
     ImageView image;
     TextView logo;
     TextView slogan;
+    public  static String Smart_api_key="YHAXZODHTH8E6V5ARVWVSRFNTVAPR7FD";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        new MyFirebaseMessagingService();
         topAnim= AnimationUtils.loadAnimation(this,R.anim.top_animation);
         bottomAnim= AnimationUtils.loadAnimation(this,R.anim.bottom_animation);
         image=findViewById(R.id.robot);
@@ -32,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
         image.setAnimation(topAnim);
         logo.setAnimation(bottomAnim);
         slogan.setAnimation(bottomAnim);
+
         final MediaPlayer mp = MediaPlayer.create(this, R.raw.transition);
         mp.start();
         new Handler().postDelayed(new Runnable() {
@@ -54,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
 
         }, 3*1000); // wait for 3 seconds
     }
+
+
 
 
 }

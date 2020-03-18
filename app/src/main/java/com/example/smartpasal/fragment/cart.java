@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.example.smartpasal.model.CartAdapterItems;
 import com.example.smartpasal.R;
+import com.example.smartpasal.view.MainActivity;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -256,6 +257,8 @@ public class cart extends Fragment {
                 //waiting for 7000ms for response
                 urlConnection.setConnectTimeout(7000);//set timeout to 5 seconds
 
+                urlConnection.setRequestProperty("APIKEY", MainActivity.Smart_api_key);
+
                 try {
                     //getting the response data
                     InputStream in = new BufferedInputStream(urlConnection.getInputStream());
@@ -360,6 +363,8 @@ public class cart extends Fragment {
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 //waiting for 7000ms for response
                 urlConnection.setConnectTimeout(7000);//set timeout to 5 seconds
+
+                urlConnection.setRequestProperty("APIKEY",MainActivity.Smart_api_key);
 
                 try {
                     //getting the response data

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+
+
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/heading_item"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:fontFamily="@font/text_me_one"
+        android:layout_marginStart="30dp"
+        android:paddingStart="?android:attr/expandableListPreferredItemPaddingLeft"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+
+
+        android:text="Home"
+
+
+        android:textColor="@color/design_default_color_on_secondary"
+        android:textSize="18sp" />
+
+</LinearLayout>

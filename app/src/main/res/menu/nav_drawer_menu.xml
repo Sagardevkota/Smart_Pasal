@@ -2,28 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
-        <item
-            android:title="SHOP BY CATEGORY">
-        <menu>
-            <item
-                android:title="Clothes,Shoes,Watches"
+    <group android:checkableBehavior="single"
 
-                android:id="@+id/nav_logout2"
-                />
-            <item
-                android:title="Electronic, Computers, Office"
+        >
 
-                android:id="@+id/nav_logout3"
-                />
-        </menu>
-        </item>
 
 
 </group>
     <item
+        android:visible="false"
+
         android:title="HELP AND SETTINGS">
         <menu>
 

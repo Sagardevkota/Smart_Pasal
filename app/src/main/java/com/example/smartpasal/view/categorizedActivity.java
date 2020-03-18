@@ -96,6 +96,7 @@ public class categorizedActivity extends AppCompatActivity {
         arr.add("Popularity");
         arr.add("Price low to high");
         arr.add("Price high to low");
+        getSupportActionBar().setTitle(b.getString("type","type"));
 
         ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(this,android.R.layout.simple_dropdown_item_1line,arr);
         spSort.setAdapter(arrayAdapter);
@@ -106,7 +107,7 @@ public class categorizedActivity extends AppCompatActivity {
                 {
                     sorting=arr.get(position).toString();
 
-                    String url= "http://idealytik.com/SmartPasalWebServices/CategoryLists.php?category=" +b.getString("category", "")+"&sorting=Popularity&page_number="+page_number;
+                    String url= "http://idealytik.com/SmartPasalWebServices/CategoryLists.php?category=" +b.getString("category", "")+"&sorting=Popularity&page_number="+page_number+"&type="+b.getString("type","");
 
                     new MyAsyncTaskgetNews().execute(url);
                     Toast.makeText(getApplicationContext(),"Popularity",Toast.LENGTH_LONG).show();
@@ -117,7 +118,7 @@ public class categorizedActivity extends AppCompatActivity {
                 {
                     sorting=arr.get(position).toString();
 
-                    String url= "http://idealytik.com/SmartPasalWebServices/CategoryLists.php?category=" +b.getString("category", "")+"&sorting=Price low to high&page_number="+page_number;
+                    String url= "http://idealytik.com/SmartPasalWebServices/CategoryLists.php?category=" +b.getString("category", "")+"&sorting=Price low to high&page_number="+page_number+"&type="+b.getString("type","");
                     new MyAsyncTaskgetNews().execute(url);
                     Toast.makeText(getApplicationContext(),"Price low to high",Toast.LENGTH_LONG).show();
                     listnewsData.clear();
@@ -127,7 +128,7 @@ public class categorizedActivity extends AppCompatActivity {
                 {
                     sorting=arr.get(position).toString();
 
-                    String url= "http://idealytik.com/SmartPasalWebServices/CategoryLists.php?category=" +b.getString("category", "")+"&sorting=Price high to low &page_number="+page_number;
+                    String url= "http://idealytik.com/SmartPasalWebServices/CategoryLists.php?category=" +b.getString("category", "")+"&sorting=Price high to low&page_number="+page_number+"&type="+b.getString("type","");
                     new MyAsyncTaskgetNews().execute(url);
 
                     Toast.makeText(getApplicationContext(),"Price high to low",Toast.LENGTH_LONG).show();
@@ -294,6 +295,8 @@ public class categorizedActivity extends AppCompatActivity {
                 //waiting for 7000ms for response
                 urlConnection.setConnectTimeout(7000);//set timeout to 5 seconds
                 urlConnection.setRequestProperty("http.keepAlive", "false");
+
+                urlConnection.setRequestProperty("APIKEY",MainActivity.Smart_api_key);
 
                 try {
                     //getting the response data

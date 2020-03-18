@@ -18,8 +18,10 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.smartpasal.R;
+import com.example.smartpasal.view.MainActivity;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -50,6 +52,14 @@ public class Profile extends Fragment {
 
     public Profile() {
         // Required empty public constructor
+    }
+    public interface IOnBackPressed {
+
+        /**
+         * If you return true the back press will not be taken into account, otherwise the activity will act naturally
+         * @return true if your processing has priority if not false
+         */
+        boolean onBackPressed();
     }
 
 
@@ -92,6 +102,8 @@ public class Profile extends Fragment {
                 //waiting for 7000ms for response
                 urlConnection.setConnectTimeout(7000);//set timeout to 5 seconds
 
+                urlConnection.setRequestProperty("APIKEY",MainActivity.Smart_api_key);
+
                 try {
                     //getting the response data
                     InputStream in = new BufferedInputStream(urlConnection.getInputStream());
@@ -99,6 +111,8 @@ public class Profile extends Fragment {
                     NewsData = ConvertInputToStringNoChange(in);
                     //send to display data
                     publishProgress(NewsData);
+
+                    urlConnection.setRequestProperty("APIKEY", MainActivity.Smart_api_key);
                 } finally {
                     //end connection
                     urlConnection.disconnect();
@@ -131,12 +145,12 @@ public class Profile extends Fragment {
                     String verified=userCredentials.getString("verified");
                     if (verified.equals("1"))
                     {
-                        tvVerified.setText("Verified");
+                        tvVerified.setText("Yes");
 
                     }
                     else
                     {
-                        tvVerified.setText("Not verified");
+                        tvVerified.setText("No");
                     }
 
                     buEdit.setOnClickListener(new View.OnClickListener() {

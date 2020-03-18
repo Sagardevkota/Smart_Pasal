@@ -144,6 +144,8 @@ public class searchList extends AppCompatActivity {
                 urlConnection.setConnectTimeout(7000);//set timeout to 5 seconds
                 urlConnection.setDoOutput(true);
 
+                urlConnection.setRequestProperty("APIKEY",MainActivity.Smart_api_key);
+
 
                 try {
                     //getting the response data

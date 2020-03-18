@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".view.AboutUs">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="@string/app_name"
+        android:textSize="36sp"
+        android:textColor="#000"
+        android:layout_marginStart="30dp"
+        android:fontFamily="@font/freckle_face"
+        />
+
+    <TextView
+        android:id="@+id/tvInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:padding="16dp"
+        android:textColor="@color/cardview_dark_background"
+        android:textSize="18sp"
+        android:fontFamily="@font/actor"
+        android:text="@string/app_info" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="#eee"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+
+        />
+
+    <TextView
+        android:id="@+id/tvContact"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+
+
+        android:layout_gravity="bottom"
+        android:padding="16dp"
+        android:drawableStart="@drawable/ic_phone_24px"
+        android:drawablePadding="10dp"
+
+        android:text="Contact Us" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="#eee"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+
+        />
+    </LinearLayout>
+
+
+
+
+
+
+</androidx.core.widget.NestedScrollView>

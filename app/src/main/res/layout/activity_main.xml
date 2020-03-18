@@ -28,7 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:fontFamily="cursive"
+        android:fontFamily="@font/freckle_face"
         android:text="S-Mart"
         android:textColor="#fff"
         android:textSize="80sp"
@@ -40,9 +40,10 @@
         android:id="@+id/slogan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="150dp"
+        android:layout_marginStart="170dp"
 
         android:text="Shop Smart"
+        android:fontFamily="@font/actor"
         android:textAlignment="textStart"
         android:textColor="@color/design_default_color_background"
         android:textSize="24sp"

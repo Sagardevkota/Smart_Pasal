@@ -246,6 +246,7 @@ uploadData();
                     .addParameter("password", password)
                     .addParameter("phone", phone)
                     .addParameter("delivery_address", delivery)
+                    .addHeader("APIKEY",MainActivity.Smart_api_key)
 
                     .setDelegate(new UploadStatusDelegate() {
                         @Override

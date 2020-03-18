@@ -1,19 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/home_linearlayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#E0E0E0"
-
-
     android:orientation="vertical"
+
+
     tools:context=".view.HomeActivity">
 
-    <include
-        layout="@layout/toolbar"
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar_layout"
         android:layout_width="match_parent"
-        android:layout_height="?attr/toolbarStyle" />
+        android:layout_height="100dp"
+        android:fitsSystemWindows="true"
+
+        >
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/toolbar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:fitsSystemWindows="true"
+
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|top"
+                android:layout_marginTop="2dp"
+
+
+                android:fontFamily="@font/freckle_face"
+                android:text="@string/app_name"
+                android:textColor="#fff"
+
+                android:textSize="36sp" />
+
+
+
+         <com.google.android.material.appbar.MaterialToolbar
+             android:id="@+id/custom_toolbar"
+             android:layout_width="match_parent"
+             android:layout_height="?attr/actionBarSize"
+             android:layout_gravity="bottom"
+             >
+
+             <EditText
+                 android:id="@+id/etSearch"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+
+                 android:gravity="center"
+                 android:focusableInTouchMode="false"
+                 android:inputType="none"
+                 android:background="#fff"
+                 android:drawableEnd="@drawable/ic_search"
+                 android:hint="Search in S-Mart"
+                 android:padding="4dp"
+                 android:layout_marginBottom="10dp"
+
+                 />
+
+         </com.google.android.material.appbar.MaterialToolbar>
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+
+
 
 
 
@@ -22,30 +81,37 @@
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="-40dp"
-
-        android:scrollbars="none"
-
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
 
 
         android:layout_above="@+id/bottom_nav_view"
+        android:layout_below="@+id/appbar_layout"
+
+
         android:background="#Fff"
+        android:scrollbars="none"
+        android:layout_marginBottom="10dp"
 
-        >
-
-
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottom_nav_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            app:labelVisibilityMode="labeled"
+        />
 
 
-            app:itemIconTint="@drawable/bottom_navigation_colors"
-            app:itemTextColor="@drawable/bottom_navigation_colors"
-            app:menu="@menu/bottom_nav_menu" />
-    </FrameLayout>
 
 
-</LinearLayout>
+
+
+<com.google.android.material.bottomnavigation.BottomNavigationView
+android:id="@+id/bottom_nav_view"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:layout_gravity="bottom"
+app:itemIconTint="@drawable/bottom_navigation_colors"
+
+
+app:itemTextColor="@drawable/bottom_navigation_colors"
+app:labelVisibilityMode="labeled"
+app:menu="@menu/bottom_nav_menu" />
+
+
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

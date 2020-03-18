@@ -32,6 +32,8 @@ import com.example.smartpasal.adapter.SliderAdapterExample;
 import com.example.smartpasal.model.ProductItems;
 import com.example.smartpasal.R;
 import com.example.smartpasal.model.SliderItems;
+import com.example.smartpasal.view.HomeActivity;
+import com.example.smartpasal.view.MainActivity;
 import com.example.smartpasal.view.categorizedActivity;
 import com.smarteist.autoimageslider.IndicatorAnimations;
 import com.smarteist.autoimageslider.SliderAnimations;
@@ -77,6 +79,7 @@ public class home extends Fragment {
     GridLayoutManager layoutManager;
     RecyclerView.Adapter myadapter;
 
+
     public int page_number=1;
 
     private boolean isLoading=true;
@@ -116,7 +119,7 @@ public class home extends Fragment {
         sliderView.setAutoCycleDirection(SliderView.AUTO_CYCLE_DIRECTION_BACK_AND_FORTH);
         sliderView.setIndicatorSelectedColor(Color.WHITE);
         sliderView.setIndicatorUnselectedColor(Color.GRAY);
-        sliderView.setScrollTimeInSec(4); //set scroll delay in seconds :
+        sliderView.setScrollTimeInSec(5); //set scroll delay in seconds :
         sliderView.startAutoCycle();
 
         endless_view=v.findViewById(R.id.endless_view);
@@ -144,6 +147,7 @@ public class home extends Fragment {
             public void onClick(View view) {
                 Intent intent=new Intent(getContext(), categorizedActivity.class);
                 intent.putExtra("category","Shoes");
+                intent.putExtra("type","Both");
 
                 startActivity(intent);
 
@@ -154,6 +158,7 @@ public class home extends Fragment {
             public void onClick(View view) {
                 Intent intent=new Intent(getContext(),categorizedActivity.class);
                 intent.putExtra("category","Bags");
+                intent.putExtra("type","Both");
 
                 startActivity(intent);
 
@@ -163,7 +168,8 @@ public class home extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent(getContext(),categorizedActivity.class);
-                intent.putExtra("category","Phones");
+                intent.putExtra("category","Cell Phones And Accessories");
+                intent.putExtra("type","Electronics");
 
                 startActivity(intent);
             }
@@ -172,7 +178,8 @@ public class home extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent(getContext(),categorizedActivity.class);
-                intent.putExtra("category","Tvs");
+                intent.putExtra("category","Television And Video");
+                intent.putExtra("type","Electronics");
 
                 startActivity(intent);
 
@@ -182,7 +189,8 @@ public class home extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent(getContext(),categorizedActivity.class);
-                intent.putExtra("category","Laptops");
+                intent.putExtra("category","Computers And Accessories");
+                intent.putExtra("type","Electronics");
 
                 startActivity(intent);
 
@@ -193,6 +201,7 @@ public class home extends Fragment {
             public void onClick(View view) {
                 Intent intent=new Intent(getContext(),categorizedActivity.class);
                 intent.putExtra("category","Jackets");
+                intent.putExtra("type","Both");
 
                 startActivity(intent);
 
@@ -203,6 +212,7 @@ public class home extends Fragment {
             public void onClick(View view) {
                 Intent intent=new Intent(getContext(),categorizedActivity.class);
                 intent.putExtra("category","Sunglasses");
+                intent.putExtra("type","Both");
 
                 startActivity(intent);
 
@@ -212,6 +222,7 @@ public class home extends Fragment {
             public void onClick(View view) {
                 Intent intent=new Intent(getContext(),categorizedActivity.class);
                 intent.putExtra("category","Watches");
+                intent.putExtra("type","Both");
 
                 startActivity(intent);
 
@@ -242,9 +253,11 @@ public class home extends Fragment {
                         .getScrollY()));
 
                 if (diff == 0) {
-                    fetchData();
+
+                     fetchData();
                     // your pagination code
                 }
+
             }
         });
 
@@ -294,6 +307,8 @@ public class home extends Fragment {
                 urlConnection.setUseCaches(false);
                 //waiting for 7000ms for response
                 urlConnection.setConnectTimeout(7000);//set timeout to 5 seconds
+
+                urlConnection.setRequestProperty("APIKEY", MainActivity.Smart_api_key);
 
 
                 try {
@@ -398,6 +413,8 @@ public class home extends Fragment {
                 //waiting for 7000ms for response
                 urlConnection.setConnectTimeout(7000);//set timeout to 5 seconds
                 urlConnection.setDoOutput(true);
+
+                urlConnection.setRequestProperty("APIKEY",MainActivity.Smart_api_key);
 
 
 

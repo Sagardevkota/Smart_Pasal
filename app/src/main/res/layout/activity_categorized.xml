@@ -63,15 +63,17 @@
         <FrameLayout
             android:id="@+id/progressBarHolder"
             android:animateLayoutChanges="true"
-            android:visibility="gone"
+
 
             android:background="#fff"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            >
             <ImageView
                 android:id="@+id/bouncing_image"
-                android:layout_width="250dp"
-                android:layout_height="250dp"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
                 android:layout_gravity="center"
                 android:src="@drawable/robot"
                 />
@@ -83,8 +85,8 @@
                 android:layout_marginTop="150dp"
                 android:fontFamily="@font/fauna_one"
 
-                android:text="Loading"
-                android:textColor="@color/design_default_color_on_secondary"
+                android:text="S-Mart"
+                android:textColor="#000"
                 android:textSize="36sp"
                 android:textStyle="bold" />
 
