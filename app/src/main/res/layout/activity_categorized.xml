@@ -26,6 +26,9 @@
             android:id="@+id/spSort"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:theme="@style/Spinner"
+
+
             android:layout_gravity="end"
             android:spinnerMode="dropdown" />
 
@@ -46,7 +49,7 @@
             android:textStyle="bold" />
 
 
-        <GridView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/LVNews"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -60,38 +63,7 @@
 
 
             />
-        <FrameLayout
-            android:id="@+id/progressBarHolder"
-            android:animateLayoutChanges="true"
 
-
-            android:background="#fff"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            >
-            <ImageView
-                android:id="@+id/bouncing_image"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:layout_gravity="center"
-                android:src="@drawable/robot"
-                />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="150dp"
-                android:fontFamily="@font/fauna_one"
-
-                android:text="S-Mart"
-                android:textColor="#000"
-                android:textSize="36sp"
-                android:textStyle="bold" />
-
-
-        </FrameLayout>
         <ProgressBar
             android:id="@+id/progress_bar"
             android:layout_width="50dp"

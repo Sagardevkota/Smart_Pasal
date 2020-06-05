@@ -5,94 +5,62 @@ import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.preference.Preference;
 
-import android.app.AlarmManager;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.ProgressDialog;
-import android.app.Service;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.smartpasal.MyFirebaseMessagingService;
-import com.example.smartpasal.adapter.App;
+import com.example.smartpasal.SmartAPI.JsonResponse;
+import com.example.smartpasal.SmartAPI.SmartAPI;
+import com.example.smartpasal.service.MyFirebaseMessagingService;
 import com.example.smartpasal.adapter.ExpandableListAdapter;
 import com.example.smartpasal.fragment.Profile;
 import com.example.smartpasal.R;
 import com.example.smartpasal.fragment.Settings;
-import com.example.smartpasal.fragment.cart;
 import com.example.smartpasal.fragment.home;
 import com.example.smartpasal.fragment.order;
 import com.example.smartpasal.fragment.scan;
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.badge.BadgeDrawable;
-import com.google.android.material.bottomnavigation.BottomNavigationItemView;
-import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.smarteist.autoimageslider.SliderView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
+import es.dmoral.toasty.Toasty;
+import retrofit2.Call;
+import retrofit2.Response;
 import ru.nikartm.support.ImageBadgeView;
 
 public class HomeActivity extends AppCompatActivity {
     private DrawerLayout mNavDrawer;
    private SharedPreferences sp;
-    GoogleApiClient googleApiClient;
+
    EditText etSearch;
    TextView tvSneakers;
    ImageBadgeView badgeView;
@@ -100,8 +68,8 @@ public class HomeActivity extends AppCompatActivity {
    ExpandableListView expandableListView;
     BadgeDrawable badge;
     public  static  TextView app_name;
-
      Toolbar toolbar;
+
 
      public static Integer count;
     private Handler mHandler = new Handler();
@@ -133,15 +101,10 @@ public class HomeActivity extends AppCompatActivity {
     }
     @Override
     protected void onStart() {
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build();
-        googleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
-        googleApiClient.connect();
 
         super.onStart();
+        getUserId();
+
     }
 
     @Override
@@ -157,6 +120,7 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.nav_drawer_layout);
         mNavDrawer = findViewById(R.id.drawer_layout);
+
 
         SharedPreferences notipref=getSharedPreferences("com.example.smartpasal_preferences",Context.MODE_PRIVATE);
         if (notipref.getBoolean("notifications",true)){
@@ -256,18 +220,11 @@ public class HomeActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
 
-                                    Auth.GoogleSignInApi.signOut(googleApiClient).setResultCallback(new ResultCallback<Status>() {
-                                        @Override
-                                        public void onResult(@NonNull Status status) {
-                                            sp.edit().putBoolean("logged", false).apply();
-                                            showProgressDialog("Logging out");
+                                   sp.edit().clear().apply();
+                                    Intent intent=new Intent(getApplicationContext(),LoginActivity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(intent);
 
-                                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
-                                            startActivity(intent);
-                                            hideProgressDialog();
-                                        }
-                                    });
 
 
                                 }
@@ -310,18 +267,13 @@ public class HomeActivity extends AppCompatActivity {
          Runnable mToastRunnable = new Runnable() {
             @Override
             public void run() {
-
-
                 Random rnd = new Random();
                 int color = Color.argb(200, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
                 int color1 = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
                 int[] colors = {color,color1};
-
-
                 //create a new gradient color
                 GradientDrawable gd = new GradientDrawable(
                         GradientDrawable.Orientation.LEFT_RIGHT, colors);
-
 
                 gd.setCornerRadius(0f);
 
@@ -341,8 +293,7 @@ public class HomeActivity extends AppCompatActivity {
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        String url="http://idealytik.com/SmartPasalWebServices/BadgeCount.php?id="+sp.getString("userID","");
-        new MyAsyncTaskgetNews().execute(url);
+
 
 
 
@@ -366,10 +317,11 @@ etSearch.setOnClickListener(new View.OnClickListener() {
         toggle.syncState();
         NavigationView navigationView=findViewById(R.id.navigation_view);
         View headview = navigationView.getHeaderView(0);
+
         ImageView header_user_image = (ImageView) headview.findViewById(R.id.header_user_image);
 
         TextView nav_header_user_name=headview.findViewById(R.id.nav_header_user_name);
-        nav_header_user_name.setText(sp.getString("email",""));
+        nav_header_user_name.setText(sp.getString("userName",""));
         try{
             String img_url=sp.getString("user_photo","");
 
@@ -412,18 +364,13 @@ etSearch.setOnClickListener(new View.OnClickListener() {
                         alert.setMessage("Are you sure you want to log out?").setTitle("Confirmation").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                showProgressDialog("Logging out");
 
-                                Auth.GoogleSignInApi.signOut(googleApiClient).setResultCallback(new ResultCallback<Status>() {
-                                    @Override
-                                    public void onResult(@NonNull Status status) {
-                                        sp.edit().putBoolean("logged", false).apply();
-                                        showProgressDialog("Logging out");
-
-                                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
-                                        startActivity(intent);
-                                    }
-                                });
+                               sp.edit().clear().apply();
+                               Intent intent=new Intent(getApplicationContext(),LoginActivity.class);
+                               intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
+                              hideProgressDialog();
+                               startActivity(intent);
 
 
                             }
@@ -472,8 +419,9 @@ etSearch.setOnClickListener(new View.OnClickListener() {
                           break;
                     case R.id.bottom_nav_cart:
 
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new cart()).commit();
-                        item.setChecked(true);
+                        Intent intent=new Intent(getApplicationContext(),cartActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
 
 
 
@@ -532,110 +480,52 @@ etSearch.setOnClickListener(new View.OnClickListener() {
         }
     }
 
-    public class MyAsyncTaskgetNews extends AsyncTask<String, String, String> {
-        @Override
-        protected void onPreExecute() {
-            //before works
 
-        }
-        @Override
-        protected String  doInBackground(String... params) {
-            // TODO Auto-generated method stub
-            try {
-                String NewsData;
-                //define the url we have to connect with
-                URL url = new URL(params[0]);
-                //make connect with url and send request
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestProperty("http.keepAlive", "false");
-                urlConnection.setDoOutput(true);
-                urlConnection.setUseCaches(false);
-                //waiting for 7000ms for response
-                urlConnection.setConnectTimeout(7000);//set timeout to 5 seconds
+   public void getUserId() {
+       if (sp != null) {
+           if (sp.contains("jwt")) {
 
+               String userName=sp.getString("userName","");
 
+               Call<JsonResponse> getUserId = SmartAPI.getApiService().getUserId(new home().jwt, userName);
+               getUserId.enqueue(new retrofit2.Callback<JsonResponse>() {
+                   @Override
+                   public void onResponse(Call<JsonResponse> call, Response<JsonResponse> response) {
+                       if (response.isSuccessful()) {
 
+                           String status = response.body().getStatus();
+                           String message = response.body().getMessage();
+                           if (status.equalsIgnoreCase("200 OK"))
+                               sp.edit().putString("userId", message).apply();
 
-                urlConnection.setRequestProperty("APIKEY",MainActivity.Smart_api_key);
+                       } else {
+                           Toasty.error(getApplicationContext(), "Session expired").show();
+                           sp.edit().clear().apply();
+                           gotoLoginActivity();
 
+                       }
 
 
-                try {
-                    //getting the response data
-                    InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-                    //convert the stream to string
-                    NewsData = ConvertInputToStringNoChange(in);
-                    //send to display data
-                    publishProgress(NewsData);
-                } finally {
-                    //end connection
-                    urlConnection.disconnect();
-                }
+                   }
 
-            }catch (Exception ex){
-                Log.d("Internet error",ex.getMessage());
-            }
-            return null;
-        }
-        protected void onProgressUpdate(String... progress) {
+                   @Override
+                   public void onFailure(Call<JsonResponse> call, Throwable t) {
+                       Log.e("error", t.getMessage());
 
-            try{
-                JSONObject json= new JSONObject(progress[0]);
-                //display response data
-
-               count=Integer.valueOf(json.getString("numrows"));
-                BottomNavigationMenuView menuView = (BottomNavigationMenuView) bottomNavigationView.getChildAt(0);
-                BottomNavigationItemView itemView = (BottomNavigationItemView) menuView.getChildAt(2);
-                badge = bottomNavigationView.getOrCreateBadge(itemView.getId());
-                if (count==0){
-
-                    badge.setVisible(false);
-                }
-                else {
-                    badge.setNumber(count);
-                    badge.setVisible(true);
-                }
-
-            }
+                   }
+               });
 
 
-            catch (Exception ex) {
-                Log.d("er", ex.getMessage());
-            }
+           }
+       }
+   }
 
-        }
-
-
-        protected void onPostExecute(String  result2){
-
-
-        }
-
-
-
-
-    }
-
-    // this method convert any stream to string
-    public static String ConvertInputToStringNoChange(InputStream inputStream) {
-
-        BufferedReader bureader=new BufferedReader( new InputStreamReader(inputStream));
-        String line ;
-        String linereultcal="";
-
-        try{
-            while((line=bureader.readLine())!=null) {
-
-                linereultcal+=line;
-
-            }
-            inputStream.close();
-
-
-        }catch (Exception ex){}
-
-        return linereultcal;
-    }
+   void gotoLoginActivity(){
+        Intent intent=new Intent(getApplicationContext(),LoginActivity.class);
+      overridePendingTransition(R.anim.left2right,R.anim.right2left);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+   }
 
 
 

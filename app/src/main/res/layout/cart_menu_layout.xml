@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="horizontal"
+    android:background="@color/colorPrimary"
+    android:padding="16dp"
+    android:weightSum="1"
+    android:layout_height="56dp">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_arrow_back"
+        android:background="@color/transparentColor"
+        android:tint="@color/White"
+
+        android:layout_weight="0.1"/>
+
+    <TextView
+        android:id="@+id/tv_cart_toolbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0 items Selected"
+        android:textColor="@color/White"
+        android:layout_marginLeft="40dp"
+        android:textStyle="bold"
+        android:layout_weight="0.7"
+        android:textSize="18sp"
+
+        />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.2"
+        android:tint="@color/White"
+        android:background="@color/transparentColor"
+        android:src="@drawable/ic_delete_black_24dp"
+        />
+
+
+</LinearLayout>

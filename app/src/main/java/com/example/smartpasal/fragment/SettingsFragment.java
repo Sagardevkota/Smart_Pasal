@@ -7,12 +7,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.preference.Preference;
-import androidx.preference.PreferenceFragment;
 import androidx.preference.PreferenceFragmentCompat;
 
-import com.example.smartpasal.MyFirebaseMessagingService;
+import com.example.smartpasal.service.MyFirebaseMessagingService;
 import com.example.smartpasal.R;
-import com.google.firebase.messaging.FirebaseMessagingService;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
    SharedPreferences.OnSharedPreferenceChangeListener listener;

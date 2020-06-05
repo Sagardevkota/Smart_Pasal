@@ -179,7 +179,7 @@
 
 
                 android:tooltipText="Sign in with Google"
-
+             android:visibility="gone"
                 android:layout_marginBottom="10dp"
                 />
 

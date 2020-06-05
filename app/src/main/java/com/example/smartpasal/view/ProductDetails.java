@@ -1,8 +1,10 @@
 package com.example.smartpasal.view;
 
+import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,9 +21,17 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.http.Header;
 import ru.nikartm.support.ImageBadgeView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.smartpasal.R;
+import com.example.smartpasal.SmartAPI.JsonResponse;
+import com.example.smartpasal.SmartAPI.SmartAPI;
+import com.example.smartpasal.fragment.home;
+import com.example.smartpasal.model.Carts;
 import com.example.smartpasal.view.HomeActivity;
 import com.example.smartpasal.view.cartActivity;
 import com.squareup.picasso.Callback;
@@ -49,6 +59,7 @@ public class ProductDetails extends AppCompatActivity {
     SharedPreferences sp;
     ImageBadgeView badgeView;
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater=getMenuInflater();
@@ -60,7 +71,7 @@ public class ProductDetails extends AppCompatActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         final MenuItem menuItem = menu.findItem(R.id.cart);
         badgeView = menuItem.getActionView().findViewById(R.id.ibv_icon);
-        badgeView.setBadgeValue(HomeActivity.count);
+
         badgeView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -119,6 +130,7 @@ public class ProductDetails extends AppCompatActivity {
 
 
 
+
         try{
             String url=b.getString("product_photo");
 
@@ -148,109 +160,38 @@ public class ProductDetails extends AppCompatActivity {
 
     public void buAdd(View view) {
         Bundle b=getIntent().getExtras();
-
-        String url="http://idealytik.com/SmartPasalWebServices/AddToCart.php?product_id="+b.getString("product_id")+"&id="+sp.getString("userID","userID");
-      new  MyAsyncTaskgetNews().execute(url);
-    }
-
-    public class MyAsyncTaskgetNews extends AsyncTask<String, String, String> {
-        @Override
-        protected void onPreExecute() {
-            //before works
-
-        }
-        @Override
-        protected String  doInBackground(String... params) {
-            // TODO Auto-generated method stub
-            try {
-                String NewsData;
-                //define the url we have to connect with
-                URL url = new URL(params[0]);
-                //make connect with url and send request
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                //waiting for 7000ms for response
-                urlConnection.setConnectTimeout(7000);//set timeout to 5 seconds
-
-                urlConnection.setRequestProperty("APIKEY",MainActivity.Smart_api_key);
-
-                try {
-                    //getting the response data
-                    InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-                    //convert the stream to string
-                    NewsData = ConvertInputToStringNoChange(in);
-                    //send to display data
-                    publishProgress(NewsData);
-                } finally {
-                    //end connection
-                    urlConnection.disconnect();
+        Integer product_id=b.getInt("product_id",0);
+        Integer user_id=Integer.valueOf(sp.getString("userId",""));
+        Carts carts=new Carts(user_id,product_id);
+        Call<JsonResponse> addToCartList= SmartAPI.getApiService().addToCartList(home.jwt,carts);
+        addToCartList.enqueue(new retrofit2.Callback<JsonResponse>() {
+            @Override
+            public void onResponse(Call<JsonResponse> call, Response<JsonResponse> response) {
+                if (!response.isSuccessful())
+                    Log.d("","");
+                else
+                {
+                    String status=response.body().getStatus();
+                    String message=response.body().getMessage();
+                    if (status.equalsIgnoreCase("200 OK")&&message.equalsIgnoreCase("Added to cart"))
+                    { Toast.makeText(getApplicationContext(),message,Toast.LENGTH_SHORT).show();
+                        goToCartActivity();
+                    }
+                    if (status.equalsIgnoreCase("401 Conflict")&&message.equalsIgnoreCase("Item is already in cart"))
+                        Toast.makeText(getApplicationContext(),message,Toast.LENGTH_SHORT).show();
                 }
-
-            }catch (Exception ex){
-                Log.d("AddToCarterror",ex.getMessage());
-            }
-            return null;
-        }
-        protected void onProgressUpdate(String... progress) {
-
-            try {
-
-
-
-                //display response data
-                JSONObject json= new JSONObject(progress[0]);
-
-                if (json.getString("msg").equals("Added to cart")) {
-
-
-                    goToCartActivity();
-                }
-                if (json.getString("msg").equals("Item is already in cart")){
-                    Toast.makeText(getApplicationContext(),"Item is already in cart",Toast.LENGTH_LONG).show();
-                }
-
             }
 
+            @Override
+            public void onFailure(Call<JsonResponse> call, Throwable t) {
 
-
-            catch (Exception ex) {
-                Log.d("JSONINCARTerror is", ex.getMessage());
             }
-
-        }
-
-
-        protected void onPostExecute(String  result2){
-
-
-
-        }
-
-
+        });
 
 
     }
-    // this method convert any stream to string
-    public static String ConvertInputToStringNoChange(InputStream inputStream) {
-
-        BufferedReader bureader=new BufferedReader( new InputStreamReader(inputStream));
-        String line ;
-        String linereultcal="";
-
-        try{
-            while((line=bureader.readLine())!=null) {
-
-                linereultcal+=line;
-
-            }
-            inputStream.close();
 
 
-        }catch (Exception ex){
-
-        }
-
-        return linereultcal;
-    }
 
 
     private void goToCartActivity() {
@@ -258,6 +199,26 @@ public class ProductDetails extends AppCompatActivity {
         Intent intent=new Intent(getApplicationContext(),cartActivity.class);
         intent.putExtra("UserID",b.getString("UserID") );
         startActivity(intent);
+    }
+
+
+    @VisibleForTesting
+    public ProgressDialog mProgressDialog;
+
+    public void showProgressDialog(String msg) {
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(this,R.style.AlertDialog);
+            mProgressDialog.setMessage(msg);
+            mProgressDialog.setIndeterminate(true);
+        }
+
+        mProgressDialog.show();
+    }
+
+    public void hideProgressDialog() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.dismiss();
+        }
     }
 
 

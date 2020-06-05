@@ -12,7 +12,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.smartpasal.MyFirebaseMessagingService;
+import com.example.smartpasal.service.MyFirebaseMessagingService;
 import com.example.smartpasal.R;
 
 public class MainActivity extends AppCompatActivity {
@@ -47,10 +47,8 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
 
                 Intent i = new Intent(MainActivity.this, LoginActivity.class);
-
+                overridePendingTransition(R.anim.left2right,R.anim.right2left);
                 startActivity(i);
-
-                // close this activity
 
                 finish();
 

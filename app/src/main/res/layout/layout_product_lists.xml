@@ -32,7 +32,8 @@
             android:padding="1dp"
 
 
-            android:scaleType="fitCenter" />
+            android:scaleType="fitCenter"
+            app:srcCompat="@color/colorAccent" />
 
         <TextView
             android:id="@+id/tvProduct_Name"

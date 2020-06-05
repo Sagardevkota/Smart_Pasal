@@ -4,6 +4,7 @@ package com.example.smartpasal.fragment;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Camera;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -36,7 +37,12 @@ LinearLayout qrCameraLayout;
         // Required empty public constructor
     }
 
+    @Override
+    public void onStart() {
 
+
+        super.onStart();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -48,7 +54,8 @@ LinearLayout qrCameraLayout;
         }
         scannerView=new ZXingScannerView(getContext());
         qrCameraLayout = (LinearLayout) v.findViewById(R.id.qrCameraLayout);
-        scannerView.startCamera();
+
+
         qrCameraLayout.addView(scannerView);
         scannerView.setResultHandler(this);
 
@@ -59,13 +66,19 @@ LinearLayout qrCameraLayout;
 
     @Override
     public void onResume() {
+
+
         scannerView.startCamera();
         super.onResume();
     }
 
     @Override
     public void onStop() {
+
         scannerView.stopCamera();
+
+
+
         super.onStop();
     }
 

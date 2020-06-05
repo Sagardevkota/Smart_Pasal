@@ -50,7 +50,7 @@ public class ListAdapterItems extends RecyclerView.Adapter<ListAdapterItems.Myvi
     public void onBindViewHolder(@NonNull Myviewholder holder, int position) {
         final ProductItems currentItem=productItems.get(position);
 
-        holder.tvProduct_Name.setText(currentItem.tvName);
+        holder.tvProduct_Name.setText(currentItem.productName);
         holder.tvMarked_Price.setText("Rs. "+currentItem.marked_price);
 
         holder.tvFixed_Price.setText("Rs. "+currentItem.fixed_price);
@@ -59,9 +59,9 @@ public class ListAdapterItems extends RecyclerView.Adapter<ListAdapterItems.Myvi
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent(context, ProductDetails.class);
-                intent.putExtra("product_id",currentItem.user_id);
+                intent.putExtra("product_id",currentItem.productId);
 
-                intent.putExtra("product_name",currentItem.tvName );
+                intent.putExtra("product_name",currentItem.productName );
                 intent.putExtra("fixed_price",currentItem.fixed_price);
                 intent.putExtra("marked_price",currentItem.marked_price);
                 intent.putExtra("product_photo",currentItem.picture_path);

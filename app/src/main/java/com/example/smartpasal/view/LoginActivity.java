@@ -18,6 +18,10 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.smartpasal.R;
+import com.example.smartpasal.SmartAPI.JwtResponse;
+import com.example.smartpasal.SmartAPI.SmartAPI;
+import com.example.smartpasal.model.User;
+import com.github.florent37.shapeofview.shapes.BubbleView;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -40,6 +44,11 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
+import es.dmoral.toasty.Toasty;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
     SharedPreferences sp;
@@ -52,30 +61,26 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     String email;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        if (savedInstanceState==null)
+            overridePendingTransition(R.anim.left2right,R.anim.right2left);
+
 
 
 
 
 
         sp=getSharedPreferences("s-martlogin", Context.MODE_PRIVATE);
-        checkIfLoggedIn();
-       GoogleSignInOptions googleSignInOptions=new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
-       googleApiClient=new GoogleApiClient.Builder(this).enableAutoManage(this,this).addApi(Auth.GOOGLE_SIGN_IN_API,googleSignInOptions).build();
-       Google_sign_in=findViewById(R.id.btn_google_login);
-       Google_sign_in.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View view) {
-               Google_sign_in=findViewById(R.id.btn_google_login);
-               Toast.makeText(getApplicationContext(),"Login with Google",Toast.LENGTH_LONG).show();
-               Intent intent=Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
-               startActivityForResult(intent,Req_code);
 
-           }
-       });
+
+
+
+        checkIfLoggedIn();
+
 
 
 
@@ -93,13 +98,65 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
           etPassword= findViewById(R.id.etPassword);
         final String password=etPassword.getEditText().getText().toString().trim();;
         if ((email.length()> 0)
-                && (password.length()> 0)) {
-            String url = "http://idealytik.com/SmartPasalWebServices/Login.php?email=" + email + "&password=" + password;
-                                new MyAsyncTaskgetNews().execute(url); }
+                && (password.length()> 0))
+        {
+          doLogin(email,password);
+
+
+
+
+
+
+        }
 
         else
-        {  Toast.makeText(this, "You did not enter email or password", Toast.LENGTH_SHORT).show();}
+        {  Toasty.error(this, "You did not enter email or password").show();}
 
+    }
+
+    private void doLogin(String email, String password) {
+        showProgressDialog("Logging in");
+        Call<JwtResponse> login=SmartAPI.getApiService().login(new User(email,password));
+        login.enqueue(new Callback<JwtResponse>() {
+            @Override
+            public void onResponse(Call<JwtResponse> call, Response<JwtResponse> response) {
+                if (!response.isSuccessful())
+                    Log.d("response",response.message());
+                else{
+
+                    String status=response.body().getStatus();
+                    String message=response.body().getMessage();
+                    Log.d("responseBody",response.body().getMessage());
+                    if (status.equalsIgnoreCase("200 OK")&&message.equalsIgnoreCase("login successfull"))
+                    {
+                        Toasty.success(getApplicationContext(),message).show();
+                        String jwt=response.body().getJwt();
+                        sp.edit().putString("jwt",jwt).apply();
+                        hideProgressDialog();
+                        goToHomeActivity();
+
+                    }
+
+                    else{
+                        Toasty.error(getApplicationContext(),message).show();
+                        hideProgressDialog();
+                    }
+
+                }
+
+
+
+
+
+
+            }
+
+            @Override
+            public void onFailure(Call<JwtResponse> call, Throwable t) {
+                Log.d("JwtResponse",t.getMessage());
+
+            }
+        });
     }
 
     @VisibleForTesting
@@ -129,137 +186,10 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
 
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode==Req_code){
-            GoogleSignInResult result=Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            handleResult(result);
-
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    private void handleResult(GoogleSignInResult result) {
-        if (result.isSuccess()){
-            GoogleSignInAccount account=result.getSignInAccount();
-             email=account.getEmail().toString();
-            String img_url=account.getPhotoUrl().toString();
-            String id=account.getId();
-            sp.edit().putString("user_photo",img_url).apply();
-            sp.edit().putString("email",email).apply();
-            RegisterViaGoogle(email,img_url);
-
-
-        }
-    }
-
-    private void RegisterViaGoogle(String email,String img_url) {
-        String url="http://idealytik.com/SmartPasalWebServices/RegisterViaGoogle.php?email="+email;
-      new  MyAsyncTaskgetNews1().execute(url);
-
-    }
-
-    // get news from server
-    public class MyAsyncTaskgetNews extends AsyncTask<String, String, String> {
-        @Override
-        protected void onPreExecute() {
-            //before works
-           showProgressDialog("Logging ");
-        }
-        @Override
-        protected String  doInBackground(String... params) {
-            // TODO Auto-generated method stub
-            try {
-                String NewsData;
-                //define the url we have to connect with
-                URL url = new URL(params[0]);
-                //make connect with url and send request
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                //waiting for 7000ms for response
-                urlConnection.setConnectTimeout(7000);//set timeout to 5 seconds
-
-                urlConnection.setRequestProperty("APIKEY",MainActivity.Smart_api_key);
-
-
-                try {
-                    //getting the response data
-                    InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-                    //convert the stream to string
-                    NewsData = ConvertInputToStringNoChange(in);
-                    //send to display data
-                    publishProgress(NewsData);
-                } finally {
-                    //end connection
-                    urlConnection.disconnect();
-                }
-
-            }catch (Exception ex){}
-            return null;
-        }
-        protected void onProgressUpdate(String... progress) {
-
-            try{
-                JSONObject json= new JSONObject(progress[0]);
-                //display response data
-
-                if (json.getString("msg").equals("Successfull")) {
-                    String msg="Logging you in";
-
-                    JSONArray userInfo=new JSONArray( json.getString("user_info"));
-                    JSONObject userCredentials=userInfo.getJSONObject(0);
-                    String userID=userCredentials.getString("id");
-                    String email=userCredentials.getString("email");
-                     SaveUserInfo(userID,email);
-                    showProgressDialog(msg);
-                    goToHomeActivity();
-                } 
-                if (json.getString("msg").equals("Email is not registered yet")){
-                    Toast.makeText(getApplicationContext(), "Email is not registered yet", Toast.LENGTH_LONG).show();
-
-                }
-                else
-                    Toast.makeText(getApplicationContext(), "Incorrect email or password", Toast.LENGTH_LONG).show();
-
-            }
-
-
-            catch (Exception ex) {
-                Log.d("er", ex.getMessage());
-            }
-
-        }
-
-
-        protected void onPostExecute(String  result2){
-
-hideProgressDialog();
-        }
 
 
 
 
-    }
-
-    // this method convert any stream to string
-    public static String ConvertInputToStringNoChange(InputStream inputStream) {
-
-        BufferedReader bureader=new BufferedReader( new InputStreamReader(inputStream));
-        String line ;
-        String linereultcal="";
-
-        try{
-            while((line=bureader.readLine())!=null) {
-
-                linereultcal+=line;
-
-            }
-            inputStream.close();
-
-
-        }catch (Exception ex){}
-
-        return linereultcal;
-    }
 
 
 
@@ -282,103 +212,25 @@ hideProgressDialog();
 
     }
 
-    public void SaveUserInfo(String userID, String email){
-        sp.edit().putString("userID",userID).apply();
-        sp.edit().putString("email",email).apply();
-        sp.edit().putBoolean("logged",true).apply();
-
-
-    }
 
     public void goToHomeActivity(){
         Intent i = new Intent(this, HomeActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
         startActivity(i);
     }
     public void checkIfLoggedIn(){
-
-
-        if (sp.getBoolean("logged",true)){
-            Toast.makeText(getApplicationContext(),"Welcome back "+sp.getString("email",""),Toast.LENGTH_LONG).show();
+        if (sp.contains("jwt")){
             goToHomeActivity();
         }
 
 
 
-
     }
 
-    // get news from server
-    public  class MyAsyncTaskgetNews1 extends AsyncTask<String, String, String> {
-        @Override
-        protected void onPreExecute() {
-            //before works
-            showProgressDialog("Logging with google");
-
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            // TODO Auto-generated method stub
-            try {
-                String NewsData;
-                //define the url we have to connect with
-                URL url = new URL(params[0]);
-                //make connect with url and send request
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                //waiting for 7000ms for response
-                urlConnection.setConnectTimeout(7000);//set timeout to 5 seconds
-
-                urlConnection.setRequestProperty("APIKEY",MainActivity.Smart_api_key);
-
-                try {
-                    //getting the response data
-                    InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-                    //convert the stream to string
-                    NewsData = ConvertInputToStringNoChange(in);
-                    //send to display data
-                    publishProgress(NewsData);
-                } finally {
-                    //end connection
-                    urlConnection.disconnect();
-                }
-
-            } catch (Exception ex) {
-            }
-            return null;
-        }
-
-        protected void onProgressUpdate(String... progress) {
-
-            try {
-                JSONObject json = new JSONObject(progress[0]);
-                //display response data
-
-                if (json.getString("msg").equals("Successfull")) {
-
-
-                    JSONArray userInfo = new JSONArray(json.getString("user_info"));
-                    JSONObject userCredentials = userInfo.getJSONObject(0);
-                    String userID = userCredentials.getString("id");
-                    String email = userCredentials.getString("email");
-                    SaveUserInfo(userID, email);
-
-                    goToHomeActivity();
-                }
-            } catch (Exception ex) {
-                Log.d("er", ex.getMessage());
-            }
-
-        }
-
-
-        protected void onPostExecute(String result2) {
-
-            hideProgressDialog();
-        }
 
 
     }
 
 
-    }
+

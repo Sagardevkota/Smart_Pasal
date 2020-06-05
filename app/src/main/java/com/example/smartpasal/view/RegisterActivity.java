@@ -24,6 +24,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.smartpasal.R;
+import com.example.smartpasal.SmartAPI.JsonResponse;
+import com.example.smartpasal.SmartAPI.SmartAPI;
+import com.example.smartpasal.model.User;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -43,6 +46,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 import java.util.regex.Pattern;
+
+import es.dmoral.toasty.Toasty;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -69,7 +77,6 @@ public class RegisterActivity extends AppCompatActivity {
                     "(?=\\S+$)" +           //no white spaces
                     ".{4,}" +               //at least 4 characters
                     "$");
-    public static final String UPLOAD_URL = "http://idealytik.com/SmartPasalWebServices/register.php";
 
 
 
@@ -120,10 +127,7 @@ public class RegisterActivity extends AppCompatActivity {
             etDelivery.setError("Field can't be empty");
             return false;
         }
-        else if (!addregex.matcher(emailInput).matches()) {
-            etDelivery.setError("Please enter a valid street address");
-            return false;
-        }
+
         else {
             etDelivery.setError(null);
             return true;
@@ -239,73 +243,36 @@ uploadData();
         final  String  phone = etPhone.getEditText().getText().toString().trim();
         final String delivery=etDelivery.getEditText().getText().toString().trim();
 
-        try {
-            String uploadId = UUID.randomUUID().toString();
-            new MultipartUploadRequest(this, uploadId, UPLOAD_URL)
-                    .addParameter("email", email)
-                    .addParameter("password", password)
-                    .addParameter("phone", phone)
-                    .addParameter("delivery_address", delivery)
-                    .addHeader("APIKEY",MainActivity.Smart_api_key)
 
-                    .setDelegate(new UploadStatusDelegate() {
-                        @Override
-                        public void onProgress(Context context, UploadInfo uploadInfo) {
-                            Log.d("Upload","Uploading");
-                            showProgressDialog("Signing you up");
-                        }
-
-                        @Override
-                        public void onError(Context context, UploadInfo uploadInfo, ServerResponse serverResponse, Exception exception) {
-
-                        }
-
-                        @Override
-                        public void onCompleted(Context context, UploadInfo uploadInfo, ServerResponse serverResponse) {
-                            try {
-                                JSONObject json = new JSONObject(serverResponse.getBodyAsString());
-                                if (json.getString("msg").equals("Email is already taken")) {
-                                    Toast.makeText(getApplicationContext(),"Email or phone is already taken",Toast.LENGTH_LONG).show();
-                                }
+        User user=new User(email,password,delivery,phone,false);
+        Call<JsonResponse> register=SmartAPI.getApiService().register(user);
+        register.enqueue(new Callback<JsonResponse>() {
+            @Override
+            public void onResponse(Call<JsonResponse> call, Response<JsonResponse> response) {
+                if (!response.isSuccessful()){
+                    Log.d("response",response.body().toString());
+                }
+                String status=response.body().getStatus();
+                String message=response.body().getMessage();
+                Log.d("response",response.body().getMessage());
 
 
-                                else {
-                                    JSONArray userInfo = new JSONArray(json.getString("user_info"));
-                                    JSONObject userCredentials = userInfo.getJSONObject(0);
-                                    String id = userCredentials.getString("id");
-                                    String email = userCredentials.getString("email");
+                if (message.equalsIgnoreCase("Registered Successfully")&&status.equalsIgnoreCase("200 OK")) {
+                    Toasty.success(getApplicationContext(),message).show();
+                    Intent intent=new Intent(getApplicationContext(),LoginActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                }
+                else
+                    Toasty.error(getApplicationContext(),message).show();
+            }
 
+            @Override
+            public void onFailure(Call<JsonResponse> call, Throwable t) {
+                Log.d("error in response",t.getMessage().toString());
 
-                                         goToActivity(id,email);
-                                    Log.d("Id is", id);
-
-
-                                }
-                            }
-                            catch (JSONException e) {
-                                Log.d("Jsonerror",e.getMessage());
-                            }
-
-                            Log.d("Upload","Uploaded");
-                            hideProgressDialog();
-
-
-
-                        }
-
-                        @Override
-                        public void onCancelled(Context context, UploadInfo uploadInfo) {
-
-                        }
-                    })
-                    .setMaxRetries(3)
-                    .startUpload();
-
-        } catch (Exception ex) {
-
-
-        }
-
+            }
+        });
 
 
     }
@@ -332,33 +299,12 @@ uploadData();
     public void loginclick(View view) {
         Intent intent=new Intent(this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        overridePendingTransition(R.anim.left2right,R.anim.right2left);
+
         startActivity(intent);
 
     }
-    public void goToActivity(String id, String email)
-    {
 
-
-
-        sp.edit().putString("userID", id).apply();
-       sp.edit().putString("email",email).apply();
-        sp.edit().putBoolean("logged", true).apply();
-        MaterialAlertDialogBuilder alert=new MaterialAlertDialogBuilder(this,R.style.AlertDialog);
-        alert.setMessage("A confirmation email has been sent to your email..Please verify before you are able to purchase any product").setTitle("Account Verification").setPositiveButton("Continue Shopping", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-
-                Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-
-            }
-        }).show();
-
-
-
-    }
 
 
     @Override

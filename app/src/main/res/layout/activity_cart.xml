@@ -4,72 +4,73 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    tools:menu="@menu/cart_menu"
 
     android:orientation="vertical"
     tools:context=".view.cartActivity">
 
 
-    <ListView
-        android:id="@+id/LVNews"
+    <TextView
+        android:id="@+id/tvEmptyCart"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+              android:layout_marginTop="10dp"
+        android:text="OOps!!! Your cart is empty"
+        android:textSize="18sp"
+        android:gravity="center"
+        android:fontFamily="@font/fauna_one"
+        android:textColor="@color/Black"
+        android:visibility="gone"
+
+
+        />
+
+
+
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/LVNews"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="1"
         android:background="#fff"
 
 
-        >
 
-    </ListView>
+        />
 
     <LinearLayout
         android:id="@+id/calcualteLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0"
+        android:weightSum="1"
+
 
         android:orientation="horizontal">
 
 
+        <TextView
+            android:id="@+id/tvTotalPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:textColor="#ff00"
+            android:layout_marginLeft="5dp"
+            android:layout_gravity="center"
+            android:textSize="18sp"
+            android:text="" />
 
         <Button
             android:id="@+id/buCheckOut"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="0.75"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="5dp"
             android:text="Place Order" />
     </LinearLayout>
-    <FrameLayout
-        android:id="@+id/progressBarHolder"
-        android:animateLayoutChanges="true"
-        android:visibility="gone"
 
-        android:background="#fff"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <ImageView
-            android:id="@+id/bouncing_image"
-            android:layout_width="250dp"
-            android:layout_height="250dp"
-            android:layout_gravity="center"
-            android:src="@drawable/robot"
-            />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="150dp"
-            android:fontFamily="@font/fauna_one"
-
-            android:text="Loading"
-            android:textColor="@color/design_default_color_on_secondary"
-            android:textSize="36sp"
-            android:textStyle="bold" />
-
-
-    </FrameLayout>
 
 </LinearLayout>

@@ -33,6 +33,7 @@
             android:background="#fff"
             android:gravity="top"
             android:padding="16dp"
+            android:visibility="gone"
             android:text="Couldnt connect to network.Please refresh the page"
             android:textColor="@color/colorGray" />
         <com.smarteist.autoimageslider.SliderView
@@ -110,6 +111,7 @@
                     android:drawableTop="@drawable/ic_sneakers"
                     android:gravity="center"
                     android:text="#Sneakers"
+                    android:onClick="tvClick"
                     android:textColor="@color/design_default_color_on_secondary" />
 
                 <TextView
@@ -120,6 +122,7 @@
                     android:drawableTop="@drawable/ic_jacket"
                     android:gravity="center"
                     android:text="#Jackets"
+                    android:onClick="onClick"
                     android:textColor="@color/design_default_color_on_secondary" />
 
                 <TextView
@@ -130,6 +133,7 @@
                     android:drawableTop="@drawable/ic_watch"
                     android:gravity="center"
                     android:text="#watch"
+                    android:onClick="onClick"
                     android:textColor="@color/design_default_color_on_secondary" />
 
                 <TextView
@@ -140,6 +144,7 @@
                     android:drawableTop="@drawable/ic_bagpack"
                     android:gravity="center"
                     android:text="#Bagpack"
+                    android:onClick="onClick"
                     android:textColor="@color/design_default_color_on_secondary" />
             </LinearLayout>
 
@@ -157,6 +162,7 @@
                     android:drawableTop="@drawable/ic_phone"
                     android:gravity="center"
                     android:text="#Phones"
+                    android:onClick="onClick"
                     android:textColor="@color/design_default_color_on_secondary" />
 
                 <TextView
@@ -166,6 +172,7 @@
                     android:layout_weight="1"
                     android:drawableTop="@drawable/ic_sunglasses"
                     android:gravity="center"
+                    android:onClick="onClick"
                     android:text="#Glasses"
                     android:textColor="@color/design_default_color_on_secondary" />
 
@@ -177,6 +184,7 @@
                     android:drawableTop="@drawable/ic_laptop"
                     android:gravity="center"
                     android:text="#Laptop"
+                    android:onClick="onClick"
                     android:textColor="@color/design_default_color_on_secondary" />
 
                 <TextView
@@ -187,6 +195,7 @@
                     android:drawableTop="@drawable/ic_tv"
                     android:gravity="center"
                     android:text="#Television"
+                    android:onClick="onClick"
                     android:textColor="@color/design_default_color_on_secondary" />
 
             </LinearLayout>
@@ -229,20 +238,25 @@
 
 
         </LinearLayout>
-        <ProgressBar
-            android:id="@+id/progress_bar"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_gravity="bottom"
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/progress_animation_view"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
             android:layout_marginBottom="50dp"
-            android:layout_marginStart="150dp"
-            android:layout_marginEnd="250dp"
-            android:keepScreenOn="false"
+
+
+
+
+            app:lottie_rawRes="@raw/loading"
 
 
             android:visibility="gone"
 
-            />
+
+        app:lottie_loop="true"
+        app:lottie_autoPlay="true" />
 
 
 

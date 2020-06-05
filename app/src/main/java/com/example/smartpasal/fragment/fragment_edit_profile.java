@@ -2,6 +2,7 @@ package com.example.smartpasal.fragment;
 
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -12,6 +13,7 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import androidx.annotation.VisibleForTesting;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -183,6 +185,7 @@ buSave.setOnClickListener(new View.OnClickListener() {
         @Override
         protected void onPreExecute() {
             //before works
+            showProgressDialog("Updating Profile");
 
         }
         @Override
@@ -228,6 +231,7 @@ buSave.setOnClickListener(new View.OnClickListener() {
                 if (json.getString("msg").equals("Profile updated successfully")) {
 
                      Toast.makeText(getContext(),"Profile updated successfully",Toast.LENGTH_SHORT).show();
+                     hideProgressDialog();
                     MaterialAlertDialogBuilder alert=new MaterialAlertDialogBuilder(getContext(),R.style.AlertDialog);
                     alert.setMessage("A confirmation email has been sent to your email..Please verify before you are able to purchase any product").setTitle("Account Verification").setPositiveButton("Continue Shopping", new DialogInterface.OnClickListener() {
                         @Override
@@ -324,5 +328,25 @@ buSave.setOnClickListener(new View.OnClickListener() {
             Log.d("My Current loction ", "Canont get Address!");
         }
         return strAdd;
+    }
+
+
+    @VisibleForTesting
+    public ProgressDialog mProgressDialog;
+
+    public void showProgressDialog(String msg) {
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(getContext(),R.style.AlertDialog);
+            mProgressDialog.setMessage(msg);
+            mProgressDialog.setIndeterminate(true);
+        }
+
+        mProgressDialog.show();
+    }
+
+    public void hideProgressDialog() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.dismiss();
+        }
     }
 }

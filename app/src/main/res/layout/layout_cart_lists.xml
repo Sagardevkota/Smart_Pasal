@@ -5,119 +5,206 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
 
     >
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+
+        >
+
+
+
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_marginBottom="10dp"
+        android:weightSum="1"
+
         android:padding="2dp">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+
+
+
 
 
             android:orientation="horizontal">
 
-            <ImageView
-                android:id="@+id/ivImg"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+            <CheckBox
+                android:id="@+id/checkbox_item"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
 
-                android:padding="10dp"
 
-                android:scaleType="centerCrop" />
+                 />
+
+            <ImageView
+                android:id="@+id/ivImg"
+                android:layout_width="90dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="0.2"
+
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+
+                android:layout_marginEnd="10dp"
+
+
+
+                android:scaleType="fitCenter" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="0.8"
                 android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/tvProduct_Name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
+
+
+                    android:layout_marginTop="20dp"
+
 
                     android:layout_marginBottom="10dp"
-                    android:fontFamily="monospace"
+                    android:fontFamily="@font/roboto_slab_light"
                     android:text="Name"
 
                     android:textColor="@android:color/background_dark"
-                    android:textSize="20sp" />
+                    android:textSize="16sp" />
 
-                <TextView
-                    android:id="@+id/tvFixed_Price"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-
-                    android:layout_gravity="center"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="10dp"
-
-                    android:text="Rs.1200"
-                    android:textColor="#fc2312"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="end"
+                    android:weightSum="1"
+
                     android:orientation="horizontal">
 
-                    <Button
-                        android:id="@+id/buDecrease"
+                    <LinearLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="@color/transparentColor"
-                        android:text="-"
-                        android:textSize="20sp" />
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.5"
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/tvQty"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginEnd="20dp"
-                        android:layout_weight="1"
-                        android:text="1"
-                        android:textAlignment="center"
-                        android:textSize="20sp" />
+                        <TextView
+                            android:id="@+id/tvFixed_Price"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
 
-                    <Button
-                        android:id="@+id/buIncrease"
+
+                            android:layout_marginBottom="10dp"
+                            android:letterSpacing="0"
+
+                            android:text="Rs.1200"
+                            android:textColor="#fc2312"
+                            android:fontFamily="@font/fauna_one"
+                            android:textSize="15sp"
+                             />
+
+                        <TextView
+                            android:id="@+id/tvMarked_Price"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+
+
+                            android:layout_marginBottom="10dp"
+
+                            android:text="Rs.1200"
+
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <com.shawnlin.numberpicker.NumberPicker
+                        android:id="@+id/num_picker"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="@color/transparentColor"
-                        android:text="+"
-                        android:textSize="20sp" />
+                        android:layout_height="60dp"
+                        app:np_dividerColor="@color/colorPrimary"
+                        app:np_dividerDistance="30dp"
+                        app:np_min="1"
+                        app:np_selectedTextSize="14sp"
+                        android:layout_weight="0.5"
+                        app:np_max="100"
+                        android:layout_marginEnd="5dp"
+                        app:np_textSize="8sp"
+                        />
+
 
                 </LinearLayout>
 
             </LinearLayout>
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/ivDelete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
 
-
-            android:background="@drawable/ic_delete_black_24dp" />
 
 
     </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:weightSum="1"
+            android:layout_marginBottom="20dp"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/etCoupon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.8"
+                android:layout_marginLeft="20dp"
+                android:outlineProvider="bounds"
+                android:layout_marginRight="20dp"
+                android:textSize="14sp"
+                android:hint="Enter coupon code"
+
+                android:textColor="@color/Black"
+                android:ems="10"
+                android:inputType="textPersonName" />
+
+            <Button
+                android:id="@+id/buApply"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.2"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:text="Apply" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvCoupon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Please enter valid coupon code"
+            android:textAlignment="center"
+            android:textColor="#ff00"
+            android:visibility="gone"
+            android:layout_marginBottom="20dp"
+            />
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorGray"
+            />
+    </LinearLayout>
+
 
 
 

@@ -109,7 +109,10 @@ app:itemIconTint="@drawable/bottom_navigation_colors"
 
 app:itemTextColor="@drawable/bottom_navigation_colors"
 app:labelVisibilityMode="labeled"
-app:menu="@menu/bottom_nav_menu" />
+app:menu="@menu/bottom_nav_menu" >
+
+
+</com.google.android.material.bottomnavigation.BottomNavigationView>
 
 
 

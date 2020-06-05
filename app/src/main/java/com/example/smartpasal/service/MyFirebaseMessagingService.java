@@ -1,4 +1,4 @@
-package com.example.smartpasal;
+package com.example.smartpasal.service;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import com.example.smartpasal.R;
 import com.example.smartpasal.adapter.App;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;

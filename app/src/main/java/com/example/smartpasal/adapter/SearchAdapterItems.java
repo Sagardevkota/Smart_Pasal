@@ -13,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.smartpasal.model.ProductItems;
 import com.example.smartpasal.view.ProductDetails;
 import com.example.smartpasal.R;
 import com.example.smartpasal.model.SearchItems;
@@ -22,13 +23,13 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 public class SearchAdapterItems extends RecyclerView.Adapter<SearchAdapterItems.Myviewholder> {
-    public ArrayList<SearchItems> searchItems=new ArrayList<>();
+    public ArrayList<ProductItems> productItems=new ArrayList<>();
 
     Context context;
 
-    public  SearchAdapterItems(ArrayList<SearchItems> searchItems,Context context){
+    public  SearchAdapterItems(ArrayList<ProductItems> productItems,Context context){
         this.context=context;
-        this.searchItems=searchItems;
+        this.productItems=productItems;
 
     }
 
@@ -47,9 +48,9 @@ public class SearchAdapterItems extends RecyclerView.Adapter<SearchAdapterItems.
     @Override
     public void onBindViewHolder(@NonNull Myviewholder holder, int position) {
 
-        final SearchItems currentItem=searchItems.get(position);
+        final ProductItems currentItem=productItems.get(position);
 
-        holder.tvProduct_Name.setText(currentItem.tvName);
+        holder.tvProduct_Name.setText(currentItem.productName);
         holder.tvMarked_Price.setText("Rs. "+currentItem.marked_price);
 
         holder.tvFixed_Price.setText("Rs. "+currentItem.fixed_price);
@@ -59,9 +60,9 @@ public class SearchAdapterItems extends RecyclerView.Adapter<SearchAdapterItems.
             public void onClick(View view) {
                 Intent intent=new Intent(context, ProductDetails.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra("product_id",currentItem.user_id);
+                intent.putExtra("product_id",currentItem.productId);
 
-                intent.putExtra("product_name",currentItem.tvName );
+                intent.putExtra("product_name",currentItem.productName );
                 intent.putExtra("fixed_price",currentItem.fixed_price);
                 intent.putExtra("marked_price",currentItem.marked_price);
                 intent.putExtra("product_photo",currentItem.picture_path);
@@ -107,7 +108,7 @@ public class SearchAdapterItems extends RecyclerView.Adapter<SearchAdapterItems.
 
     @Override
     public int getItemCount() {
-        return searchItems.size();
+        return productItems.size();
     }
     public class Myviewholder extends RecyclerView.ViewHolder   {
         TextView tvProduct_Name;

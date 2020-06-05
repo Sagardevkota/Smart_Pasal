@@ -22,7 +22,8 @@
         android:textSize="36sp"
         android:textColor="#000"
         android:layout_marginStart="30dp"
-        android:fontFamily="@font/freckle_face"
+        android:textStyle="bold"
+        android:fontFamily="@font/fauna_one"
         />
 
     <TextView

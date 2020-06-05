@@ -10,13 +10,17 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.example.smartpasal.R;
+import com.example.smartpasal.SmartAPI.SmartAPI;
 import com.example.smartpasal.adapter.SearchAdapterItems;
+import com.example.smartpasal.fragment.home;
+import com.example.smartpasal.model.ProductItems;
 import com.example.smartpasal.model.SearchItems;
 import com.example.smartpasal.view.HomeActivity;
 
@@ -30,13 +34,18 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class searchList extends AppCompatActivity {
     ImageView backimg;
     EditText etSearch;
     RecyclerView endless_view;
 
-    ArrayList<SearchItems> listnewsData = new ArrayList<SearchItems>();
+    ArrayList<ProductItems> listnewsData = new ArrayList<>();
     GridLayoutManager layoutManager;
     RecyclerView.Adapter myadapter;
     ProgressBar progressBar;
@@ -75,9 +84,12 @@ public class searchList extends AppCompatActivity {
 
 
 
+
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                listnewsData.clear();
 
 
             }
@@ -99,7 +111,25 @@ public class searchList extends AppCompatActivity {
 
 
                     String url="http://idealytik.com/SmartPasalWebServices/SearchLists.php?keyword="+editable.toString();
-                    new MyAsyncTaskgetNews1().execute(url);
+                    Call<List<ProductItems>> search= SmartAPI.getApiService().searchForProduct(home.jwt,editable.toString());
+                   search.enqueue(new Callback<List<ProductItems>>() {
+                       @Override
+                       public void onResponse(Call<List<ProductItems>> call, Response<List<ProductItems>> response) {
+                           if (!response.isSuccessful())
+                               Log.d("unsuccess","unsuccess");
+                           else{
+                               for (ProductItems p:response.body()){
+                                   listnewsData.add(new ProductItems(p));
+                                   myadapter.notifyDataSetChanged();
+                               }
+                           }
+                       }
+
+                       @Override
+                       public void onFailure(Call<List<ProductItems>> call, Throwable t) {
+
+                       }
+                   });
 
 
 
@@ -118,108 +148,4 @@ public class searchList extends AppCompatActivity {
 
 
 
-    public class MyAsyncTaskgetNews1 extends AsyncTask<String, String, String> {
-        @Override
-        protected void onPreExecute() {
-            //before works
-            progressBar.setVisibility(View.VISIBLE);
-
-
-
-
-
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            // TODO Auto-generated method stub
-            try {
-                String NewsData;
-                //define the url we have to connect with
-                URL url = new URL(params[0]);
-                //make connect with url and send request
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestProperty("http.keepAlive", "false");
-                //waiting for 7000ms for response
-                urlConnection.setConnectTimeout(7000);//set timeout to 5 seconds
-                urlConnection.setDoOutput(true);
-
-                urlConnection.setRequestProperty("APIKEY",MainActivity.Smart_api_key);
-
-
-                try {
-                    //getting the response data
-                    InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-                    //convert the stream to string
-                    NewsData = ConvertInputToStringNoChange(in);
-                    //send to display data
-                    publishProgress(NewsData);
-                } finally {
-                    //end connection
-                    urlConnection.disconnect();
-                }
-
-            } catch (Exception ex) {
-                Log.d("error", ex.getMessage());
-            }
-            return null;
-        }
-
-        protected void onProgressUpdate(String... progress) {
-            listnewsData.clear();
-
-
-            try {
-                JSONArray userInfo = new JSONArray(progress[0]);
-
-
-                for (int i = 0; i < userInfo.length(); i++) {
-                    JSONObject userCredentials = userInfo.getJSONObject(i);
-
-
-                    listnewsData.add(new SearchItems(userCredentials.getString("name"), userCredentials.getString("picture_path"), userCredentials.getString("product_id"), userCredentials.getString("marked_price"), userCredentials.getString("fixed_price"), userCredentials.getString("brand"), userCredentials.getString("desc"), userCredentials.getString("sku")));
-
-
-                }
-
-
-                myadapter.notifyDataSetChanged();
-                //display response data
-                progressBar.setVisibility(View.GONE);
-
-
-            } catch (Exception ex) {
-            }
-
-
-        }
-
-        protected void onPostExecute(String result2) {
-
-
-
-        }
-
-
-    }
-    // this method convert any stream to string
-    public static String ConvertInputToStringNoChange(InputStream inputStream) {
-
-        BufferedReader bureader=new BufferedReader( new InputStreamReader(inputStream));
-        String line ;
-        String linereultcal="";
-
-        try{
-            while((line=bureader.readLine())!=null) {
-
-                linereultcal+=line;
-
-            }
-            inputStream.close();
-
-
-        }catch (Exception ex){}
-
-        return linereultcal;
-    }
 }

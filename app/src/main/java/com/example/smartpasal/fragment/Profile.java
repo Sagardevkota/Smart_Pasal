@@ -1,11 +1,13 @@
 package com.example.smartpasal.fragment;
 
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -44,9 +46,7 @@ public class Profile extends Fragment {
     TextView tvVerified;
     TextView tvDelivery;
     Button buEdit;
-    FrameLayout progressBarHolder;
-    Animation bounce_animation;
-    ImageView bouncing_image;
+
     View v;
 
 
@@ -81,13 +81,8 @@ public class Profile extends Fragment {
         @Override
         protected void onPreExecute() {
             //before works
-            progressBarHolder = v.findViewById(R.id.progressBarHolder);
-            progressBarHolder.setVisibility(View.VISIBLE);
-            bouncing_image=v.findViewById(R.id.bouncing_image);
+            showProgressDialog("Loading Profile");
 
-            bounce_animation= AnimationUtils.loadAnimation(getContext(),R.anim.bounce_animation);
-
-            bouncing_image.setAnimation(bounce_animation);
 
         }
         @Override
@@ -184,8 +179,8 @@ public class Profile extends Fragment {
 
 
         protected void onPostExecute(String  result2){
-            progressBarHolder.setVisibility(View.GONE);
-            bounce_animation.cancel();
+            hideProgressDialog();
+
 
 
 
@@ -215,6 +210,26 @@ public class Profile extends Fragment {
         }catch (Exception ex){}
 
         return linereultcal;
+    }
+
+
+    @VisibleForTesting
+    public ProgressDialog mProgressDialog;
+
+    public void showProgressDialog(String msg) {
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(getContext(),R.style.AlertDialog);
+            mProgressDialog.setMessage(msg);
+            mProgressDialog.setIndeterminate(true);
+        }
+
+        mProgressDialog.show();
+    }
+
+    public void hideProgressDialog() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.dismiss();
+        }
     }
 
 
