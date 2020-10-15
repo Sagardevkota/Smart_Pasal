@@ -7,15 +7,59 @@
 
     tools:context=".fragment.order">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      android:layout_marginBottom="20dp"
+
+    >
+
+
+
+  <TextView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="ORDERS"
+      android:gravity="center"
+      android:textSize="18sp"
+      android:textStyle="bold"
+      android:padding="16dp"
+      android:textColor="@color/colorPrimary"
+
+      />
+
+    <View
         android:layout_width="wrap_content"
+        android:layout_height="0.005dp"
+      android:background="@color/colorGray"
+    />
+
+    <Spinner
+        android:id="@+id/spSort"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+      android:tag="@string/app_name"
+        android:theme="@style/Spinner"
+        android:gravity="end"
+        android:layout_gravity="end"
+        android:spinnerMode="dropdown"
 
+      />
 
-        android:text="You have no orders yet"
-        android:textColor="@color/common_google_signin_btn_text_dark_focused"
-        android:textSize="30sp" />
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="0.005dp"
+        android:background="@color/colorGray"
+
+        />
+
+  <androidx.recyclerview.widget.RecyclerView
+      android:id="@+id/rvOrders"
+      android:padding="8dp"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"/>
+
+  </LinearLayout>
 
 </androidx.core.widget.NestedScrollView>

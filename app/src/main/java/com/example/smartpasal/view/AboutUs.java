@@ -13,17 +13,20 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.example.smartpasal.R;
+import com.example.smartpasal.databinding.ActivityAboutUsBinding;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class AboutUs extends AppCompatActivity {
-    FrameLayout layoutInfo;
-    TextView tvContact;
+
+    private ActivityAboutUsBinding binding;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_about_us);
+        binding=ActivityAboutUsBinding.inflate(getLayoutInflater());
+        View view=binding.getRoot();
+        setContentView(view);
         getSupportActionBar().setTitle("About Us");
 
 
@@ -32,9 +35,9 @@ public class AboutUs extends AppCompatActivity {
 
 
 
-        tvContact=findViewById(R.id.tvContact);
 
-        tvContact.setOnClickListener(new View.OnClickListener() {
+
+        binding.tvContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 

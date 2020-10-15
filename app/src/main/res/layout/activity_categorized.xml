@@ -22,15 +22,41 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
-        <Spinner
-            android:id="@+id/spSort"
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Spinner
+                android:id="@+id/spSort"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:theme="@style/Spinner"
+                android:layout_alignParentRight="true"
+
+
+                android:layout_gravity="end"
+                android:spinnerMode="dropdown" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Filter"
+                android:textColor="@color/Black"
+                android:layout_marginStart="20dp"
+               android:layout_marginTop="10dp"
+                android:drawableEnd="@drawable/ic_list"
+                android:drawablePadding="20dp"
+                android:textSize="18sp"
+               />
+
+
+        </RelativeLayout>
+
+        <View
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:theme="@style/Spinner"
-
-
-            android:layout_gravity="end"
-            android:spinnerMode="dropdown" />
+            android:layout_height="1dp"
+            android:background="@color/colorGray"
+            />
 
 
         <TextView
@@ -50,7 +76,7 @@
 
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/LVNews"
+            android:id="@+id/rvlist"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:columnWidth="110dp"

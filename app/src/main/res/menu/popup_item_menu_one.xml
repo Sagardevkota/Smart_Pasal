@@ -1,0 +1,15 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group
+        android:visible="true">
+
+        <item
+            android:title="I dont like this item"
+            android:id="@+id/popup_hate"
+            android:icon="@drawable/ic_scan"
+            />
+
+
+
+    </group>
+
+</menu>

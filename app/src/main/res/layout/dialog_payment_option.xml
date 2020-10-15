@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:elevation="5dp"
+    android:padding="8dp"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp"
+>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Select payment Option"
+            android:textSize="18sp"
+            android:textStyle="bold"
+
+            />
+
+
+
+
+
+
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+
+            android:padding="8dp"
+            >
+            <RadioButton
+                android:id="@+id/rbCashOnDelivery"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cash On Delivery"
+                android:textSize="18sp"
+                android:drawablePadding="10dp"
+                android:drawableStart="@drawable/ic_cash_on_delivery"
+                android:checked="true"
+                android:paddingStart="10dp"
+                />
+
+
+          <RadioButton
+              android:id="@+id/rbOnlinePayment"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="Online Payment"
+              android:textSize="18sp"
+              android:drawableStart="@drawable/ic_paypal"
+              android:drawablePadding="10dp"
+              android:layout_marginTop="10dp"
+              android:paddingStart="10dp"
+              />
+
+
+
+        </RadioGroup>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Enter shipping address"
+            android:textSize="18sp"
+            android:layout_marginTop="20dp"
+            android:textStyle="bold"
+            />
+
+        <com.google.android.material.textfield.TextInputLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+
+            android:layout_marginTop="5dp"
+            >
+
+            <androidx.appcompat.widget.AppCompatEditText
+
+                android:id="@+id/etDelivery"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:textColor="#000"
+                android:hint="Enter delivery address"
+                android:inputType="text"
+                android:maxLines="1" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:drawableStart="@drawable/ic_touch_app_24px"
+            android:drawableTint="@color/colorPrimary"
+            android:drawablePadding="10dp"
+            android:text="Tap here to get current location"/>
+
+
+
+
+
+
+
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

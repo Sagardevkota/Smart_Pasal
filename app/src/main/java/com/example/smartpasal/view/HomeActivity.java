@@ -1,6 +1,7 @@
 package com.example.smartpasal.view;
 
 import androidx.annotation.NonNull;
+
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,65 +15,64 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
+
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
+
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
+
 import android.widget.ExpandableListView;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.smartpasal.SmartAPI.JsonResponse;
+
 import com.example.smartpasal.SmartAPI.SmartAPI;
+import com.example.smartpasal.databinding.ActivityHomeBinding;
+import com.example.smartpasal.repository.UserRepository;
 import com.example.smartpasal.service.MyFirebaseMessagingService;
 import com.example.smartpasal.adapter.ExpandableListAdapter;
 import com.example.smartpasal.fragment.Profile;
 import com.example.smartpasal.R;
-import com.example.smartpasal.fragment.Settings;
 import com.example.smartpasal.fragment.home;
 import com.example.smartpasal.fragment.order;
 import com.example.smartpasal.fragment.scan;
-import com.google.android.material.appbar.AppBarLayout;
+
+import com.example.smartpasal.Session.Session;
+
 import com.google.android.material.badge.BadgeDrawable;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
-
-
 import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 
-import es.dmoral.toasty.Toasty;
-import retrofit2.Call;
-import retrofit2.Response;
-import ru.nikartm.support.ImageBadgeView;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+
+
 
 public class HomeActivity extends AppCompatActivity {
+
+    ActivityHomeBinding binding;
     private DrawerLayout mNavDrawer;
-   private SharedPreferences sp;
+    private Session session;
 
-   EditText etSearch;
-   TextView tvSneakers;
-   ImageBadgeView badgeView;
-   BottomNavigationView bottomNavigationView;
-   ExpandableListView expandableListView;
+    Bundle b;
+
+
+
+    BottomNavigationView bottomNavigationView;
+    ExpandableListView expandableListView;
     BadgeDrawable badge;
-    public  static  TextView app_name;
-     Toolbar toolbar;
+    Toolbar toolbar;
+    String userName;
 
 
-     public static Integer count;
-    private Handler mHandler = new Handler();
 
     @Override
     public void onAttachFragment(@NonNull Fragment fragment) {
@@ -99,13 +99,7 @@ public class HomeActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-    @Override
-    protected void onStart() {
 
-        super.onStart();
-        getUserId();
-
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -113,28 +107,33 @@ public class HomeActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-
+    @Override
+    protected void onStart() {
+        super.onStart();
+        getBadgeCount();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        session=new Session(HomeActivity.this);
+       binding=ActivityHomeBinding.inflate(getLayoutInflater());
+       overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
         setContentView(R.layout.nav_drawer_layout);
+        b=getIntent().getExtras();
+        if (b!=null) userName=b.getString("user_name");
+
+       if (!new UserRepository(session,getApplicationContext()).checkIfLoggedIn())
+           goToLoginActivity();
+
+
+
+
         mNavDrawer = findViewById(R.id.drawer_layout);
-
-
         SharedPreferences notipref=getSharedPreferences("com.example.smartpasal_preferences",Context.MODE_PRIVATE);
         if (notipref.getBoolean("notifications",true)){
             MyFirebaseMessagingService.subscribeTopic("general");
         }
-
-
-
-
-
-        sp=getSharedPreferences("s-martlogin", Context.MODE_PRIVATE);
-
-        final AppBarLayout mAppBarLayout = (AppBarLayout) findViewById(R.id.appbar_layout);
-
 
         expandableListView=findViewById(R.id.expandable_listview);
         expandableListView.setChildIndicator(null);
@@ -188,6 +187,7 @@ public class HomeActivity extends AppCompatActivity {
         childList.put(headings.get(3),L4);
         childList.put(headings.get(4),L5);
         childList.put(headings.get(5),L6);
+
         ExpandableListAdapter expandableListAdapter=new ExpandableListAdapter(getApplicationContext(),getResources(),headings,childList);
         expandableListView.setAdapter(expandableListAdapter);
 
@@ -208,19 +208,13 @@ public class HomeActivity extends AppCompatActivity {
                     switch (selectedItem){
                         case "Account":
                             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new Profile()).commit();
-
-
                             break;
-                        case "Settings":
-                            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new Settings()).commit();
-                            break;
-                        case "Logout":
+                           case "Logout":
                             MaterialAlertDialogBuilder alert = new MaterialAlertDialogBuilder(HomeActivity.this,R.style.AlertDialog);
                             alert.setMessage("Are you sure you want to log out?").setTitle("Confirmation").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-
-                                   sp.edit().clear().apply();
+                                    session.destroy();
                                     Intent intent=new Intent(getApplicationContext(),LoginActivity.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
                                     startActivity(intent);
@@ -244,8 +238,8 @@ public class HomeActivity extends AppCompatActivity {
                     Intent intent=new Intent(getApplicationContext(),categorizedActivity.class);
                     intent.putExtra("type",selectedHeading);
                     intent.putExtra("category",selectedItem);
-
                     startActivity(intent);
+                    overridePendingTransition(R.anim.left2right,R.anim.right2left);
 
                 }
 
@@ -262,55 +256,28 @@ public class HomeActivity extends AppCompatActivity {
 
 
 
-      toolbar = findViewById(R.id.custom_toolbar);
-
-         Runnable mToastRunnable = new Runnable() {
-            @Override
-            public void run() {
-                Random rnd = new Random();
-                int color = Color.argb(200, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
-                int color1 = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
-                int[] colors = {color,color1};
-                //create a new gradient color
-                GradientDrawable gd = new GradientDrawable(
-                        GradientDrawable.Orientation.LEFT_RIGHT, colors);
-
-                gd.setCornerRadius(0f);
-
-
-
-
-               toolbar.setBackgroundDrawable(gd);
-               mAppBarLayout.setBackgroundDrawable(gd);
-                mHandler.postDelayed(this, 5000);
-            }
-        };
-         mToastRunnable.run();
-
-
-
-
-
+        toolbar = findViewById(R.id.custom_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
 
-
+        findViewById(R.id.etSearch).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(getApplicationContext(), searchList.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+        });
 
 
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new home()).commit();
 
 
 
-etSearch=findViewById(R.id.etSearch);
-etSearch.setOnClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View view) {
-        Intent intent=new Intent(getApplicationContext(), searchList.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-    }
-});
+
+
+
         mNavDrawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mNavDrawer,toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mNavDrawer.addDrawerListener(toggle);
@@ -318,31 +285,12 @@ etSearch.setOnClickListener(new View.OnClickListener() {
         NavigationView navigationView=findViewById(R.id.navigation_view);
         View headview = navigationView.getHeaderView(0);
 
-        ImageView header_user_image = (ImageView) headview.findViewById(R.id.header_user_image);
+        bottomNavigationView=findViewById(R.id.bottom_nav_view);
+
 
         TextView nav_header_user_name=headview.findViewById(R.id.nav_header_user_name);
-        nav_header_user_name.setText(sp.getString("userName",""));
-        try{
-            String img_url=sp.getString("user_photo","");
+        nav_header_user_name.setText(session.getusername());
 
-            Picasso.get()
-                    .load(img_url)
-                    .fit()
-                    .into(header_user_image, new Callback() {
-                        @Override
-                        public void onSuccess() {
-                            Log.d("Load","Successfull");
-
-                        }
-
-                        @Override
-                        public void onError(Exception e) {
-                            Log.d("Load",e.getMessage());
-                        }
-                    });}
-        catch (Exception e){
-            Log.d("error",e.getMessage());
-        }
 
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -354,22 +302,21 @@ etSearch.setOnClickListener(new View.OnClickListener() {
                         Toast.makeText(getApplicationContext(), "Profile", Toast.LENGTH_SHORT).show();
                         break;
 
-                    case R.id.nav_settings:
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new Settings()).commit();
-                        Toast.makeText(getApplicationContext(), "Settings selected", Toast.LENGTH_SHORT).show();
-                        break;
 
-                    case R.id.nav_logout:
+                        case R.id.nav_logout:
                         MaterialAlertDialogBuilder alert = new MaterialAlertDialogBuilder(HomeActivity.this,R.style.AlertDialog);
                         alert.setMessage("Are you sure you want to log out?").setTitle("Confirmation").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 showProgressDialog("Logging out");
 
-                               sp.edit().clear().apply();
+                               session.destroy();
                                Intent intent=new Intent(getApplicationContext(),LoginActivity.class);
                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
                               hideProgressDialog();
+
+                              finish();
+
                                startActivity(intent);
 
 
@@ -389,57 +336,46 @@ etSearch.setOnClickListener(new View.OnClickListener() {
                 return false;
             }
         });
-        bottomNavigationView=findViewById(R.id.bottom_nav_view);
 
 
 
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+
+       bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
-
-
-
-
-
                 switch (item.getItemId()){
                     case R.id.bottom_nav_home:
+                         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new home()).commit();
+                         item.setChecked(true);
+                         break;
 
-                          getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new home()).commit();
-                        item.setChecked(true);
-
-
-
-                        break;
                     case R.id.bottom_nav_scan:
                          getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new scan()).commit();
                         item.setChecked(true);
+                        break;
 
-
-                          break;
                     case R.id.bottom_nav_cart:
-
                         Intent intent=new Intent(getApplicationContext(),cartActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
-
-
-
                         break;
+
                     case R.id.bottom_nav_order:
                            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new order()).commit();
                         item.setChecked(true);
-
-
-
                         break;
+
                 }
 
                 return false;
             }
         });
 
+
+
     }
+
+
 
 
     @Override
@@ -454,6 +390,7 @@ etSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
+                dialog.dismiss();
             }
         }).show();
 
@@ -481,52 +418,43 @@ etSearch.setOnClickListener(new View.OnClickListener() {
     }
 
 
-   public void getUserId() {
-       if (sp != null) {
-           if (sp.contains("jwt")) {
-
-               String userName=sp.getString("userName","");
-
-               Call<JsonResponse> getUserId = SmartAPI.getApiService().getUserId(new home().jwt, userName);
-               getUserId.enqueue(new retrofit2.Callback<JsonResponse>() {
-                   @Override
-                   public void onResponse(Call<JsonResponse> call, Response<JsonResponse> response) {
-                       if (response.isSuccessful()) {
-
-                           String status = response.body().getStatus();
-                           String message = response.body().getMessage();
-                           if (status.equalsIgnoreCase("200 OK"))
-                               sp.edit().putString("userId", message).apply();
-
-                       } else {
-                           Toasty.error(getApplicationContext(), "Session expired").show();
-                           sp.edit().clear().apply();
-                           gotoLoginActivity();
-
-                       }
 
 
-                   }
+    private void getBadgeCount() {
+        SmartAPI.getApiService().getBadgeCount(session.getJWT(),session.getUserId())
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(jsonResponse -> {
+            if (jsonResponse.getStatus().equalsIgnoreCase("200 OK"))
+            {
+                badge=bottomNavigationView.getOrCreateBadge(R.id.bottom_nav_cart);
+                Integer message=Integer.valueOf(jsonResponse.getMessage());
+                if (message>0)
+                {
+                    session.setBadgeCount(message);
 
-                   @Override
-                   public void onFailure(Call<JsonResponse> call, Throwable t) {
-                       Log.e("error", t.getMessage());
-
-                   }
-               });
+                    badge.setNumber(message);
+                        badge.setVisible(true);
 
 
-           }
-       }
-   }
+                }
+                else
+                    badge.setVisible(false);
 
-   void gotoLoginActivity(){
-        Intent intent=new Intent(getApplicationContext(),LoginActivity.class);
-      overridePendingTransition(R.anim.left2right,R.anim.right2left);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+            }
+
+        },throwable -> {});
+
+
+    }
+
+   private void goToLoginActivity()
+    {
+        Intent intent=new Intent(HomeActivity.this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
-   }
 
-
+    }
 
 }

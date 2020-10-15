@@ -1,61 +1,76 @@
 package com.example.smartpasal.model;
 
-
-
 public class ProductItems {
 
-    public String productName;
+    private String productName;
 
-    public String picture_path;
+    private String picture_path;
+    private int productId;
+    private  String price;
+    private String brand;
+    private String desc;
+    private String sku;
+    private int discount;
+    private String category;
+    private String type;
+    private int stock;
 
-    public int productId;
+    private Integer seller_id;
 
-    public String marked_price;
-    public String fixed_price;
+    private String rating;
 
-    public String brand;
-    public String desc;
-    public String sku;
-
-    public ProductItems() {
-    }
 
     //for news details
-    public ProductItems(String productName, String picture_path, int productId, String marked_price, String fixed_price, String brand, String desc, String sku) {
+    public ProductItems(String productName, String picture_path, int productId, String price, String brand, String desc, String sku,Integer discount,Integer stock) {
 
         this.productName = productName;
-
         this.picture_path = picture_path;
-
+        this.price=price;
         this.productId = productId;
-        this.marked_price = marked_price;
-        this.fixed_price = fixed_price;
         this.brand = brand;
         this.desc = desc;
         this.sku = sku;
+        this.discount=discount;
+        this.stock=stock;
 
     }
 
-    public ProductItems(String productName, String picture_path, int productId, String marked_price, String fixed_price) {
+
+
+    public ProductItems(String productName, String picture_path, int productId, String price,Integer discount,Integer stock,Integer seller_id) {
         this.productName = productName;
         this.picture_path = picture_path;
         this.productId = productId;
-        this.marked_price = marked_price;
-        this.fixed_price = fixed_price;
+        this.price=price;
+        this.discount=discount;
+        this.stock=stock;
+        this.seller_id=seller_id;
     }
 
     public ProductItems(ProductItems p) {
         this.productName = p.getProductName();
-
         this.picture_path = p.getPicture_path();
-
         this.productId = p.getProductId();
-        this.marked_price = p.getMarked_price();
-        this.fixed_price = p.getFixed_price();
+        this.price=p.getPrice();
         this.brand = p.getBrand();
         this.desc = p.getDesc();
         this.sku = p.getSku();
+        this.discount=p.getDiscount();
+        this.stock=p.getStock();
+        this.seller_id=p.getSeller_id();
+        this.rating=p.getRating();
+        this.type=p.getType();
+        this.category=p.getCategory();
 
+
+    }
+
+    public Integer getSeller_id() {
+        return seller_id;
+    }
+
+    public void setSeller_id(Integer seller_id) {
+        this.seller_id = seller_id;
     }
 
     public String getPicture_path() {
@@ -76,20 +91,12 @@ public class ProductItems {
         this.productId = productId;
     }
 
-    public String getMarked_price() {
-        return marked_price;
+    public String getPrice() {
+        return price;
     }
 
-    public void setMarked_price(String marked_price) {
-        this.marked_price = marked_price;
-    }
-
-    public String getFixed_price() {
-        return fixed_price;
-    }
-
-    public void setFixed_price(String fixed_price) {
-        this.fixed_price = fixed_price;
+    public void setPrice(String price) {
+        this.price = price;
     }
 
     public String getBrand() {
@@ -130,12 +137,62 @@ public class ProductItems {
                 "productName='" + productName + '\'' +
                 ", picture_path='" + picture_path + '\'' +
                 ", productId=" + productId +
-                ", marked_price='" + marked_price + '\'' +
-                ", fixed_price='" + fixed_price + '\'' +
+                ", price='" + price + '\'' +
                 ", brand='" + brand + '\'' +
                 ", desc='" + desc + '\'' +
                 ", sku='" + sku + '\'' +
+                ", discount=" + discount +
+                ", stock=" + stock +
                 '}';
+    }
+
+
+
+    public Integer getStock() {
+        return stock;
+    }
+
+    public void setStock(Integer stock) {
+        this.stock = stock;
+    }
+    public Integer getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(Integer discount) {
+        this.discount = discount;
+    }
+
+    public String getRating() {
+        return rating;
+    }
+
+    public void setRating(String rating) {
+        this.rating = rating;
+    }
+
+    public void setDiscount(int discount) {
+        this.discount = discount;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
     }
 }
 

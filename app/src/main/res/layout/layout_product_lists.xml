@@ -3,16 +3,18 @@
 
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
-
-           android:layout_margin="0.05dp"
+        android:layout_margin="5dp"
+        android:elevation="10dp"
 
 
 
        >
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -22,55 +24,136 @@
 
         >
 
-        <ImageView
-            android:id="@+id/ivImg"
-            android:layout_width="match_parent"
-
-            android:layout_height="100dp"
 
 
-            android:padding="1dp"
+            <ImageView
+                android:id="@+id/ivImg"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:padding="1dp"
+                android:scaleType="fitXY"
+                app:srcCompat="@color/colorAccent" />
 
 
-            android:scaleType="fitCenter"
-            app:srcCompat="@color/colorAccent" />
 
         <TextView
             android:id="@+id/tvProduct_Name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:gravity="center"
-
-            android:fontFamily="monospace"
+            android:gravity="start"
+            android:textStyle="bold"
             android:text="Name"
-
             android:textColor="@android:color/background_dark"
-            android:textSize="20sp" />
+            android:textSize="18sp" />
+
+        <RatingBar
+            android:id="@+id/ratingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="?android:attr/ratingBarStyleSmall"
+
+            android:layout_marginBottom="10dp"
+            android:numStars="5"
+            />
         <TextView
-            android:id="@+id/tvFixed_Price"
+            android:id="@+id/tvDiscountedPrice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
 
 
             android:text="Rs.1200"
-            android:textAlignment="center"
+
+            android:gravity="start"
             android:layout_marginBottom="10dp"
             android:textColor="#fc2312"
-            android:textSize="18sp"
+            android:textSize="14sp"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/tvMarked_Price"
+            android:id="@+id/tvPrice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
 
             android:text="1500"
-            android:textAlignment="center"
+            android:textAlignment="textStart"
             android:textColor="@android:color/background_dark"
             android:textSize="12sp"
             />
+
+        <TextView
+            android:id="@+id/tvIsStock"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="OUT OF STOCK"
+            android:textSize="14sp"
+            android:layout_marginTop="5dp"
+            android:textStyle="bold"
+            android:textColor="@color/google_red"
+            />
+
+        <TextView
+            android:id="@+id/textViewOptions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:text="&#8942;"
+            android:textAppearance="?android:textAppearanceLarge" />
+
+
     </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvDiscount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="-5%"
+            android:background="@drawable/roundedstyle"
+            android:textColor="@color/White"
+            android:layout_alignParentTop="true"
+            android:padding="10dp"
+            android:textSize="15sp"
+            android:textStyle="bold"
+
+            android:layout_alignParentEnd="true"/>
+
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/roundedstyle"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:padding="5dp"
+            android:visibility="gone"
+            android:backgroundTint="@color/White"
+            >
+
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:background="@drawable/ic_add_shopping_cart"
+            android:tint="@color/Black"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            />
+
+        </RelativeLayout>
+
+
+
+
+
+
+
+
+
+    </RelativeLayout>
+
 
 
     </androidx.cardview.widget.CardView>

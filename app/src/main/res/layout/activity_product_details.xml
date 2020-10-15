@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F2F2F2"
+    android:background="#EAF0F1"
     android:theme="@style/AppTheme.DarkActionBar"
-
     tools:context=".view.ProductDetails">
+
     <include layout="@layout/transparent_toolbar"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"/>
@@ -31,56 +30,69 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
+               <RelativeLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content">
+
+
+
+
+
                 <ImageView
                     android:id="@+id/ivProduct_image"
                     android:layout_width="match_parent"
                     android:layout_height="250dp"
                     android:layout_gravity="center"
                     android:scaleType="fitXY"
+                    android:layout_alignParentTop="true"
                     tools:srcCompat="@tools:sample/avatars[0]" />
 
-                <TextView
-                    android:id="@+id/tvFixed_price"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginBottom="10dp"
-                    android:fontFamily="monospace"
-                    android:lineSpacingExtra="8sp"
-                    android:text="Rs.1200"
-                    android:textAlignment="textStart"
-                    android:textColor="#fc2312"
 
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
+                   <TextView
+                       android:id="@+id/tvIsStock"
+                       android:layout_width="match_parent"
+                       android:layout_height="250dp"
 
-                <TextView
-                    android:id="@+id/tvMarked_price"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Rs.1500"
-                    android:textAlignment="textStart"
-                    android:textColor="@android:color/background_dark"
-                    android:textSize="12sp" />
+                       android:text="OUT OF \n STOCK"
+                       android:gravity="center"
+
+                       android:background="@color/colorGray"
+                       android:layout_centerVertical="true"
+                       android:textAlignment="center"
+
+                       android:textSize="50sp"
+                       android:textStyle="bold"
+                       android:textColor="@color/White"
+                       android:alpha="0.7"
+                       android:visibility="gone"
+
+
+
+
+
+
+                       />
+
+               </RelativeLayout>
+
+
 
                 <TextView
                     android:id="@+id/tvProduct_Name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/actor"
-                    android:text="Product Name"
-                    android:textColor="@color/design_default_color_on_secondary"
-                    android:textSize="22sp" />
-
-                <RatingBar
-                    android:id="@+id/ratingBar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:numStars="5"
-                    android:stepSize="0.1"
-                    android:isIndicator="true"
+                    android:fontFamily="@font/actor"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="5dp"
 
-                    />
+                    android:textStyle="bold"
+                    android:text="Product Name"
+                    android:textColor="@color/Black"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:textSize="22sp" />
+
+
 
                 <TextView
                     android:id="@+id/tvDesc"
@@ -88,13 +100,216 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/actor"
                     android:text="Product Name"
-                    android:textColor="@color/design_default_color_on_secondary"
-                    android:textSize="14sp" />
+
+                      android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/tvCouponPrice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:lineSpacingExtra="8sp"
+                    android:text="Rs.1100"
+                    android:textAlignment="textStart"
+                    android:textColor="#fc2312"
+                    android:visibility="gone"
+
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+
+
+                <TextView
+                    android:id="@+id/tvDiscountedPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Rs.1200"
+
+                    android:textColor="#fc2312"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:layout_alignParentStart="true"
+
+                    />
+
+
+
+
+
+                <TextView
+                    android:id="@+id/tvPrice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Rs.1500"
+                    android:layout_marginBottom="10dp"
+                    android:textAlignment="textStart"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tvDiscount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:text="No Discount available for this product"
+                    android:textAlignment="textStart"
+                    android:textColor="@color/google_red"
+                    android:layout_marginBottom="10dp"
+                    />
+
+                <TextView
+                    android:id="@+id/tvSellerName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Sold By \n GoldStar Shoes"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentTop="true"
+
+
+                    />
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+
+                    >
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/etCoupon"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+
+                        >
+
+                        <androidx.appcompat.widget.AppCompatEditText
+
+
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="start"
+                            android:textColor="#000"
+                            android:hint="Enter promo code"
+                            android:inputType="text"
+                            android:maxLines="1" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+
+                    <Button
+                        android:id="@+id/buApply"
+                        android:layout_width="wrap_content"
+                        android:layout_height="65dp"
+                        android:text="Apply"
+                       android:padding="8dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="20dp"
+                        android:enabled="false"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentRight="true"/>
+
+
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/tvIsCoupon"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:text="Invalid coupon code"
+                   android:textColor="@color/colorPrimary"
+                  android:visibility="gone"
+                    />
+
+
+                <RatingBar
+                    android:id="@+id/ratingBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:numStars="5"
+                    android:stepSize="0.1"
+                    style="?android:attr/ratingBarStyleSmall"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:isIndicator="true"
+
+                    />
+
+
+                <TextView
+                    android:id="@+id/tvStock"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="In stock: 0"
+                    android:layout_marginTop="5dp"
+                    android:textSize="14sp"/>
+
 
 
 
 
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="#fff"
+                android:padding="16dp"
+                >
+
+                <TextView
+                    android:id="@+id/tvIsColor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Select color for this product"
+                    android:layout_marginBottom="10dp"
+
+                    android:textSize="14sp"
+                    />
+
+
+
+                   <Spinner
+                       android:id="@+id/spColor"
+                       android:spinnerMode="dialog"
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+
+                       android:visibility="gone"
+
+                       />
+                <TextView
+                    android:id="@+id/tvIsSize"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Select size for this product"
+                    android:layout_marginBottom="10dp"
+                    android:textSize="14sp"
+                    />
+
+
+
+                <Spinner
+                    android:id="@+id/spSize"
+                    android:spinnerMode="dialog"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+
+
+                    />
+
+
+
+
+
+
+
+
+            </LinearLayout>
+
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -111,8 +326,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Specifications"
-                    android:textColor="@color/colorGray"
-                    android:textSize="24sp"
+                    android:layout_marginBottom="10dp"
+
+                    android:textSize="22sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -127,6 +343,7 @@
                     android:id="@+id/tvBrand"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
                     android:text="TextView" />
 
                 <TextView
@@ -141,12 +358,13 @@
                     android:id="@+id/tvSku"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
                     android:text="TextView" />
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="5dp"
                 android:background="#fff"
                 android:padding="16dp"
                 android:orientation="vertical">
@@ -157,7 +375,7 @@
                     android:layout_height="wrap_content"
 
                     android:text="Services"
-                    android:textColor="@color/colorGray"
+                    android:layout_marginBottom="10dp"
                     android:textSize="24sp"
                     android:textStyle="bold" />
 
@@ -165,26 +383,187 @@
                     android:id="@+id/textView16"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/ic_done"
+                    android:drawableStart="@drawable/ic_done_black_24dp"
+                    android:drawableTint="@color/Black"
                     android:text="7 Day Return"
-                    android:textColor="@color/design_default_color_on_secondary"
-                    android:textSize="18sp" />
+                    android:layout_marginBottom="5dp"
+                    android:drawablePadding="10dp"
+                    android:textSize="16sp" />
 
 
                 <TextView
                     android:id="@+id/textView17"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/ic_done"
+                    android:drawableStart="@drawable/ic_done_black_24dp"
                     android:text="Payment On Delivery"
-                    android:textColor="@color/design_default_color_on_secondary"
-                    android:textSize="18sp" />
+                    android:drawableTint="@color/Black"
+                    android:drawablePadding="10dp"
+                    android:textSize="16sp" />
 
 
             </LinearLayout>
 
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="10dp"
+                >
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@color/White"
+                    >
+
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@color/White"
+                        android:textSize="16sp"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentStart="true"
+                        android:text="Ratings and Reviews"/>
+
+                    <TextView
+                        android:id="@+id/tvMoreReview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="14sp"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentEnd="true"
+                        android:text="View More>>"/>
+
+                </RelativeLayout>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvReviews"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#FFF"
+                    android:padding="16dp"
+                    android:layout_gravity="center"
+
+                    />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/colorGray"/>
+
+
+            </LinearLayout>
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@color/White"
+
+                >
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                   android:padding="16dp"
+                    android:layout_marginTop="10dp"
+                    >
+
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/White"
+                android:textSize="16sp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true"
+                android:text="Questions about this product"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="14sp"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentEnd="true"
+                        android:text="View More>>"/>
+
+                </RelativeLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvQA"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFF"
+                android:padding="16dp"
+                android:layout_gravity="center"
+
+                />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/colorGray"/>
+
+
+
+            <TextView
+                android:id="@+id/tvAskQuestions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorAccent"
+                android:text="Ask Questions"
+                android:layout_marginTop="10dp"
+                android:background="@color/White"
+                android:textAlignment="center"
+                android:textSize="14sp"
+
+                android:layout_marginBottom="10dp"
+                />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/colorGray"/>
+
+            </LinearLayout>
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Similar Products"
+                android:padding="16dp"
+
+
+                android:textSize="16sp"
+                android:background="@color/White"
+                />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvSimilarProducts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFF"
+                android:padding="16dp"
+                android:layout_gravity="center"
+
+                />
+
         </LinearLayout>
+
+
+
+
+
 
 
     </androidx.core.widget.NestedScrollView>
@@ -195,27 +574,33 @@
         android:layout_gravity="bottom"
         android:layout_weight="0"
         android:orientation="horizontal"
+        android:background="#ffff"
         android:padding="5dp">
 
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/buBuy"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="20dp"
             android:layout_weight="1"
-            android:padding="16dp"
+            android:background="@drawable/roundedstyle"
+
+            android:padding="10dp"
             android:text="Buy Now" />
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/buCart"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:padding="16dp"
+            android:padding="10dp"
             android:visibility="visible"
             android:layout_weight="1"
             android:onClick="buAdd"
+            android:background="@drawable/roundedstyle"
+
             android:drawableStart="@drawable/ic_add_shopping_cart"
+
             android:text="Add to Cart" />
     </LinearLayout>
 

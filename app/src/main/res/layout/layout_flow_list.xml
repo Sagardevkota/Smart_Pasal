@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    android:id="@+id/cvFLow"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_centerInParent="true"
+    android:innerRadius="0dp"
+    android:shape="rectangle"
+    app:cardCornerRadius="10dp"
+    android:layout_margin="5dp"
+    android:paddingStart="8dp"
+
+
+
+
+    >
+
+    <TextView
+        android:id="@+id/tvOptions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Blue"
+        android:textSize="12sp"
+        android:padding="16dp"
+        android:textColor="@color/Black"
+        android:background="@color/LightGray"
+
+
+        />
+</androidx.cardview.widget.CardView>

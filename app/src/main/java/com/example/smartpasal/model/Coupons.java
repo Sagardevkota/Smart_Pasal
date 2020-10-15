@@ -2,13 +2,9 @@ package com.example.smartpasal.model;
 
 public class Coupons {
 
-
     private Integer id;
-
     private Integer product_id;
-
     private String coupon_code;
-
     private Integer discount;
 
     public Coupons() {

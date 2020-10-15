@@ -10,15 +10,12 @@
     android:layout_weight="1"
     android:background="#f0f8ff"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-
-
     tools:context=".fragment.home">
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
         android:nestedScrollingEnabled="false"
          android:background="#fff"
         android:orientation="vertical">
@@ -36,50 +33,121 @@
             android:visibility="gone"
             android:text="Couldnt connect to network.Please refresh the page"
             android:textColor="@color/colorGray" />
-        <com.smarteist.autoimageslider.SliderView
-            android:id="@+id/imageSlider"
+
+        <com.github.florent37.diagonallayout.DiagonalLayout
+
+
+            xmlns:diagonal="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/dvShape"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+            android:elevation="10dp"
+            app:diagonal_angle="10"
+            diagonal:diagonal_direction="right"
+            diagonal:diagonal_position="bottom"
+
+                >
+                <LinearLayout
+                    android:id="@+id/dvHome"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:background="@color/colorPrimary"
+                    />
+
+                <com.smarteist.autoimageslider.SliderView
+                    android:id="@+id/imageSlider"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="10dp"
+                    android:layout_height="130dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="10dp"
+                     app:sliderAnimationDuration="600"
+                    app:sliderAutoCycleDirection="back_and_forth"
+                    app:sliderAutoCycleEnabled="true"
+                    app:sliderIndicatorAnimationDuration="600"
+                    app:sliderIndicatorGravity="center_horizontal|bottom"
+                    app:sliderIndicatorMargin="15dp"
+                    app:sliderIndicatorOrientation="horizontal"
+                    app:sliderIndicatorPadding="3dp"
+                    app:sliderIndicatorRadius="2dp"
+                    app:sliderIndicatorSelectedColor="#5A5A5A"
+                    app:sliderIndicatorUnselectedColor="#FFF"
+                    app:sliderScrollTimeInSec="1"
+
+                    app:sliderStartAutoCycle="true" />
+
+
+            </com.github.florent37.diagonallayout.DiagonalLayout>
+
+
+
+        <TextView
             android:layout_width="match_parent"
-            android:layout_marginTop="10dp"
-            android:layout_height="150dp"
-            android:layout_marginEnd="10dp"
+            android:layout_height="wrap_content"
+            android:text="Most Sold Products Near You"
+            android:fontFamily="@font/actor"
+            android:gravity="start"
             android:layout_marginStart="10dp"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            app:sliderAnimationDuration="600"
-            app:sliderAutoCycleDirection="back_and_forth"
-            app:sliderAutoCycleEnabled="true"
-            app:sliderIndicatorAnimationDuration="600"
-            app:sliderIndicatorGravity="center_horizontal|bottom"
-            app:sliderIndicatorMargin="15dp"
-            app:sliderIndicatorOrientation="horizontal"
-            app:sliderIndicatorPadding="3dp"
-            app:sliderIndicatorRadius="2dp"
-            app:sliderIndicatorSelectedColor="#5A5A5A"
-            app:sliderIndicatorUnselectedColor="#FFF"
-            app:sliderScrollTimeInSec="1"
-            app:sliderStartAutoCycle="true" />
+            android:textColor="@color/design_default_color_on_secondary"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+
+            />
+
+        <View
+            android:layout_width="120dp"
+            android:layout_height="5dp"
+            android:background="@color/colorAccent"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+
+            />
+
+
+
+
+
+
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvMostSelling"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+
+                android:layout_gravity="center"
+
+
+                />
+
+
+
+
+
 
         <LinearLayout
             android:layout_width="match_parent"
-
             android:layout_height="wrap_content"
-
-
+            android:layout_marginTop="10dp"
             android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+
                 android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/textView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="100dp"
+                    android:layout_marginStart="10dp"
 
                     android:fontFamily="@font/actor"
-                    android:gravity="center"
+                    android:gravity="start"
                     android:text="Categories"
                     android:textColor="@color/design_default_color_on_secondary"
                     android:textSize="20sp"
@@ -93,110 +161,159 @@
                     android:layout_weight="1"
                     android:gravity="end"
                     android:text="SHOP MORE>>"
-                    android:textColor="@color/design_default_color_error" />
+                    android:textColor="@color/colorPrimary" />
             </LinearLayout>
+
+            <View
+                android:layout_width="120dp"
+                android:layout_height="5dp"
+                android:background="@color/colorAccent"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="10dp"
+
+                />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:orientation="vertical"
+                android:padding="4dp"
+                android:background="#EAF0F1"
+                >
+
+
+
+            <com.github.florent37.shapeofview.shapes.CutCornerView
+                android:id="@+id/clipCorner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:elevation="4dp"
+                android:layout_margin="2dp"
+                app:shape_cutCorner_topLeftSize="20dp"
+                app:shape_cutCorner_bottomRightSize="20dp"
 
                 >
 
-                <TextView
-                    android:id="@+id/tvSneakers"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:drawableTop="@drawable/ic_sneakers"
-                    android:gravity="center"
-                    android:text="#Sneakers"
-                    android:onClick="tvClick"
-                    android:textColor="@color/design_default_color_on_secondary" />
+                    android:orientation="vertical"
+                    android:background="#fff"
+                    android:padding="8dp"
 
-                <TextView
-                    android:id="@+id/tvJackets"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:drawableTop="@drawable/ic_jacket"
-                    android:gravity="center"
-                    android:text="#Jackets"
-                    android:onClick="onClick"
-                    android:textColor="@color/design_default_color_on_secondary" />
 
-                <TextView
-                    android:id="@+id/tvWatch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:drawableTop="@drawable/ic_watch"
-                    android:gravity="center"
-                    android:text="#watch"
-                    android:onClick="onClick"
-                    android:textColor="@color/design_default_color_on_secondary" />
 
-                <TextView
-                    android:id="@+id/tvBag"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:drawableTop="@drawable/ic_bagpack"
-                    android:gravity="center"
-                    android:text="#Bagpack"
-                    android:onClick="onClick"
-                    android:textColor="@color/design_default_color_on_secondary" />
-            </LinearLayout>
+                    >
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/tvPhones"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:drawableTop="@drawable/ic_phone"
-                    android:gravity="center"
-                    android:text="#Phones"
-                    android:onClick="onClick"
-                    android:textColor="@color/design_default_color_on_secondary" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingBottom="10dp"
+                        android:paddingTop="10dp"
 
-                <TextView
-                    android:id="@+id/tvSunGlasses"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:drawableTop="@drawable/ic_sunglasses"
-                    android:gravity="center"
-                    android:onClick="onClick"
-                    android:text="#Glasses"
-                    android:textColor="@color/design_default_color_on_secondary" />
+                        >
 
-                <TextView
-                    android:id="@+id/tvLaptops"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:drawableTop="@drawable/ic_laptop"
-                    android:gravity="center"
-                    android:text="#Laptop"
-                    android:onClick="onClick"
-                    android:textColor="@color/design_default_color_on_secondary" />
+                        <TextView
+                            android:id="@+id/tvSneakers"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:drawableTop="@drawable/ic_sneakers"
+                            android:gravity="center"
+                            android:text="#Sneakers"
+                            android:textColor="@color/design_default_color_on_secondary" />
 
-                <TextView
-                    android:id="@+id/tvTv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:drawableTop="@drawable/ic_tv"
-                    android:gravity="center"
-                    android:text="#Television"
-                    android:onClick="onClick"
-                    android:textColor="@color/design_default_color_on_secondary" />
+                        <TextView
+                            android:id="@+id/tvJackets"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:drawableTop="@drawable/ic_jacket"
+                            android:gravity="center"
+                            android:text="#Jackets"
+                            android:textColor="@color/design_default_color_on_secondary" />
+
+                        <TextView
+                            android:id="@+id/tvWatch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:drawableTop="@drawable/ic_watch"
+                            android:gravity="center"
+                            android:text="#watch"
+
+                            android:textColor="@color/design_default_color_on_secondary" />
+
+                        <TextView
+                            android:id="@+id/tvBag"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:drawableTop="@drawable/ic_bagpack"
+                            android:gravity="center"
+                            android:text="#Bagpack"
+
+                            android:textColor="@color/design_default_color_on_secondary" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        android:paddingBottom="10dp"
+                        android:paddingTop="10dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tvPhones"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:drawableTop="@drawable/ic_phone"
+                            android:gravity="center"
+                            android:text="#Phones"
+
+                            android:textColor="@color/design_default_color_on_secondary" />
+
+                        <TextView
+                            android:id="@+id/tvSunGlasses"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:drawableTop="@drawable/ic_sunglasses"
+                            android:gravity="center"
+
+                            android:text="#Glasses"
+                            android:textColor="@color/design_default_color_on_secondary" />
+
+                        <TextView
+                            android:id="@+id/tvLaptops"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:drawableTop="@drawable/ic_laptop"
+                            android:gravity="center"
+                            android:text="#Laptop"
+
+                            android:textColor="@color/design_default_color_on_secondary" />
+
+                        <TextView
+                            android:id="@+id/tvTv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:drawableTop="@drawable/ic_tv"
+                            android:gravity="center"
+                            android:text="#Television"
+
+                            android:textColor="@color/design_default_color_on_secondary" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+            </com.github.florent37.shapeofview.shapes.CutCornerView>
 
             </LinearLayout>
 
@@ -205,7 +322,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginTop="10dp"
+            >
 
             <TextView
                 android:layout_width="match_parent"
@@ -213,28 +332,37 @@
 
                 android:background="#fff"
                 android:fontFamily="sans-serif-condensed-medium"
-                android:gravity="top"
-                android:padding="16dp"
+                android:gravity="start"
+               android:layout_marginStart="10dp"
                 android:text="Most Popular Items"
-                android:textAlignment="center"
                 android:textColor="@android:color/background_dark"
                 android:textSize="20sp"
                 android:textStyle="bold" />
+
+            <View
+                android:layout_width="120dp"
+                android:layout_height="5dp"
+                android:background="@color/colorAccent"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="10dp"
+
+                />
+
+
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/endless_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#eee"
+                android:background="#EAF0F1"
                 android:layout_gravity="center"
-
-
-                android:layout_marginTop="10dp"
                 android:layout_marginBottom="50dp"
 
 
 
+
                 />
+
 
 
         </LinearLayout>

@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.smartpasal.model.ProductItems;
 import com.example.smartpasal.view.ProductDetails;
 import com.example.smartpasal.R;
-import com.example.smartpasal.model.SearchItems;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -50,25 +49,26 @@ public class SearchAdapterItems extends RecyclerView.Adapter<SearchAdapterItems.
 
         final ProductItems currentItem=productItems.get(position);
 
-        holder.tvProduct_Name.setText(currentItem.productName);
-        holder.tvMarked_Price.setText("Rs. "+currentItem.marked_price);
-
-        holder.tvFixed_Price.setText("Rs. "+currentItem.fixed_price);
+        holder.tvProduct_Name.setText(currentItem.getProductName());
+        holder.tvMarked_Price.setText("Rs. "+currentItem.getPrice());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent(context, ProductDetails.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra("product_id",currentItem.productId);
+                intent.putExtra("product_id",currentItem.getProductId());
 
-                intent.putExtra("product_name",currentItem.productName );
-                intent.putExtra("fixed_price",currentItem.fixed_price);
-                intent.putExtra("marked_price",currentItem.marked_price);
-                intent.putExtra("product_photo",currentItem.picture_path);
-                intent.putExtra("brand",currentItem.brand);
-                intent.putExtra("sku",currentItem.sku);
-                intent.putExtra("desc",currentItem.desc);
+                intent.putExtra("product_name",currentItem.getProductName() );
+                intent.putExtra("price",currentItem.getPrice());
+
+                intent.putExtra("product_photo",currentItem.getPicture_path());
+                intent.putExtra("brand",currentItem.getBrand());
+                intent.putExtra("sku",currentItem.getSku());
+                intent.putExtra("desc",currentItem.getDesc());
+                intent.putExtra("rating",currentItem.getRating());
+                intent.putExtra("category",currentItem.getCategory());
+                intent.putExtra("type",currentItem.getType());
                 context.startActivity(intent);
 
 

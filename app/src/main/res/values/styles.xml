@@ -6,10 +6,10 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-
-
+        <item name="android:windowAnimationStyle">@style/CustomActivityAnimation</item>
 
     </style>
+
 
     <style name="AppTheme.DarkActionBar">
         <item name="windowActionBar">true</item>
@@ -20,6 +20,7 @@
         <item name="android:textColorPrimary">@color/White </item>
         <item name="windowActionModeOverlay">true</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowAnimationStyle">@style/CustomActivityAnimation</item>
 
     </style>
 
@@ -27,6 +28,7 @@
 
     <style name="AppTheme.TransparentActionBar" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <item name="windowActionBar">true</item>
+        <item name="android:windowAnimationStyle">@style/CustomActivityAnimation</item>
 
         <item name="android:homeAsUpIndicator">@drawable/ic_arrow_back</item>
         <item name="colorPrimary">@color/transparentColor</item>
@@ -53,10 +55,17 @@
     <style name="AlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
         <item name="android:windowAnimationStyle">@style/DialogAnimation</item>
         <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
+        <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
+        <item name="android:windowCloseOnTouchOutside">false</item>
     </style>
     <style name="NegativeButtonStyle" parent="Widget.MaterialComponents.Button.TextButton">
-        <item name="android:textColor">#FF0000</item>
+        <item name="android:textColor">@color/google_red</item>
     </style>
+
+    <style name="PositiveButtonStyle" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">@color/google_green</item>
+    </style>
+
 
 
     <style name="AppTheme.WhiteAccent">
@@ -65,5 +74,14 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+
+    <style name="CustomActivityAnimation" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/slide_in_right</item>
+        <item name="android:activityOpenExitAnimation">@anim/slide_out_left</item>
+        <item name="android:activityCloseEnterAnimation">@anim/slide_in_left</item>
+        <item name="android:activityCloseExitAnimation">@anim/slide_out_right</item>
+    </style>
+
 
 </resources>

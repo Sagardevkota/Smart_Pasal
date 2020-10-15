@@ -22,7 +22,7 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="160dp"
-            android:layout_marginTop="-12dp"
+            android:layout_marginTop="-15dp"
             android:layout_marginBottom="0dp"
             android:src="@drawable/ic_toolbar" />
 
@@ -57,8 +57,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:errorEnabled="true"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
 
-                android:background="#fff"
+
+
                 app:placeholderTextColor="#000"
                      >
 
@@ -68,15 +70,15 @@
                     android:layout_height="wrap_content"
 
                     android:drawableStart="@drawable/ic_email_24px"
-                    android:drawablePadding="10dp"
-                    android:gravity="center"
-                    android:background="#fff"
+                    android:drawablePadding="20dp"
+
+
+
                     android:textColor="#000"
 
                     android:textAlignment="center"
                     app:passwordToggleTint="@color/colorPrimary"
                     android:hint="Email"
-                    android:inputType="textEmailAddress"
 
                     android:maxLines="1" />
 
@@ -88,7 +90,8 @@
                 android:layout_height="wrap_content"
                 app:errorEnabled="true"
                 app:counterEnabled="true"
-                android:background="#fff"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+
                 app:placeholderTextColor="#000"
                 app:counterMaxLength="15"
                 app:passwordToggleEnabled="true">
@@ -99,9 +102,9 @@
                     android:layout_height="wrap_content"
 
                     android:drawableStart="@drawable/ic_lock_24px"
-                    android:drawablePadding="10dp"
-                    android:gravity="center"
-                    android:background="#fff"
+                    android:drawablePadding="20dp"
+
+
                     android:textColor="#000"
 
                     android:textAlignment="center"
@@ -121,6 +124,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+
                 app:errorEnabled="true"
                 app:passwordToggleEnabled="true">
 
@@ -130,10 +135,10 @@
                     android:layout_height="wrap_content"
 
                     android:drawableStart="@drawable/ic_lock_24px"
-                    android:background="#fff"
+
                     android:textColor="#000"
-                    android:drawablePadding="10dp"
-                    android:gravity="center"
+                    android:drawablePadding="20dp"
+
 
                     android:textAlignment="center"
                     android:maxLength="15"
@@ -152,8 +157,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:errorEnabled="true"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
 
-                android:background="#fff"
+
+
                 app:placeholderTextColor="#000"
                 >
 
@@ -163,9 +170,9 @@
                     android:layout_height="wrap_content"
 
                     android:drawableStart="@drawable/ic_location_on_24px"
-                    android:drawablePadding="10dp"
-                    android:gravity="center"
-                    android:background="#fff"
+                    android:drawablePadding="20dp"
+
+
                     android:textColor="#000"
 
                     android:textAlignment="center"
@@ -204,31 +211,92 @@
                 android:layout_height="wrap_content"
                 app:errorEnabled="true"
                 app:counterEnabled="true"
-                android:background="#fff"
+
                 app:counterMaxLength="10"
                 app:placeholderTextColor="#000"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+
                 >
 
                 <androidx.appcompat.widget.AppCompatEditText
-
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
                     android:drawableStart="@drawable/ic_phone_24px"
-                    android:drawablePadding="10dp"
-                    android:gravity="center"
-                    android:background="#fff"
-                    android:textColor="#000"
+                    android:drawablePadding="20dp"
 
+                    android:textColor="#000"
                     android:textAlignment="center"
                     app:passwordToggleTint="@color/colorPrimary"
                     android:hint="Phone"
                     android:maxLength="10"
                     android:inputType="number"
-
                     android:maxLines="1" />
 
             </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/etAge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:errorEnabled="true"
+                app:counterEnabled="true"
+                app:counterMaxLength="2"
+                app:placeholderTextColor="#000"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+
+                >
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/ic_age"
+                    android:drawablePadding="20dp"
+
+                    android:textColor="#000"
+                    android:textAlignment="center"
+                    app:passwordToggleTint="@color/colorPrimary"
+                    android:hint="Age"
+                    android:maxLength="2"
+                    android:inputType="number"
+                    android:maxLines="1" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <RadioGroup
+                android:id="@+id/rbGender"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="3"
+                >
+
+                <RadioButton
+                    android:id="@+id/rbMale"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="male"
+                    android:layout_weight="1"
+                    android:checked="true"
+                    />
+
+                <RadioButton
+                    android:id="@+id/rbFemale"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checked="false"
+                    android:text="female"/>
+                <RadioButton
+                    android:id="@+id/rbOther"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checked="false"
+                    android:text="Other"/>
+
+
+            </RadioGroup>
 
 
             <Button

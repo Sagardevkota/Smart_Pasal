@@ -14,7 +14,6 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
         createNotificationChannels();
     }
 
@@ -35,8 +34,12 @@ public class App extends Application {
             channel2.setDescription("This is Channel 2");
 
             NotificationManager manager = getSystemService(NotificationManager.class);
-            manager.createNotificationChannel(channel1);
-            manager.createNotificationChannel(channel2);
+            if (manager!=null)
+            {
+                manager.createNotificationChannel(channel1);
+                manager.createNotificationChannel(channel2);
+            }
+
         }
     }
 }

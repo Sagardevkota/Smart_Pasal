@@ -3,40 +3,67 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
-
+    android:padding="8dp"
     tools:context=".view.searchList">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="50dp"
+        android:layout_marginBottom="20dp"
+        >
 
         <ImageView
             android:id="@+id/back_img"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_margin="10dp"
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+
+
+
+            android:backgroundTint="@color/colorPrimary"
+
 
             android:background="@drawable/ic_arrow_back"
           />
 
-        <EditText
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/etSearch"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:drawableEnd="@drawable/ic_search"
-            android:hint="Search in S-Mart"
-            android:inputType="textPersonName" />
+            android:layout_height="wrap_content"
+            app:errorEnabled="true"
+            android:layout_marginStart="50dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+
+
+            app:placeholderTextColor="#000"
+            >
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@drawable/ic_search"
+
+                android:gravity="start"
+                android:textColor="#000"
+                app:passwordToggleTint="@color/colorPrimary"
+                android:hint="Search in S-Mart"
+                android:inputType="text"
+                android:maxLines="1" />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
 
 
-    </LinearLayout>
+
+    </RelativeLayout>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/endless_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="8dp"
 
         />
 

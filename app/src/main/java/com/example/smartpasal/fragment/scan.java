@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.smartpasal.R;
+import com.example.smartpasal.databinding.FragmentScanBinding;
 import com.google.zxing.Result;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
@@ -30,9 +31,9 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView;
  */
 public class scan extends Fragment implements ZXingScannerView.ResultHandler {
     private static final int MY_CAMERA_REQUEST_CODE = 100;
+    FragmentScanBinding binding;
+    ZXingScannerView scannerView;
 
-ZXingScannerView scannerView;
-LinearLayout qrCameraLayout;
     public scan() {
         // Required empty public constructor
     }
@@ -48,18 +49,15 @@ LinearLayout qrCameraLayout;
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v= inflater.inflate(R.layout.fragment_scan, scannerView, false);
+        binding=FragmentScanBinding.inflate(getLayoutInflater());
+        View v=binding.getRoot();
+
         if (ContextCompat.checkSelfPermission(getContext(),Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_REQUEST_CODE);
         }
         scannerView=new ZXingScannerView(getContext());
-        qrCameraLayout = (LinearLayout) v.findViewById(R.id.qrCameraLayout);
-
-
-        qrCameraLayout.addView(scannerView);
+        binding.qrCameraLayout.addView(scannerView);
         scannerView.setResultHandler(this);
-
-
         return v;
     }
 

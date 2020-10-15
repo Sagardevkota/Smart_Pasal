@@ -3,10 +3,9 @@ package com.example.smartpasal.fragment;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.Fragment;
 
@@ -14,40 +13,26 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.smartpasal.R;
-import com.example.smartpasal.view.MainActivity;
+import com.example.smartpasal.SmartAPI.SmartAPI;
+import com.example.smartpasal.databinding.FragmentProfileBinding;
+import com.example.smartpasal.model.User;
+import com.example.smartpasal.Session.Session;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class Profile extends Fragment {
-    SharedPreferences sp;
-    TextView tvEmail;
-    TextView tvPhone;
-    TextView tvVerified;
-    TextView tvDelivery;
-    Button buEdit;
 
-    View v;
+    private FragmentProfileBinding binding;
+    private Session session;
+
 
 
     public Profile() {
@@ -62,154 +47,65 @@ public class Profile extends Fragment {
         boolean onBackPressed();
     }
 
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        session=new Session(context);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-         v= inflater.inflate(R.layout.fragment_profile, container, false);
-        sp=this.getActivity().getSharedPreferences("s-martlogin", Context.MODE_PRIVATE);
-        String id= sp.getString("userID","userID");
-        String url = "http://idealytik.com/SmartPasalWebServices/UserInfo.php?id="+id;
-        new MyAsyncTaskgetNews().execute(url);
+        binding=FragmentProfileBinding.inflate(getLayoutInflater());
+        View v=binding.getRoot();
 
-
+        getUserDetails(session.getusername());
         return v;
     }
 
-    public class MyAsyncTaskgetNews extends AsyncTask<String, String, String> {
-        @Override
-        protected void onPreExecute() {
-            //before works
-            showProgressDialog("Loading Profile");
+    private void getUserDetails(String userName) {
+        Call<User> userCall= SmartAPI.getApiService().getUserDetails(session.getJWT(),userName);
+        userCall.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (!response.isSuccessful())
+                    Log.d("unsuccess","unsuccess");
+                    else{
+                        String user_name=response.body().getUserName();
+                        String delivery_address=response.body().getDeliveryAddress();
+                        String phone=response.body().getPhone();
+                       String role=response.body().getRole();
+                       String age=response.body().getAge();
+                       String gender=response.body().getGender();
+                        binding.tvUserName.setText(user_name);
+                        binding.tvAddress.setText(delivery_address);
+                        binding.tvPhone.setText(phone);
+                      binding.tvAccountType.setText(role);
+                      binding.tvAge.setText(age);
+                      binding.tvGender.setText(gender);
+                        binding.buEdit.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Bundle args=new Bundle();
+                                fragment_edit_profile fragmentEditProfile=new fragment_edit_profile();
+                                User user=new User(userName,delivery_address,phone);
+                                args.putParcelable("userObj",user);
+                                fragmentEditProfile.setArguments(args);
 
+                               getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,fragmentEditProfile).commit();
 
-        }
-        @Override
-        protected String  doInBackground(String... params) {
-            // TODO Auto-generated method stub
-            try {
-                String NewsData;
-                //define the url we have to connect with
-                URL url = new URL(params[0]);
-                //make connect with url and send request
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                //waiting for 7000ms for response
-                urlConnection.setConnectTimeout(7000);//set timeout to 5 seconds
-
-                urlConnection.setRequestProperty("APIKEY",MainActivity.Smart_api_key);
-
-                try {
-                    //getting the response data
-                    InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-                    //convert the stream to string
-                    NewsData = ConvertInputToStringNoChange(in);
-                    //send to display data
-                    publishProgress(NewsData);
-
-                    urlConnection.setRequestProperty("APIKEY", MainActivity.Smart_api_key);
-                } finally {
-                    //end connection
-                    urlConnection.disconnect();
-                }
-
-            }catch (Exception ex){
-                Log.d("Internet error",ex.getMessage());
-            }
-            return null;
-        }
-        protected void onProgressUpdate(String... progress) {
-
-            try{
-                JSONArray userInfo = new JSONArray(progress[0]);
-                for (int i = 0; i < userInfo.length(); i++) {
-                    JSONObject userCredentials = userInfo.getJSONObject(i);
-
-                    tvEmail= v.findViewById(R.id.tvEmail);
-                    tvPhone= v.findViewById(R.id.tvPhone);
-                    buEdit=v.findViewById(R.id.buEdit);
-                    tvDelivery=v.findViewById(R.id.tvDelivery);
-                    final String email=userCredentials.getString("email");
-                  final   String phone=userCredentials.getString("phone");
-                  String delivery_address=userCredentials.getString("delivery_address");
-                  tvDelivery.setText(delivery_address);
-
-                    tvEmail.setText(email);
-                    tvPhone.setText(phone);
-                    tvVerified= v.findViewById(R.id.tvVerified);
-                    String verified=userCredentials.getString("verified");
-                    if (verified.equals("1"))
-                    {
-                        tvVerified.setText("Yes");
-
-                    }
-                    else
-                    {
-                        tvVerified.setText("No");
-                    }
-
-                    buEdit.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Bundle b=new Bundle();
-                            b.putString("email",email);
-                            b.putString("phone",phone);
-                           new fragment_edit_profile().setArguments(b);
-
-                            getActivity().getSupportFragmentManager().beginTransaction()
-                                    .replace(R.id.fragment_container, new fragment_edit_profile(), "findThisFragment")
-                                    .addToBackStack(null)
-                                    .commit();
-
-
-                        }
-                    });
-
+                            }
+                        });
 
                 }
-
             }
 
-
-            catch (Exception ex) {
-                Log.d("er", ex.getMessage());
-            }
-
-        }
-
-
-        protected void onPostExecute(String  result2){
-            hideProgressDialog();
-
-
-
-
-        }
-
-
-
-
-    }
-
-    // this method convert any stream to string
-    public static String ConvertInputToStringNoChange(InputStream inputStream) {
-
-        BufferedReader bureader=new BufferedReader( new InputStreamReader(inputStream));
-        String line ;
-        String linereultcal="";
-
-        try{
-            while((line=bureader.readLine())!=null) {
-
-                linereultcal+=line;
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
 
             }
-            inputStream.close();
-
-
-        }catch (Exception ex){}
-
-        return linereultcal;
+        });
     }
 
 

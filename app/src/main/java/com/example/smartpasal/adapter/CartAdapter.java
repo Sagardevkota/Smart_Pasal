@@ -2,10 +2,8 @@ package com.example.smartpasal.adapter;
 
 import android.content.Context;
 
-import android.graphics.Paint;
-
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,18 +13,24 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smartpasal.R;
-import com.example.smartpasal.SmartAPI.JsonResponse;
-import com.example.smartpasal.SmartAPI.SmartAPI;
-import com.example.smartpasal.fragment.home;
-import com.example.smartpasal.model.Coupons;
-import com.example.smartpasal.model.ProductItems;
 
+import com.example.smartpasal.Session.Session;
+import com.example.smartpasal.model.CartResponse;
+import com.example.smartpasal.model.Checkout;
+
+
+import com.example.smartpasal.view.cartActivity;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.shawnlin.numberpicker.NumberPicker;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -34,26 +38,24 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import retrofit2.Call;
-import retrofit2.Response;
+import es.dmoral.toasty.Toasty;
+
 
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.Myviewholder> {
 
 
-    public ArrayList<ProductItems> productItems;
+    public ArrayList<CartResponse> productItems;
     Context context;
     ArrayList<HashMap<String,String>> numCheckboxes=new ArrayList<>();
     TextView tvTotalPrice;
+    ArrayList<Checkout> orders=new ArrayList<>();
 
 
 
-    public CartAdapter(ArrayList<ProductItems> productItems, Context context, TextView tvTotalPrice) {
+    public CartAdapter(ArrayList<CartResponse> productItems, Context context, TextView tvTotalPrice) {
         this.productItems=productItems;
         this.context=context;
         this.tvTotalPrice=tvTotalPrice;
-
-
-
     }
 
 
@@ -61,95 +63,165 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.Myviewholder> 
     @NonNull
     @Override
     public Myviewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_cart_lists, parent, false);
         Myviewholder view = new Myviewholder(v);
         return view;
 
     }
 
+    private void setOrders(CartResponse c){
+        orders.add(
+                new Checkout(
+                        c.getProductName(),
+                        c.getProductId(),
+                        c.getColor(),
+                        c.getSize(),
+                        Integer.valueOf(c.getPrice()),
+                       1,
+                        c.getPicture_path()
+
+                )
+        );
+
+    }
+
+    public void updateOrders(Integer position,CartResponse c,Integer totaPrice,Integer qty){
+        orders.set(position,new Checkout(
+                c.getProductName(),
+                c.getProductId(),
+                c.getColor(),
+                c.getSize(),
+                totaPrice,
+                qty,
+                c.getPicture_path()
+        ));
+    }
+
+    public ArrayList<Checkout> getOrders(){
+        return  orders;
+    }
+
+    private void updateList(Integer position,CartResponse c){
+        productItems.set(position,c);
+    }
+
     @Override
     public void onBindViewHolder(@NonNull Myviewholder holder, int position) {
-        final ProductItems currentItem=productItems.get(position);
+        final CartResponse currentItem=productItems.get(position);
+        String product_name=currentItem.getProductName();
+        String price=currentItem.getPrice();
+        Integer discount=currentItem.getDiscount();
+        holder.tvProduct_Name.setText(product_name);
+        String size=String.valueOf(currentItem.getSize());
+        String color=currentItem.getColor();
+//        if (size.equalsIgnoreCase("0.0"))
+//            holder.tvSize.setVisibility(View.GONE);
+//        else  holder.tvSize.setText("Size:  "+size);
 
-        holder.tvProduct_Name.setText(currentItem.productName);
-        holder.tvMarked_Price.setText("Rs. "+currentItem.marked_price);
 
-        holder.tvFixed_Price.setText("Rs. "+currentItem.fixed_price);
+        holder.tvPrice.setText("Rs. "+price);
         tvTotalPrice.setText("Rs. "+String.valueOf(getTotal()));
+
+        CartResponse orderCart=new CartResponse(
+                currentItem.getProductId(),
+                currentItem.getProductName(),
+                currentItem.getDesc(),
+                String.valueOf(currentItem.getPrice()),
+                currentItem.getCategory(),
+                currentItem.getBrand(),
+                currentItem.getSku(),
+                currentItem.getType(),
+                currentItem.getPicture_path(),
+                currentItem.getDiscount(),
+                currentItem.getStock(),
+                currentItem.getColor(),
+                currentItem.getSize()
+
+        );
+
+        holder.tvStock.setText("Only "+currentItem.getStock()+" item(s) available");
+        holder.numberPicker.setMaxValue(currentItem.getStock());
+        if (currentItem.getStock()==0)
+        {
+            Session session=new Session(context);
+            holder.checkBox.setEnabled(false);
+            holder.tvStock.setText("Sorry this product is out of stock");
+            MaterialAlertDialogBuilder alertDialogBuilder=new MaterialAlertDialogBuilder(context,R.style.AlertDialog);
+            alertDialogBuilder.setTitle("Confirmation")
+                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Toasty.success(context,String.valueOf(currentItem.getProductName())).show();
+                            new cartActivity().removeFromCart(context,session,String.valueOf(currentItem.getProductId()));
+
+                        }
+                    })
+                    .setMessage("There are item(s) in your cart that is not in stock for now.So we are removing the item")
+
+                    .setCancelable(false)
+                    .create()
+
+                    .show();
+
+
+        }
+
+
+
+        setOrders(orderCart);
+
+
+
+
+
 
         holder.numberPicker.setOnValueChangedListener((NumberPicker picker, int oldVal, int newVal)->
         {
-                Integer TotalPrice = newVal * Integer.valueOf(currentItem.fixed_price);
-                updateList(position,currentItem.productName,currentItem.picture_path,String.valueOf(currentItem.productId),currentItem.marked_price,TotalPrice);
-                holder.tvFixed_Price.setText("Rs. "+String.valueOf(TotalPrice));
+            Integer prices=Integer.valueOf(price);
+                Integer TotalPrice = newVal * prices;
+                CartResponse cartResponse=new CartResponse(
+                        currentItem.getProductId(),
+                        currentItem.getProductName(),
+                        currentItem.getDesc(),
+                        String.valueOf(TotalPrice),
+                        currentItem.getCategory(),
+                        currentItem.getBrand(),
+                        currentItem.getSku(),
+                        currentItem.getType(),
+                        currentItem.getPicture_path(),
+                        currentItem.getDiscount(),
+                        currentItem.getStock(),
+                        currentItem.getColor(),
+                        currentItem.getSize()
+
+                );
+                updateList(position,cartResponse);
+                updateOrders(position,cartResponse,TotalPrice,newVal);
+
                 tvTotalPrice.setText("Rs. "+String.valueOf(getTotal()));
+                holder.tvPrice.setText("Rs. "+String.valueOf(TotalPrice));
 
             }
         );
 
-        holder.buApply.setEnabled(false);
+
         holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
 
                 if (compoundButton.isChecked()) {
-
                     HashMap<String, String> keyV = new HashMap<>();
                     keyV.put("Position", String.valueOf(position));
-                    keyV.put("Id", String.valueOf(currentItem.productId));
-
-
-
+                    keyV.put("Id", String.valueOf(currentItem.getProductId()));
                     numCheckboxes.add(keyV);
-
-
-
                 }
-                else
-                   numCheckboxes.clear();
+                else if(!compoundButton.isChecked()) {
+                        numCheckboxes.remove(numCheckboxes.size()-1);
 
-            }
-        });
-
-        holder.etCoupon.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-                if(holder.etCoupon.getText().toString().isEmpty())
-                   holder. buApply.setEnabled(false);
-                else
-                {
-                   holder.buApply.setEnabled(true);
                 }
 
             }
         });
-
-
-        holder.buApply.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String coupon_code=holder.etCoupon.getText().toString();
-                applyCoupon(coupon_code,currentItem.getProductId(),holder);
-            }
-        });
-
-
-
-
-
-
 
         try{
             String url=currentItem.getPicture_path();
@@ -180,104 +252,53 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.Myviewholder> 
         return productItems.size();
     }
     public static class Myviewholder extends RecyclerView.ViewHolder {
-        TextView tvProduct_Name;
-        TextView tvFixed_Price;
-        TextView tvMarked_Price;
+        TextView tvProduct_Name,tvPrice,tvSize,tvDiscount,tvStock;
         ImageView ivImg;
         NumberPicker numberPicker;
         EditText etCoupon;
         Button buApply;
-        Context context;
         CheckBox checkBox;
-        TextView tvCoupon;
+        LinearLayout itemLayout;
 
         public Myviewholder(@NonNull View itemView) {
             super(itemView);
-
-
             tvProduct_Name=itemView.findViewById(R.id.tvProduct_Name);
-
-            tvFixed_Price=itemView.findViewById(R.id.tvFixed_Price);
-
-            tvMarked_Price=itemView.findViewById(R.id.tvMarked_Price);
-
-            tvMarked_Price.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-            tvCoupon=itemView.findViewById(R.id.tvCoupon);
-
-
+            tvPrice=itemView.findViewById(R.id.tvPrice);
+            tvStock=itemView.findViewById(R.id.tvStock);
             ivImg=itemView.findViewById(R.id.ivImg);
             numberPicker=itemView.findViewById(R.id.num_picker);
             etCoupon=itemView.findViewById(R.id.etCoupon);
             buApply=itemView.findViewById(R.id.buApply);
             checkBox=itemView.findViewById(R.id.checkbox_item);
-
-
+            tvSize=itemView.findViewById(R.id.tvSize);
+            tvDiscount=itemView.findViewById(R.id.tvDiscount);
         }
     }
 
-    public void updateList(Integer position, String tvName, String picture_path ,String user_id,String marked_price,Integer amount){
-
-
-        productItems.set(position,new ProductItems(tvName,picture_path,Integer.valueOf(user_id),marked_price,String.valueOf(amount)));
-
-    }
 
     public Integer getTotal(){
 
-
         Integer totalPrice=0;
-
-
         for (int i = 0; i < productItems.size(); i++) {
-
-            totalPrice+=(Integer.valueOf(productItems.get(i).fixed_price));
+            totalPrice+=(Integer.parseInt(productItems.get(i).getPrice()));
         }
         return totalPrice;
 
     }
 
     public ArrayList<HashMap<String,String>> getNumCheckBoxes(){
-
         return numCheckboxes;
-
     }
 
-    public void applyCoupon(String coupon_code,Integer product_id,Myviewholder myviewholder){
-        Coupons coupons=new Coupons(product_id,coupon_code);
-       Call<JsonResponse> checkCoupon= SmartAPI.getApiService().checkCoupon(home.jwt,coupons);
-
-       checkCoupon.enqueue(new retrofit2.Callback<JsonResponse>() {
-           @Override
-           public void onResponse(Call<JsonResponse> call, Response<JsonResponse> response) {
-               if (!response.isSuccessful())
-                   Log.d("unsuccess","unsuccess");
-               else{
-                   String status=response.body().getStatus();
-                           String message=response.body().getMessage();
-                           if (status.equalsIgnoreCase("200 OK")){
-                               Integer discount=Integer.valueOf(message);
-
-                               myviewholder.tvCoupon.setText("Discount applied of " + discount +"%");
-                               myviewholder.tvCoupon.setVisibility(View.VISIBLE);
-
-                           }
-                           else
-                           {
-                               myviewholder.tvCoupon.setText(message);
-                               myviewholder.tvCoupon.setVisibility(View.VISIBLE);
-                           }
-               }
-           }
-
-           @Override
-           public void onFailure(Call<JsonResponse> call, Throwable t) {
-
-           }
-       });
-
-
-
+    public void removeItem(Integer position){
+        productItems.remove(position);
+        notifyItemRangeChanged(position,productItems.size());
     }
+
+
+
+
+
 
 
 }

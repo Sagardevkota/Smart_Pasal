@@ -2,19 +2,12 @@ package com.example.smartpasal.service;
 
 import android.app.Notification;
 import android.app.PendingIntent;
-import android.app.Service;
-import android.content.Intent;
 import android.graphics.Color;
-import android.os.IBinder;
-import android.support.v4.app.INotificationSideChannel;
 import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-
 import com.example.smartpasal.R;
-import com.example.smartpasal.adapter.App;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;

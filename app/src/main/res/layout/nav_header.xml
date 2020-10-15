@@ -31,7 +31,7 @@
         android:layout_width="100dp"
         android:layout_gravity="top|center"
         android:layout_marginTop="50dp"
-        android:src="@mipmap/ic_launcher"
+        android:src="@drawable/avatar"
         android:elevation="5dp"
         android:scaleType="centerCrop"
          />

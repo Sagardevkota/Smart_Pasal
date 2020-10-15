@@ -23,11 +23,7 @@
                 android:id="@+id/nav_home"
                 android:icon="@drawable/ic_account"
                 />
-            <item
-                android:title="settings"
-                android:id="@+id/nav_settings"
-                android:icon="@drawable/ic_settings_24px"
-                />
+
             <item
                 android:title="logout"
                 android:icon="@drawable/ic_logout"
