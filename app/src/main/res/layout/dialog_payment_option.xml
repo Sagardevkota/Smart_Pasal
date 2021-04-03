@@ -104,12 +104,49 @@
             android:drawableStart="@drawable/ic_touch_app_24px"
             android:drawableTint="@color/colorPrimary"
             android:drawablePadding="10dp"
+            android:layout_marginBottom="3dp"
             android:text="Tap here to get current location"/>
 
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="Please make sure you have filled up everything correctly!!!!"
+            />
 
 
 
+
+
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            >
+
+            <Button
+                android:id="@+id/buCancel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Cancel"
+                android:layout_weight="1"
+                android:layout_margin="8dp"
+                />
+
+
+            <Button
+                android:id="@+id/buContinue"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Continue"
+                android:layout_weight="1"
+                android:layout_margin="8dp"
+                />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
 
 

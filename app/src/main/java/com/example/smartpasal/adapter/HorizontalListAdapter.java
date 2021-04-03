@@ -15,6 +15,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.smartpasal.SmartAPI.SmartAPI;
 import com.example.smartpasal.view.ProductDetails;
 import com.example.smartpasal.model.ProductItems;
 import com.example.smartpasal.R;
@@ -88,33 +89,18 @@ public class HorizontalListAdapter extends RecyclerView.Adapter<HorizontalListAd
 
 
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent=new Intent(context, ProductDetails.class);
-                intent.putExtra("product_id",currentItem.getProductId());
-                intent.putExtra("product_name",currentItem.getProductName() );
-                intent.putExtra("price",currentItem.getPrice());
-                intent.putExtra("product_photo",currentItem.getPicture_path());
-                intent.putExtra("brand",currentItem.getBrand());
-                intent.putExtra("sku",currentItem.getSku());
-                intent.putExtra("desc",currentItem.getDesc());
-                intent.putExtra("discount",currentItem.getDiscount());
-                intent.putExtra("stock",currentItem.getStock());
-                intent.putExtra("seller_id",currentItem.getSeller_id());
-                intent.putExtra("rating",currentItem.getRating());
-                intent.putExtra("category",currentItem.getCategory());
-                intent.putExtra("type",currentItem.getType());
+        holder.itemView.setOnClickListener(view -> {
+            Intent intent=new Intent(context, ProductDetails.class);
+            intent.putExtra("product",currentItem);
 
-                context.startActivity(intent);
+            context.startActivity(intent);
 
 
-            }
         });
 
 
         try{
-            String url=currentItem.getPicture_path();
+            String url= SmartAPI.IMG_BASE_URL+currentItem.getPicturePath();
 
             Picasso.get()
                     .load(url)

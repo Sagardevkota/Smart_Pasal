@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 
+    android:id="@+id/rootLayout"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,44 +11,55 @@
     tools:context=".view.cartActivity">
 
 
-    <TextView
-        android:id="@+id/tvEmptyCart"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-              android:layout_marginTop="10dp"
-        android:text="Your cart is empty"
-        android:textSize="18sp"
-        android:gravity="center"
-        android:fontFamily="@font/fauna_one"
-        android:textColor="@color/Black"
+
+
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:visibility="gone"
+        android:id="@+id/noItemLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
 
-        />
 
 
+
+        <TextView
+            android:id="@+id/tvNoItemsInCart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="There are no items in your cart...... "
+            android:padding="16dp"
+            />
+
+        <Button
+            android:id="@+id/buContinueShopping"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Continue Shopping"/>
+
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/LVNews"
+        android:id="@+id/rvCart"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:background="#fff"
         android:padding="16dp"
 
-
-
         />
 
     <LinearLayout
-        android:id="@+id/calcualteLayout"
+        android:id="@+id/calculateLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:weightSum="1"
-
-
         android:orientation="horizontal">
 
 
@@ -55,12 +67,13 @@
             android:id="@+id/tvTotalPrice"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="0.25"
-            android:textColor="#ff00"
             android:layout_marginStart="5dp"
+            android:layout_weight="0.25"
+            android:fontFamily="sans-serif-condensed-medium"
             android:gravity="center_vertical"
-            android:textSize="18sp"
-            android:text="Rs. " />
+            android:text="Rs. "
+            android:textColor="#ff00"
+            android:textSize="18sp" />
 
         <Button
             android:id="@+id/buCheckOut"
@@ -69,7 +82,6 @@
             android:layout_weight="0.75"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
-
             android:text="Place Order" />
     </LinearLayout>
 

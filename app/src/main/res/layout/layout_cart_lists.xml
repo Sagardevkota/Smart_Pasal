@@ -1,132 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
-    android:id="@+id/cartItemLayout"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cartItemLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
     android:orientation="vertical">
 
 
-
-
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:layout_weight="2"
-
-    >
-
-
-    <CheckBox
-        android:id="@+id/checkbox_item"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.2"
-        android:layout_gravity="center_vertical"
-
-
-        />
-
-    <ImageView
-        android:id="@+id/ivImg"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-
-        android:scaleType="fitCenter"
-        android:src="@drawable/robot"
-        android:layout_weight="0.6"
-        android:layout_gravity="center"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-
-
-
-
-      />
-
-
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_weight="1.2"
-        android:padding="8dp"
+        android:orientation="horizontal"
+
         >
 
 
-
-        <TextView
-            android:id="@+id/tvProduct_Name"
-            android:layout_width="wrap_content"
-            android:layout_height="20dp"
-            android:layout_marginTop="10dp"
-            android:fontFamily="@font/roboto_slab_light"
-            android:text="Name"
-            android:textColor="@android:color/background_dark"
-            android:textSize="16sp"
-            />
-
-        <TextView
-            android:id="@+id/tvStock"
+        <CheckBox
+            android:id="@+id/checkbox_item"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Only item left"
-            android:textSize="12sp"
-            android:textColor="@color/colorPrimary"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="5dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="-5dp"
+
             />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
+        <ImageView
+            android:id="@+id/ivImg"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:scaleType="fitXY"
+            android:src="@drawable/robot"
+
+            />
+
+
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1.3"
+            android:orientation="vertical"
+            android:paddingStart="8dp"
 
             >
 
 
+            <TextView
+                android:id="@+id/tvProduct_Name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:fontFamily="sans-serif-condensed-medium"
+                android:text="Name"
+                android:textColor="@color/colorPrimary"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/tvPrice"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/fauna_one"
-        android:text="Rs.1200"
-        android:layout_centerVertical="true"
+            <TextView
+                android:id="@+id/tvStock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="Only item left"
+                android:textSize="12sp" />
 
-        android:textColor="#ff00"
-        android:textSize="15sp"/>
+            <TextView
+                android:id="@+id/tvDiscountApplied"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Discount Applied"
+                android:textSize="12sp" />
 
+            <TextView
+                android:id="@+id/tvPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Price"
+                android:textSize="12sp" />
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
 
-    <com.shawnlin.numberpicker.NumberPicker
-        android:id="@+id/num_picker"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_alignParentEnd="true"
-
-        app:np_dividerColor="@color/colorPrimary"
-        app:np_dividerDistance="30dp"
-        android:layout_marginEnd="10dp"
-        app:np_max="100"
-        app:np_min="1"
-        app:np_selectedTextSize="14sp"
-        app:np_textSize="8sp" />
-
-        </RelativeLayout>
-
+                >
 
 
+                <TextView
+                    android:id="@+id/tvDiscountedPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="Not Set"
+
+                    android:textColor="#ff00"
+                    android:textSize="15sp" />
+
+
+                <com.shawnlin.numberpicker.NumberPicker
+                    android:id="@+id/num_picker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_alignParentEnd="true"
+
+                    android:layout_marginEnd="10dp"
+                    app:np_dividerColor="@color/colorPrimary"
+                    app:np_dividerDistance="30dp"
+                    app:np_max="100"
+                    app:np_min="1"
+                    app:np_selectedTextSize="14sp"
+                    app:np_textSize="8sp" />
+
+            </RelativeLayout>
+
+
+        </LinearLayout>
 
     </LinearLayout>
-
-</LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="0.05dp"
-        android:background="@color/colorGray"
-        android:layout_marginTop="10dp"/>
+        android:layout_marginTop="10dp"
+        android:background="@color/colorGray" />
 </LinearLayout>

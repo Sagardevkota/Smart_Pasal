@@ -11,8 +11,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginBottom="20dp"
-        >
+        android:layout_marginBottom="20dp">
 
         <ImageView
             android:id="@+id/back_img"
@@ -20,63 +19,58 @@
             android:layout_height="match_parent"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-
-
-
-            android:backgroundTint="@color/colorPrimary"
-
-
             android:background="@drawable/ic_arrow_back"
-          />
+            android:backgroundTint="@color/colorPrimary" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/etSearch"
+
+        <AutoCompleteTextView
+            android:id="@+id/actv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:errorEnabled="true"
-            android:layout_marginStart="50dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_marginStart="35dp"
+            android:layout_marginEnd="35dp"
+            android:completionThreshold="1"
+            android:hint="Search in S-Mart" />
 
+        <ImageView
+            android:id="@+id/ivSearch"
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="10dp"
 
-            app:placeholderTextColor="#000"
-            >
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/ic_search"
 
-            <androidx.appcompat.widget.AppCompatEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawableEnd="@drawable/ic_search"
-
-                android:gravity="start"
-                android:textColor="#000"
-                app:passwordToggleTint="@color/colorPrimary"
-                android:hint="Search in S-Mart"
-                android:inputType="text"
-                android:maxLines="1" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-
+            android:backgroundTint="@color/colorPrimary" />
 
 
     </RelativeLayout>
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/endless_view"
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp"
+        android:text="Popular Searches"
+        android:fontFamily="sans-serif-condensed-medium"
+        android:textSize="18sp"
+        />
 
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/keywordChipGroup"
+        android:layout_width="match_parent"
+        app:chipSpacingVertical="2dp"
+        android:layout_height="wrap_content"
+        app:singleSelection="true"
         />
 
 
-        <ProgressBar
-            android:id="@+id/progress_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            />
 
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
 
-
+        />
 
 
 </LinearLayout>

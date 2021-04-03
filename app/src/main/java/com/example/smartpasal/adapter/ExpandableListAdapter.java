@@ -1,7 +1,6 @@
 package com.example.smartpasal.adapter;
 
 
-
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -25,20 +24,18 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
-    List<String> header_titles;
-    HashMap<String,List<String>> child_titles;
-    Context context;
-     FragmentManager fragmentManager;
-     Resources resources;
+    private final List<String> header_titles;
+    private final HashMap<String, List<String>> child_titles;
+    private final Context context;
 
 
-    public ExpandableListAdapter(Context context, Resources resources, List<String> header_titles, HashMap<String,List<String>> child_titles){
-        this.resources=resources;
-        this.context=context;
-        this.header_titles=header_titles;
-        this.child_titles=child_titles;
+    public ExpandableListAdapter(Context context, Resources resources, List<String> header_titles, HashMap<String, List<String>> child_titles) {
+        this.context = context;
+        this.header_titles = header_titles;
+        this.child_titles = child_titles;
 
     }
+
     @Override
     public int getGroupCount() {
         return header_titles.size();
@@ -76,12 +73,12 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getGroupView(int i, boolean b, View view, ViewGroup viewGroup) {
-        final String title=(String) this.getGroup(i);
-        if (view==null){
-            LayoutInflater layoutInflater=(LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view=layoutInflater.inflate(R.layout.layout_parent,null);
+        final String title = (String) this.getGroup(i);
+        if (view == null) {
+            LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            view = layoutInflater.inflate(R.layout.layout_parent, null);
         }
-        TextView textView=view.findViewById(R.id.heading_item);
+        TextView textView = view.findViewById(R.id.heading_item);
         textView.setText(title);
 
 
@@ -90,15 +87,14 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getChildView(int i, int i1, boolean b, View view, ViewGroup viewGroup) {
-        final String title=(String) this.getChild(i,i1);
-        if (view==null){
-            LayoutInflater layoutInflater=(LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view=layoutInflater.inflate(R.layout.layout_child,null);
-
+        final String title = (String) this.getChild(i, i1);
+        if (view == null) {
+            LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            view = layoutInflater.inflate(R.layout.layout_child, null);
 
 
         }
-        TextView textView=view.findViewById(R.id.child_items);
+        TextView textView = view.findViewById(R.id.child_items);
         textView.setText(title);
 //        String lowTitle=title.trim().toLowerCase();
 //

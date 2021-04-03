@@ -31,31 +31,25 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView;
  */
 public class scan extends Fragment implements ZXingScannerView.ResultHandler {
     private static final int MY_CAMERA_REQUEST_CODE = 100;
-    FragmentScanBinding binding;
-    ZXingScannerView scannerView;
+    private FragmentScanBinding binding;
+    private ZXingScannerView scannerView;
 
     public scan() {
         // Required empty public constructor
     }
 
-    @Override
-    public void onStart() {
-
-
-        super.onStart();
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        binding=FragmentScanBinding.inflate(getLayoutInflater());
-        View v=binding.getRoot();
+        binding = FragmentScanBinding.inflate(getLayoutInflater());
+        View v = binding.getRoot();
 
-        if (ContextCompat.checkSelfPermission(getContext(),Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_REQUEST_CODE);
         }
-        scannerView=new ZXingScannerView(getContext());
+        scannerView = new ZXingScannerView(getContext());
         binding.qrCameraLayout.addView(scannerView);
         scannerView.setResultHandler(this);
         return v;
@@ -64,26 +58,21 @@ public class scan extends Fragment implements ZXingScannerView.ResultHandler {
 
     @Override
     public void onResume() {
-
-
         scannerView.startCamera();
         super.onResume();
     }
 
     @Override
     public void onStop() {
-
         scannerView.stopCamera();
-
-
-
         super.onStop();
     }
 
     @Override
     public void handleResult(Result result) {
-        Toast.makeText(getContext(),result.getText(),Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), result.getText(), Toast.LENGTH_LONG).show();
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);

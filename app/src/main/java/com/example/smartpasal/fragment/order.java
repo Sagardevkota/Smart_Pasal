@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Interpolator;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
@@ -25,10 +26,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import es.dmoral.toasty.Toasty;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+import jp.wasabeef.recyclerview.animators.FadeInLeftAnimator;
+import jp.wasabeef.recyclerview.animators.LandingAnimator;
+import jp.wasabeef.recyclerview.animators.OvershootInRightAnimator;
+import jp.wasabeef.recyclerview.animators.ScaleInTopAnimator;
+import jp.wasabeef.recyclerview.animators.SlideInDownAnimator;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -40,7 +47,7 @@ import retrofit2.Response;
 public class order extends Fragment {
     private FragmentOrderBinding binding;
     private OrderAdapter adapter;
-    private ArrayList<OrderResponse> orderResponses=new ArrayList<>();
+    private ArrayList<OrderResponse> orderResponseList = new ArrayList<>();
     private Session session;
 
     public order() {
@@ -50,7 +57,7 @@ public class order extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        session=new Session(context);
+        session = new Session(context);
 
     }
 
@@ -58,9 +65,8 @@ public class order extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        binding= FragmentOrderBinding.inflate(getLayoutInflater());
-        View v=binding.getRoot();
-
+        binding = FragmentOrderBinding.inflate(getLayoutInflater());
+        View v = binding.getRoot();
         initRecyclerview();
         initSpinner();
         return v;
@@ -68,18 +74,18 @@ public class order extends Fragment {
     }
 
     private void initSpinner() {
-     List<String> arr=new ArrayList<>();
+        List<String> arr = new ArrayList<>();
         arr.add("Waiting");
         arr.add("Dispatched");
         arr.add("Completed");
         arr.add("Cancelled");
-        ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_dropdown_item,arr);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, arr);
         binding.spSort.setAdapter(arrayAdapter);
         binding.spSort.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-              if (arr.get(position).equalsIgnoreCase("Waiting"))
-                  getOrders("waiting");
+                if (arr.get(position).equalsIgnoreCase("Waiting"))
+                    getOrders("waiting");
                 if (arr.get(position).equalsIgnoreCase("Dispatched"))
                     getOrders("dispatched");
                 if (arr.get(position).equalsIgnoreCase("Completed"))
@@ -97,41 +103,26 @@ public class order extends Fragment {
     }
 
     private void getOrders(String status) {
-        Call<List<OrderResponse>> getorder=  SmartAPI.getApiService()
-               .getOrders(session.getJWT(),session.getUserId(),status);
-     getorder.enqueue(new Callback<List<OrderResponse>>() {
-         @Override
-         public void onResponse(Call<List<OrderResponse>> call, Response<List<OrderResponse>> response) {
-             if (response.isSuccessful()){
-                 orderResponses.clear();
-                 adapter.notifyDataSetChanged();
-                 int position=0;
-                 for (OrderResponse o:response.body()){
-                     orderResponses.add(new OrderResponse(o));
-                     Log.d("orderresponse",orderResponses.toString());
-                     adapter.notifyItemInserted(position);
-
-                     position++;
-                 }
-             }
-         }
-
-         @Override
-         public void onFailure(Call<List<OrderResponse>> call, Throwable t) {
-
-         }
-     });
-             
-
-
-
+        SmartAPI.getApiService()
+                .getOrders(session.getJWT(), status)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(orderResponses -> {
+                    adapter.notifyItemRangeRemoved(0,orderResponseList.size());
+                    orderResponseList.clear();
+                    orderResponseList.addAll(orderResponses);
+                    adapter.notifyItemRangeInserted(0,orderResponses.size());
+                });
 
     }
 
     private void initRecyclerview() {
         binding.rvOrders.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter=new OrderAdapter(orderResponses,getActivity());
+        adapter = new OrderAdapter(orderResponseList, getActivity());
         binding.rvOrders.setAdapter(adapter);
+        binding.rvOrders.setItemAnimator(new LandingAnimator());
+        binding.rvOrders.getItemAnimator().setAddDuration(200);
+
     }
 
 }

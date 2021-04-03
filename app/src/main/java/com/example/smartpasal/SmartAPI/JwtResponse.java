@@ -1,38 +1,16 @@
 package com.example.smartpasal.SmartAPI;
 
+import java.util.Arrays;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
 public class JwtResponse {
     private final String jwt;
-    private String status;
-    private String message;
-    private String  role;
+    private final String status;
+    private final String message;
+    private final String  role;
 
-    public JwtResponse(String jwt, String status, String message, String role) {
-        this.jwt = jwt;
-        this.status = status;
-        this.message = message;
-        this.role=role;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-
-
-    public String getMessage() {
-        return message;
-    }
-
-
-
-
-    public String getRole() {
-        return role;
-    }
-
-
-
-    public String getJwt() {
-        return jwt;
-    }
 }

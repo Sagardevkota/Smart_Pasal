@@ -1,6 +1,8 @@
 package com.example.smartpasal.adapter;
 
 import android.content.Context;
+import android.graphics.Paint;
+import android.support.v4.media.MediaBrowserCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,19 +14,21 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smartpasal.R;
+import com.example.smartpasal.SmartAPI.SmartAPI;
 import com.example.smartpasal.model.Checkout;
 import com.example.smartpasal.model.Orders;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.MyViewholder> {
 
-   ArrayList<Checkout> orders=new ArrayList<>();
+    List<Orders> orders = new ArrayList<>();
     Context context;
 
-    public DialogAdapter(ArrayList<Checkout> orders, Context context) {
+    public DialogAdapter(List<Orders> orders, Context context) {
         this.orders = orders;
         this.context = context;
     }
@@ -32,27 +36,38 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.MyViewhold
     @NonNull
     @Override
     public MyViewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new MyViewholder(LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_dialog_order_list,parent,false));
+        return new MyViewholder(LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_dialog_order_list, parent, false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyViewholder holder, int position) {
-        final Checkout order=orders.get(position);
+        final Orders order = orders.get(position);
         holder.tvProductName.setText(String.valueOf(order.getProductName()));
-       String color=order.getProductColor();
-        if (order.getProductColor().length()>2)
-           holder.tvColor.setText("Color: "+order.getProductColor());
+        String color = order.getProductColor();
+        if (color.length() > 2)
+            holder.tvColor.setText("Color: " + order.getProductColor());
         else
             holder.tvColor.setText("Color: Not available");
-        if (order.getProductSize()>0)
-            holder.tvSize.setText("Size: "+String.valueOf(order.getProductSize()));
+        if (order.getProductSize() > 0)
+            holder.tvSize.setText("Size: " + String.valueOf(order.getProductSize()));
         else
             holder.tvSize.setText("Size: Not available");
-        holder.tvPrice.setText("Rs. "+String.valueOf(order.getPrice()));
-        holder.tvQty.setText("Qty: "+String.valueOf(order.getQty()));
 
-        try{
-            String url=order.getProductImage();
+        holder.tvQty.setText("Qty: " + String.valueOf(order.getQuantity()));
+
+        int markedPrice = order.getPrice();
+        int discountedAmount = markedPrice * order.getDiscount() / 100;
+        int newPrice = markedPrice - discountedAmount;
+        holder.tvDiscountedPrice.setText("Rs. " + newPrice);
+        holder.tvPrice.setText("Rs. "+markedPrice);
+        holder.tvPrice.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+        holder.tvDiscount.setText("-"+order.getDiscount()+"%");
+
+        if (markedPrice==newPrice)
+            holder.tvPrice.setVisibility(View.GONE);
+
+        try {
+            String url = SmartAPI.IMG_BASE_URL+order.getPicturePath();
 
             Picasso.get()
                     .load(url)
@@ -60,17 +75,17 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.MyViewhold
                     .into(holder.ivImg, new Callback() {
                         @Override
                         public void onSuccess() {
-                            Log.d("Load","Successfull");
+                            Log.d("Load", "Successful");
 
                         }
 
                         @Override
                         public void onError(Exception e) {
-                            Log.d("Load",e.getMessage());
+                            Log.d("Load", e.getMessage());
                         }
-                    });}
-        catch (Exception e){
-            Log.d("error",e.getMessage());
+                    });
+        } catch (Exception e) {
+            Log.d("error", e.getMessage());
         }
 
 
@@ -81,9 +96,9 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.MyViewhold
         return orders.size();
     }
 
-    public static class MyViewholder extends RecyclerView.ViewHolder{
+    public static class MyViewholder extends RecyclerView.ViewHolder {
 
-        TextView tvProductName;
+        TextView tvProductName, tvDiscountedPrice, tvDiscount;
         TextView tvPrice;
         TextView tvSize;
         TextView tvColor;
@@ -92,20 +107,26 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.MyViewhold
 
         public MyViewholder(@NonNull View itemView) {
             super(itemView);
-            tvProductName=itemView.findViewById(R.id.tvProduct_Name);
-            tvPrice=itemView.findViewById(R.id.tvPrice);
-            tvSize=itemView.findViewById(R.id.tvProductSize);
-            tvColor=itemView.findViewById(R.id.tvProductColor);
-            tvQty=itemView.findViewById(R.id.tvQty);
-            ivImg=itemView.findViewById(R.id.ivImg);
+            tvProductName = itemView.findViewById(R.id.tvProduct_Name);
+            tvPrice = itemView.findViewById(R.id.tvPrice);
+            tvSize = itemView.findViewById(R.id.tvProductSize);
+            tvColor = itemView.findViewById(R.id.tvProductColor);
+            tvQty = itemView.findViewById(R.id.tvQty);
+            ivImg = itemView.findViewById(R.id.ivImg);
+            tvDiscountedPrice = itemView.findViewById(R.id.tvDiscountedPrice);
+            tvDiscount = itemView.findViewById(R.id.tvDiscount);
 
         }
     }
 
-    public Integer getTotal(){
-        Integer price=0;
-        for (Checkout c:orders){
-            price+=c.getPrice();
+    public Integer getTotal() {
+        int price = 0;
+        for (Orders c : orders) {
+            int markedPrice = c.getPrice();
+            int discount = c.getDiscount();
+            int discountedAmount = markedPrice * discount / 100;
+            Integer newPrice = markedPrice - discountedAmount;
+            price += newPrice * c.getQuantity();
         }
         return price;
     }

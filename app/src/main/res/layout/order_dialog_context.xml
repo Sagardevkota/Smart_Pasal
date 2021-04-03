@@ -4,10 +4,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="5dp"
-    android:padding="8dp"
-    >
 
+    >
 
 
     <androidx.core.widget.NestedScrollView
@@ -21,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp"
+        android:padding="8dp"
 
         >
 
@@ -29,11 +27,12 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/Black"
+            android:fontFamily="sans-serif-condensed-medium"
             android:gravity="center"
             android:padding="8dp"
-            android:textSize="18sp"
-            android:text="Order Confirmation"/>
+            android:text="Order Confirmation"
+            android:textColor="@color/Black"
+            android:textSize="22sp" />
 
 
         <androidx.recyclerview.widget.RecyclerView
@@ -41,6 +40,58 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="8dp"
+            />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+
+            >
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/etCoupon"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                >
+
+                <androidx.appcompat.widget.AppCompatEditText
+
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:hint="Enter promo code"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:textColor="#000" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <Button
+                android:id="@+id/buApply"
+                android:layout_width="wrap_content"
+                android:layout_height="65dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="20dp"
+                android:enabled="false"
+                android:padding="8dp"
+                android:text="Apply" />
+
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tvDiscountApplied"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="@color/google_red"
             />
 
         <RelativeLayout
@@ -59,7 +110,7 @@
                 android:id="@+id/tvDeliveryAddress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="New Road,Pokhara"
+                android:text="Location"
                 android:layout_alignParentEnd="true"/>
 
         </RelativeLayout>
@@ -106,7 +157,7 @@
                 android:id="@+id/tvTotal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Rs.3000"
+                android:text="Rs."
                 android:textColor="@color/colorPrimary"
                 android:layout_alignParentEnd="true"/>
 
@@ -122,9 +173,38 @@
             />
 
 
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            >
 
+            <Button
+                android:id="@+id/buCancel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Cancel"
+                android:backgroundTint="#808080"
+                android:layout_weight="1"
+                android:layout_margin="8dp"
+                />
+
+
+        <Button
+            android:id="@+id/buContinue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Continue"
+            android:layout_weight="1"
+            android:layout_margin="8dp"
+            />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
     </LinearLayout>
+
+
 
     </androidx.core.widget.NestedScrollView>
 

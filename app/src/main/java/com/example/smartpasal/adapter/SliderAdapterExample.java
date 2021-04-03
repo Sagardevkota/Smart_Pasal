@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.smartpasal.R;
+import com.example.smartpasal.SmartAPI.SmartAPI;
 import com.example.smartpasal.model.SliderItems;
 import com.smarteist.autoimageslider.SliderViewAdapter;
 import com.squareup.picasso.Callback;
@@ -61,7 +62,7 @@ public class SliderAdapterExample extends
 
 
         try{
-            String url=sliderItem.getPicture_path();
+            String url= sliderItem.getPicture_path();
 
             Picasso.get()
                     .load(url)

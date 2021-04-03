@@ -14,7 +14,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 
-
 import com.example.smartpasal.databinding.ActivityMainBinding;
 import com.example.smartpasal.repository.UserRepository;
 import com.example.smartpasal.service.MyFirebaseMessagingService;
@@ -31,7 +30,7 @@ import es.dmoral.toasty.Toasty;
 
 
 public class MainActivity extends AppCompatActivity {
-    Animation topAnim,bottomAnim;
+    Animation topAnim, bottomAnim;
     ActivityMainBinding binding;
     private Session session;
     private UserRepository repository;
@@ -42,8 +41,8 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
-        session=new Session(MainActivity.this);
-        repository=new UserRepository(session,MainActivity.this);
+        session = new Session(MainActivity.this);
+        repository = new UserRepository(session, MainActivity.this);
         new MyFirebaseMessagingService();
         setAnimations();
         new Handler().postDelayed(new Runnable() {
@@ -51,12 +50,12 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 checkIfLoggedIn();
             }
-            }, 3*1000); // wait for 3 seconds
+        }, 3 * 1000); // wait for 3 seconds
     }
 
     private void setAnimations() {
-        topAnim= AnimationUtils.loadAnimation(this,R.anim.top_animation);
-        bottomAnim= AnimationUtils.loadAnimation(this,R.anim.bottom_animation);
+        topAnim = AnimationUtils.loadAnimation(this, R.anim.top_animation);
+        bottomAnim = AnimationUtils.loadAnimation(this, R.anim.bottom_animation);
         binding.logo.setAnimation(bottomAnim);
         binding.slogan.setAnimation(bottomAnim);
         binding.robot.setAnimation(topAnim);
@@ -66,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void checkIfLoggedIn() {
         if (repository.checkIfLoggedIn()) goToHomeActivity();
-      else goToLoginActivity();
+        else goToLoginActivity();
     }
 
     private void goToLoginActivity() {
@@ -74,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);
     }
+
     public void goToHomeActivity() {
         Intent i = new Intent(this, HomeActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

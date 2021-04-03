@@ -45,6 +45,8 @@ import java.util.List;
 import java.util.Locale;
 
 import es.dmoral.toasty.Toasty;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -55,9 +57,9 @@ import retrofit2.Response;
  */
 public class fragment_edit_profile extends Fragment {
     private FragmentFragmentEditProfileBinding binding;
-
-    final private int REQUEST_CODE_ASK_PERMISSIONS = 123;
-    FusedLocationProviderClient fusedLocationClient;
+    private static final String TAG = "FRAGMENT_EDIT_PROFILE";
+    private static final int REQUEST_CODE_ASK_PERMISSIONS = 123;
+    private FusedLocationProviderClient fusedLocationClient;
     private Session session;
 
 
@@ -68,7 +70,7 @@ public class fragment_edit_profile extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        session=new Session(context);
+        session = new Session(context);
     }
 
     @Override
@@ -79,61 +81,43 @@ public class fragment_edit_profile extends Fragment {
         View v = binding.getRoot();
         getPassedValues();
 
-        binding.getLocation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                checkPermission();
-            }
+        binding.getLocation.setOnClickListener((View.OnClickListener) view -> checkPermission());
+
+        binding.ivCancel.setOnClickListener((View.OnClickListener) view -> getActivity()
+                .getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, new Profile(), "findThisFragment")
+                .addToBackStack(null)
+                .commit());
+        binding.buSaveEmail.setOnClickListener((View.OnClickListener) view -> {
+            String email = binding.etEmail.getText().toString();
+            if (email.isEmpty())
+                Toasty.error(getContext(), "Field cant be empty").show();
+            else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches())
+                Toasty.error(getContext(), "Please enter valid email address").show();
+            else if (email.equals(session.getusername()))
+                Toasty.error(getContext(), "No changes made").show();
+            else
+                updateEmail(email);
+
+
         });
-
-        binding.ivCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, new Profile(), "findThisFragment")
-                        .addToBackStack(null)
-                        .commit();
-            }
+        binding.buSavePhone.setOnClickListener((View.OnClickListener) view -> {
+            String phone = binding.etPhone.getText().toString();
+            if (phone.isEmpty())
+                Toasty.error(getContext(), "Field cant be empty").show();
+            else if (phone.length() != 10)
+                Toasty.error(getContext(), "Please enter valid phone number").show();
+            else
+                updatePhone(phone);
         });
-        binding.buSaveEmail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String email = binding.etEmail.getText().toString();
-                if (email.isEmpty())
-                    Toasty.error(getContext(), "Field cant be empty").show();
-                else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches())
-                    Toasty.error(getContext(), "Please enter valid email address").show();
-                else if (email.equals(session.getusername()))
-                    Toasty.error(getContext(), "No changes made").show();
-                else
-                    updateEmail(email);
+        binding.buSaveDelivery.setOnClickListener((View.OnClickListener) view -> {
+            String delivery = binding.etDelivery.getText().toString();
+            if (!delivery.isEmpty())
+                updateDelivery(delivery);
+            else
+                Toasty.error(getContext(), "Field cant be empty").show();
 
-
-            }
-        });
-        binding.buSavePhone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String phone = binding.etPhone.getText().toString();
-                if (phone.isEmpty())
-                    Toasty.error(getContext(), "Field cant be empty").show();
-                else if (phone.length() != 10)
-                    Toasty.error(getContext(), "Please enter valid phone number").show();
-                else
-                    updatePhone(phone);
-            }
-        });
-        binding.buSaveDelivery.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String delivery = binding.etDelivery.getText().toString();
-                if (!delivery.isEmpty())
-                    updateDelivery(delivery);
-                else
-                    Toasty.error(getContext(), "Field cant be empty").show();
-
-            }
         });
 
 
@@ -141,9 +125,9 @@ public class fragment_edit_profile extends Fragment {
     }
 
     private void getPassedValues() {
-        Bundle b=getArguments();
-        if (b!=null){
-            User user=b.getParcelable("userObj");
+        Bundle b = getArguments();
+        if (b != null) {
+            User user = b.getParcelable("userObj");
             binding.etEmail.setText(user.getUserName());
             binding.etDelivery.setText(user.getDeliveryAddress());
             binding.etPhone.setText(user.getPhone());
@@ -151,109 +135,66 @@ public class fragment_edit_profile extends Fragment {
     }
 
     private void updateEmail(String email) {
-        MaterialAlertDialogBuilder alertDialogBuilder=new MaterialAlertDialogBuilder(getContext());
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(getContext());
         alertDialogBuilder.setTitle("Logout Confirmation")
                 .setMessage("You will be logged out after changing your email address")
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+                .setPositiveButton("Ok", (dialogInterface, i) -> {
 
-                        Call<JsonResponse> updateEmail = SmartAPI.getApiService().updateEmail(session.getJWT(), session.getUserId(), email);
-                        updateEmail.enqueue(new Callback<JsonResponse>() {
-                            @Override
-                            public void onResponse(Call<JsonResponse> call, Response<JsonResponse> response) {
-                                if (!response.isSuccessful())
-                                    Log.d("unsuccessful", "unsuccessful");
-                                else {
-                                    String status = response.body().getStatus();
-                                    String message = response.body().getMessage();
-                                    if (status.equalsIgnoreCase("200 Ok"))
+                    SmartAPI.getApiService().updateEmail(session.getJWT(), email)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(response -> {
+                                String status = response.getStatus();
+                                String message = response.getMessage();
+                                if (status.equalsIgnoreCase("200 Ok")) {
+                                    Intent intent = new Intent(getActivity(), LoginActivity.class);
+                                    session.destroy();
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(intent);
 
-                                    {
-                                        Intent intent=new Intent(getActivity(), LoginActivity.class);
-                                        session.destroy();
-                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
-                                        startActivity(intent);
-
-                                        Toasty.success(getContext(), message).show();
-                                    }
-                                    else
-                                        Toasty.error(getContext(), message).show();
-                                }
-
-                            }
-
-                            @Override
-                            public void onFailure(Call<JsonResponse> call, Throwable t) {
-
-                            }
-                        });
-
-
-                    }
+                                    Toasty.success(getContext(), message).show();
+                                } else
+                                    Toasty.error(getContext(), message).show();
+                            }, throwable -> {
+                                Log.e(TAG, "updateEmail: " + throwable.getMessage());
+                            });
                 })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                })
+
+                .setNegativeButton("Cancel", (DialogInterface.OnClickListener) (dialogInterface, i) -> dialogInterface.dismiss())
                 .create().show();
 
 
     }
 
     private void updatePhone(String phone) {
-        Call<JsonResponse> updatePhone = SmartAPI.getApiService().updatePhone(session.getJWT(), session.getUserId(), phone);
-        updatePhone.enqueue(new Callback<JsonResponse>() {
-            @Override
-            public void onResponse(Call<JsonResponse> call, Response<JsonResponse> response) {
-                if (!response.isSuccessful())
-                    Log.d("unsuccessful", "unsuccessful");
-                else {
-                    String status = response.body().getStatus();
-                    String message = response.body().getMessage();
+        SmartAPI.getApiService().updatePhone(session.getJWT(), phone)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(response -> {
+                    String status = response.getStatus();
+                    String message = response.getMessage();
                     if (status.equalsIgnoreCase("200 Ok"))
                         Toasty.success(getContext(), message).show();
                     else
                         Toasty.error(getContext(), message).show();
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<JsonResponse> call, Throwable t) {
-
-            }
-        });
+                });
 
 
     }
 
     private void updateDelivery(String delivery) {
-        Call<JsonResponse> updateDelivery = SmartAPI.getApiService().updateDelivery(session.getJWT(), session.getUserId(), delivery);
-        updateDelivery.enqueue(new Callback<JsonResponse>() {
-            @Override
-            public void onResponse(Call<JsonResponse> call, Response<JsonResponse> response) {
-                if (!response.isSuccessful())
-                    Log.d("unsuccessful", "unsuccessful");
-                else {
-                    String status = response.body().getStatus();
-                    String message = response.body().getMessage();
+        SmartAPI.getApiService().updateDelivery(session.getJWT(), delivery)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(response -> {
+                    String status = response.getStatus();
+                    String message = response.getMessage();
                     if (status.equalsIgnoreCase("200 Ok"))
                         Toasty.success(getContext(), message).show();
                     else
                         Toasty.error(getContext(), message).show();
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<JsonResponse> call, Throwable t) {
-
-            }
-        });
-
+                }, throwable ->
+                        Log.e(TAG, "updateDelivery: " + throwable.getMessage()));
 
     }
 
@@ -294,7 +235,6 @@ public class fragment_edit_profile extends Fragment {
     private void getLocation() {
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
-
 
         fusedLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
             @Override

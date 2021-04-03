@@ -1,73 +1,67 @@
 package com.example.smartpasal.view;
 
+import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.nfc.cardemulation.HostNfcFService;
-import android.os.Bundle;
-
-import android.os.Handler;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.widget.Button;
-
-import android.view.View;
-
-import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import com.example.smartpasal.R;
-import com.example.smartpasal.SmartAPI.JsonResponse;
+import com.example.smartpasal.Session.Session;
 import com.example.smartpasal.SmartAPI.SmartAPI;
 import com.example.smartpasal.adapter.CartAdapter;
 import com.example.smartpasal.adapter.DialogAdapter;
+import com.example.smartpasal.databinding.ActivityCartBinding;
 import com.example.smartpasal.model.CartResponse;
 import com.example.smartpasal.model.Carts;
-import com.example.smartpasal.model.Checkout;
 import com.example.smartpasal.model.Orders;
-import com.example.smartpasal.Session.Session;
+import com.example.smartpasal.util.CartUtil;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import es.dmoral.toasty.Toasty;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+import jp.wasabeef.recyclerview.animators.SlideInRightAnimator;
 
 
 public class cartActivity extends AppCompatActivity {
 
-    CartAdapter myadapter;
-    ArrayList<CartResponse> listnewsData = new ArrayList<>();
-    RecyclerView lvlist;
+    private static final String TAG = "CART_ACTIVITY";
+    private ActivityCartBinding cartBinding;
     private Session session;
+    private CartAdapter cartAdapter;
+    private final ArrayList<CartResponse> cartList = new ArrayList<>();
+    private final CartUtil cartUtil = new CartUtil();
+    private final List<Orders> checkoutList = new ArrayList<>();
+    private DialogAdapter dialogAdapter;
 
-    TextView tvEmptyCart;
-    SharedPreferences sp;
-    TextView tvTotalPrice;
-    Integer position = 0;
-    ArrayList<Checkout> checkoutList=new ArrayList<>();
-    private String deliveryAddress="";
-
+    private int grandTotalPrice = 0;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -77,49 +71,39 @@ public class cartActivity extends AppCompatActivity {
     }
 
 
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_delete:
-                if (myadapter.getNumCheckBoxes().size() == 0)
-                    Toast.makeText(getApplicationContext(), "Please select any item to delete", Toast.LENGTH_SHORT).show();
-                else {
-                    Log.d("dataArray", myadapter.getNumCheckBoxes().toString());
 
-                    MaterialAlertDialogBuilder alertDialogBuilder=new MaterialAlertDialogBuilder(this,R.style.AlertDialog);
-                           alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int count) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            overridePendingTransition(R.anim.fragment_fade_enter, R.anim.slide_out_right);
+            return super.onOptionsItemSelected(item);
+        }
+        if (item.getItemId() == R.id.menu_delete) {
+            Log.i(TAG, "onOptionsItemSelected: " + cartUtil.getItemPositionMap().toString());
+            if (cartUtil.getItemPositionMap().size() == 0) {
+                Toasty.warning(getApplicationContext(), "No item selected to delete").show();
+                return super.onOptionsItemSelected(item);
+            }
+            Log.i(TAG, "onOptionsItemSelected: "+cartUtil.getItemPositionMap());
 
-                                    for (int i = 0; i < myadapter.getNumCheckBoxes().size(); i++) {
-                                        String productId = myadapter.getNumCheckBoxes().get(i).get("Id");
-                                        position = Integer.parseInt(myadapter.getNumCheckBoxes().get(i).get("Position"));
-                                        Log.d("dataArray", "item is " + productId + " at " + String.valueOf(position));
-                                        showProgressDialog("Removing from cart");
-                                        removeFromCart(productId);
-                                        hideProgressDialog();
-                                    }
+            MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(this);
+            alertDialogBuilder.setMessage("Do you want to remove the item from cart?")
+                    .setPositiveButton("Yes", (dialog, which) -> {
 
 
 
-                                }
-                            })
-                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    dialogInterface.dismiss();
-
-                                }
-                            })
-                            .setTitle("Confirmation")
-                            .setMessage("Do you want to delete item(s)")
-                            .create().show();
+                        for(Map.Entry<Integer,Integer>entry:cartUtil.getItemPositionMap().entrySet()){
+                            int productId = entry.getKey();
+                            int position = entry.getValue();
+                            removeFromCart(productId);
+                        }
 
 
+                    })
+                    .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss()).show();
 
-
-
-                }
 
         }
         return super.onOptionsItemSelected(item);
@@ -127,196 +111,302 @@ public class cartActivity extends AppCompatActivity {
 
 
 
-    public void removeFromCart(String productId) {
 
-        Carts cart = new Carts(session.getUserId(), Integer.valueOf(productId));
-        Call<JsonResponse> removeFromCart = SmartAPI.getApiService().removeFromCart(session.getJWT(), cart);
-        removeFromCart.enqueue(new Callback<JsonResponse>() {
-            @Override
-            public void onResponse(Call<JsonResponse> call, Response<JsonResponse> response) {
-                if (!response.isSuccessful())
-                    Log.d("unsuccussful", "unsuccessful");
-                else {
-                    String status = response.body().getStatus();
-                    String message = response.body().getMessage();
-                    if (status.equalsIgnoreCase("200 OK") && message.equalsIgnoreCase("Item is removed from cart")) {
-                        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-                        myadapter.removeItem(position);
-                        Intent intent = getIntent();
-                        overridePendingTransition(0, 0);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        finish();
-                        overridePendingTransition(0, 0);
-                        startActivity(intent);
-
-
-                    }
-
-                }
-            }
-
-            @Override
-            public void onFailure(Call<JsonResponse> call, Throwable t) {
-
-            }
-        });
-
-    }
-
-
-    public void removeFromCart(Context context,Session session,String productId) {
-        Carts cart = new Carts(session.getUserId(), Integer.valueOf(productId));
-        Call<JsonResponse> removeFromCart = SmartAPI.getApiService().removeFromCart(session.getJWT(), cart);
-        removeFromCart.enqueue(new Callback<JsonResponse>() {
-            @Override
-            public void onResponse(Call<JsonResponse> call, Response<JsonResponse> response) {
-                if (!response.isSuccessful())
-                    Log.d("unsuccussful", "unsuccessful");
-                else {
-                    String status = response.body().getStatus();
-                    String message = response.body().getMessage();
-                    if (status.equalsIgnoreCase("200 OK") && message.equalsIgnoreCase("Item is removed from cart")) {
-                        Intent intent = new Intent(context,cartActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        context.startActivity(intent);
-
-
-                    }
-
-                }
-            }
-
-            @Override
-            public void onFailure(Call<JsonResponse> call, Throwable t) {
-
-            }
-        });
-
-    }
 
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cart);
-        session=new Session(cartActivity.this);
+        cartBinding = ActivityCartBinding.inflate(getLayoutInflater());
+        View view = cartBinding.getRoot();
+        setContentView(view);
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-        Bundle b = getIntent().getExtras();
-        sp = getSharedPreferences("s-martlogin", Context.MODE_PRIVATE);
-        tvEmptyCart = findViewById(R.id.tvEmptyCart);
-
+        session = new Session(getApplicationContext());
 
         //Cart listview
-        lvlist = findViewById(R.id.LVNews);
-        tvTotalPrice = findViewById(R.id.tvTotalPrice);
-        myadapter = new CartAdapter(listnewsData, cartActivity.this, tvTotalPrice);
-        lvlist.setAdapter(myadapter);
-        lvlist.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        initRecyclerView();
 
         //get Cart List
-
-
         getCartItems();
 
+        //listener
+        cartBinding.buContinueShopping.setOnClickListener(v -> {
+            Intent intent = new Intent(this,HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        });
 
-        Button buCheckOut = findViewById(R.id.buCheckOut);
-
-
-        buCheckOut.setOnClickListener((View v) ->
-        {
-
-            if (myadapter.getNumCheckBoxes().size() == 0) {
-                Toasty.error(getApplicationContext(), "No item selected").show();
-            } else {
-                checkoutList.clear();
-                Integer price = 0;
-                for (int i = 0; i < myadapter.getNumCheckBoxes().size(); i++) {
-                    String productId = myadapter.getNumCheckBoxes().get(i).get("Id");
-                    position = Integer.parseInt(myadapter.getNumCheckBoxes().get(i).get("Position"));
-                    Checkout orders=myadapter.getOrders().get(position);
-                    checkoutList.add(new Checkout(
-                            orders.getProductName(),
-                            orders.getProductId(),
-                            orders.getProductColor(),
-                            orders.getProductSize(),
-                            orders.getPrice(),
-                            orders.getQty(),
-                           orders.getProductImage()
-                    ));
-
-                    String order = orders.toString();
-                    price += myadapter.getOrders().get(position).getPrice();
-                    Log.d("ItemSelected", "Items selected are" + productId + " " + order);
+        cartBinding.buCheckOut.setOnClickListener(v -> createCheckOutDialog());
 
 
-                }
-                initDialogView();
-//                Log.d("orders",myadapter.getOrders().toString());
-//          Log.d("totalprice",String.valueOf(myadapter.getTotal()));
-                Toast.makeText(getApplicationContext(), String.valueOf(price), Toast.LENGTH_SHORT).show();
 
 
+    }
+
+    private void createCheckOutDialog() {
+        //no item checked
+        if (cartUtil.getItemPositionMap().size()==0)  {
+            Toasty.warning(getApplicationContext(),"Nothing selected to checkout").show();
+            return;
+        }
+       initCheckOutDialogView();
+
+    }
+
+    private void initCheckOutDialogView(){
+        checkoutList.clear();
+        final Dialog dialog = new Dialog(this,android.R.style.Theme_Light_NoTitleBar_Fullscreen);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        dialog.setContentView(R.layout.order_dialog_context);
+        dialog.create();
+
+        RecyclerView rvDialog = dialog.findViewById(R.id.rvDialog);
+        TextView tvTotal = dialog.findViewById(R.id.tvTotal);
+        TextView tvSubTotal = dialog.findViewById(R.id.SubTotal);
+        TextView tvDeliveryAddrs = dialog.findViewById(R.id.tvDeliveryAddress);
+        TextView tvDiscountApplied = dialog.findViewById(R.id.tvDiscountApplied);
+        Button buCancel = dialog.findViewById(R.id.buCancel);
+        Button buContinue = dialog.findViewById(R.id.buContinue);
+        TextInputLayout etCoupon = dialog.findViewById(R.id.etCoupon);
+        Button buApply = dialog.findViewById(R.id.buApply);
+        Session session = new Session(cartActivity.this);
+        tvDeliveryAddrs.setText(session.getAddress());
+
+        buCancel.setOnClickListener(v -> dialog.dismiss());
+        buContinue.setOnClickListener(v -> showPaymentOptionDialog());
+
+        Log.i(TAG, "initCheckOutDialogView: "+cartUtil.getItemPositionMap().toString());
+
+
+        for (Map.Entry<Integer,Integer> orderSet:cartUtil.getItemPositionMap().entrySet()){
+            int productId = orderSet.getKey();
+            int position = orderSet.getValue();
+            Orders orders = cartUtil.getOrderList().stream()
+                    .filter(order -> order.getProductId().equals(productId))
+                    .reduce((a, b) -> {
+                        throw new IllegalStateException("Multiple elements: " + a + ", " + b);
+                    })
+                    .get();
+            checkoutList.add(orders);
+
+        }
+
+        etCoupon.getEditText().addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
 
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (editable.length() > 0) buApply.setEnabled(true);
+            }
+        });
+
+        dialogAdapter = new DialogAdapter(checkoutList,getApplicationContext());
+
+
+        rvDialog.setLayoutManager(new LinearLayoutManager(cartActivity.this));
+        grandTotalPrice = dialogAdapter.getTotal();
+        buApply.setOnClickListener(view -> {
+            String coupon_code = etCoupon.getEditText().getText().toString().trim();
+            Integer discount = applyCoupon(coupon_code);
+            Integer totalPrice = dialogAdapter.getTotal();
+            Integer CouponedAmount = totalPrice * discount / 100;
+            int PriceAfterCoupon = totalPrice - CouponedAmount;
+            tvTotal.setText("Rs. "+PriceAfterCoupon);
+            if (discount!=0){
+                tvDiscountApplied.setVisibility(View.VISIBLE);
+                tvDiscountApplied.setText(discount+ "% Discount applied after promo code");
+                grandTotalPrice = PriceAfterCoupon;
+            }
+            else tvDiscountApplied.setText("Invalid Coupon Code");
 
         });
+
+
+
+        tvTotal.setText("Rs. " + grandTotalPrice);
+        tvSubTotal.setText("SubTotal("+checkoutList.size()+" items)");
+        rvDialog.setAdapter(dialogAdapter);
+        dialog.create();
+        dialog.show();
+
+    }
+
+    private void showPaymentOptionDialog() {
+        final Dialog dialog = new Dialog(this,android.R.style.Theme_Light_NoTitleBar_Fullscreen);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        dialog.setContentView(R.layout.dialog_payment_option);
+        dialog.create();
+        EditText etDeliveryAddress = dialog.findViewById(R.id.etDelivery);
+        etDeliveryAddress.setText(session.getAddress());
+        dialog.findViewById(R.id.buCancel).setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+        dialog.findViewById(R.id.buContinue).setOnClickListener(v -> {
+
+            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
+            builder.setTitle("Checkout?")
+                    .setMessage("Please check everything before pressing Yes")
+                    .setPositiveButton("Yes", (dialog12, which) -> postOrders(etDeliveryAddress.getText().toString()))
+                    .setNegativeButton("No", (dialog1, which) -> dialog1.dismiss())
+                    .show();
+
+        });
+        dialog.show();
+
+    }
+
+    private void postOrders(String deliveryAddress) {
+        showProgressDialog("Loading");
+
+        int total = dialogAdapter.getTotal();
+        int discount = total-grandTotalPrice;
+        int discountPerItem = discount/checkoutList.size();
+
+        checkoutList.forEach(orders -> {
+            String pattern = "MM-dd-yyyy";
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern, Locale.US);
+            String date = simpleDateFormat.format(new Date());
+            orders.setOrderedDate(date);//set today's date
+            orders.setDeliveryAddress(deliveryAddress);//if user selects delivery address different
+             int finalPrice = orders.getPrice()-discountPerItem;
+            orders.setPrice(finalPrice); //discount for every item from overall discount
+
+            SmartAPI.getApiService().addOrder(session.getJWT(),orders)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(response -> Log.i(TAG, "postOrders: "+response.getMessage()),
+                            throwable -> Log.e(TAG, "postOrders: "+throwable.getMessage()));
+        });
+
+        hideProgressDialog();
+
+        showFinishingDialog();
+
+    }
+
+    private void showFinishingDialog() {
+        final Dialog dialog = new Dialog(this,android.R.style.Theme_Light_NoTitleBar_Fullscreen);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        dialog.setContentView(R.layout.placed_order_dialog);
+        dialog.create();
+        dialog.findViewById(R.id.tvContinueShopping).setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(),HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        });
+        dialog.show();
 
     }
 
 
+    private Integer applyCoupon(String coupon_code) {
+
+        if (coupon_code.equalsIgnoreCase("GCES2016"))
+            return 15;
+        else
+            return 0;
+//        SmartAPI.getApiService().checkCoupon(session.getJWT(), coupons)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(response -> {
+//
+//                    String status = response.getStatus();
+//                    String message = response.getMessage();
+//                    if (status.equalsIgnoreCase("200 OK")) {
+//                        Integer discount = Integer.valueOf(message);
+//                        Integer CouponedAmount = newPrice * discount / 100;
+//                        PriceAfterCoupon = newPrice - CouponedAmount;
+//                        binding.tvPrice.setTextColor(Color.BLACK);
+//                        binding.tvCouponPrice.setText("Rs." + String.valueOf(PriceAfterCoupon));
+//                        binding.tvPrice.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+//                        binding.tvDiscountedPrice.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+//                        binding.tvCouponPrice.setVisibility(View.VISIBLE);
+//                        binding.tvIsCoupon.setText("Discount applied of " + message + " %");
+//                    } else {
+//                        binding.tvIsCoupon.setVisibility(View.VISIBLE);
+//                        binding.tvIsCoupon.setText("Invalid coupon code");
+//                        binding.tvCouponPrice.setVisibility(View.GONE);
+//                        PriceAfterCoupon = newPrice;
+//                        binding.tvPrice.setTextColor(Color.parseColor("#ff5252"));
+//                        binding.tvPrice.setPaintFlags(0);
+//                    }
+//
+//                }, throwable -> Log.e(TAG, "applyCoupon: " + throwable.getMessage()));
+
+
+
+    }
+
+    private void initRecyclerView() {
+        cartAdapter = new CartAdapter(cartList, cartActivity.this, cartUtil, cartBinding.tvTotalPrice);
+        cartBinding.rvCart.setAdapter(cartAdapter);
+        cartBinding.rvCart.setItemAnimator(new SlideInRightAnimator());
+        cartBinding.rvCart.getItemAnimator().setAddDuration(300);
+        cartBinding.rvCart.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+    }
 
 
     public void getCartItems() {
-        listnewsData.clear();
-        Integer userId = session.getUserId();
-        Call<List<CartResponse>> cartList = SmartAPI.getApiService().getCartList(session.getJWT(), userId);
-        cartList.enqueue(new Callback<List<CartResponse>>() {
-            @Override
-            public void onResponse(Call<List<CartResponse>> call, Response<List<CartResponse>> response) {
-                if (!response.isSuccessful())
-                    Log.d("unsuccesful", "unsuccessful");
-                else {
-                    if (response.body().size() == 0)
-                    {  tvEmptyCart.setVisibility(View.VISIBLE);
-                    showContinueShoppingDialog();}
-                    for (CartResponse c : response.body()) {
-                        Log.d("products", c.toString());
-                        listnewsData.add(new CartResponse(c));
-                        myadapter.notifyDataSetChanged();
-                    }
-                    hideProgressDialog();
+        cartList.clear();
+        SmartAPI.getApiService().getCartList(session.getJWT())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(cartResponses -> {
+                            if (cartResponses.size() == 0) {
+                                cartBinding.noItemLinearLayout.setVisibility(View.VISIBLE);
+                                return;
+                            }for (CartResponse cartResponse:cartResponses){
+                                if (cartResponse.getStock()!=0) //check if the cart item has stock
+                                    cartList.add(cartResponse);
+                                else {
+                                    removeFromCart(cartResponse.getProductId());  //if item is not in stock remove from cart
+                                     Snackbar
+                                            .make(cartBinding.rootLayout, "Some of the items were removed due to out of stock ", Snackbar.LENGTH_INDEFINITE)
+                                    .setAction("OK", view -> { }).show();
 
-                }
+                                }
 
-            }
+                            }
+                            cartAdapter.notifyItemRangeInserted(0,cartResponses.size());
+                            hideProgressDialog();
+                        },
+                        throwable -> Log.e(TAG, "getCartItems: " + throwable.getMessage()));
 
-            @Override
-            public void onFailure(Call<List<CartResponse>> call, Throwable t) {
-                Log.d("Error", t.getMessage());
-
-            }
-        });
     }
 
-    private void showContinueShoppingDialog() {
-        MaterialAlertDialogBuilder builder=new MaterialAlertDialogBuilder(this,R.style.AlertDialog);
-        builder.setTitle("Continue");
-        builder.setMessage("There are no items in this cart");
-        builder.setPositiveButton("Continue Shopping", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-                Intent intent=new Intent(cartActivity.this, HomeActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
 
 
-            }
-        });
-        builder.create().show();
+
+    public void removeFromCart(int productId) {
+
+        Carts cart = new Carts(session.getUserId(), productId);
+        SmartAPI.getApiService().removeFromCart(session.getJWT(), cart)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(response -> {
+                            String status = response.getStatus();
+                            String message = response.getMessage();
+                            if (status.equalsIgnoreCase("200 OK") && message.equalsIgnoreCase("Item is removed from cart")) {
+                                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                                cartAdapter.removeData(productId);
+                                if (cartAdapter.getItemCount()==0)
+                                    cartBinding.noItemLinearLayout.setVisibility(View.VISIBLE);
+                            }
+                        },
+                        throwable -> Log.e(TAG, "removeFromCart: " + throwable.getMessage()));
+
+
     }
-
 
     @VisibleForTesting
     public ProgressDialog mProgressDialog;
@@ -337,160 +427,6 @@ public class cartActivity extends AppCompatActivity {
         }
     }
 
-    private void initDialogView() {
-
-       MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(this,R.style.AlertDialog);
-       LayoutInflater inflater = this.getLayoutInflater();
-        View dialogView= inflater.inflate(R.layout.order_dialog_context, null);
-        dialogBuilder.setView(dialogView);
-        RecyclerView rvDialog=dialogView.findViewById(R.id.rvDialog);
-       TextView tvTotal=dialogView.findViewById(R.id.tvTotal);
-       TextView tvSubTotal=dialogView.findViewById(R.id.SubTotal);
-       TextView tvDeliveryAddrs=dialogView.findViewById(R.id.tvDeliveryAddress);
-       Session session=new Session(cartActivity.this);
-       tvDeliveryAddrs.setText(session.getAddress());
-       tvSubTotal.setText("Subtotal"+"("+String.valueOf(myadapter.getItemCount()+" items)"));
 
 
-     dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-         @Override
-         public void onClick(DialogInterface dialogInterface, int i) {
-             dialogInterface.dismiss();
-
-         }
-     });
-
-
-     dialogBuilder.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
-         @Override
-         public void onClick(DialogInterface dialogInterface, int i) {
-             showPaymentOptionDialog();
-         }
-     });
-
-        DialogAdapter adapter=new DialogAdapter(checkoutList,getApplicationContext());
-        rvDialog.setLayoutManager(new LinearLayoutManager(cartActivity.this));
-        tvTotal.setText("Rs. "+ adapter.getTotal());
-        rvDialog.setAdapter(adapter);
-        dialogBuilder.create().show();
-
-
-    }
-
-    private void showPaymentOptionDialog() {
-        MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(this,R.style.AlertDialog);
-        LayoutInflater inflater = this.getLayoutInflater();
-        View dialogView= inflater.inflate(R.layout.dialog_payment_option, null);
-        dialogBuilder.setView(dialogView);
-        EditText etDeliveryAddrs=dialogView.findViewById(R.id.etDelivery);
-
-        dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                deliveryAddress=etDeliveryAddrs.getText().toString();
-                showProgressDialog("Placing Order");
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        placeOrder();
-                        hideProgressDialog();
-                        createFinishingDialog();
-                    }
-
-                }, 5000);
-
-
-            }
-        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
-            }
-        })
-        ;
-
-        dialogBuilder.create().show();
-
-    }
-
-    private void createFinishingDialog() {
-        MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(this,R.style.AlertDialog);
-        LayoutInflater inflater = this.getLayoutInflater();
-        View dialogView= inflater.inflate(R.layout.placed_order_dialog, null);
-        dialogBuilder.setView(dialogView);
-        dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                createClearCartDialog();
-
-
-            }
-        });
-
-        dialogBuilder.create().show();
-
-
-
-    }
-
-    private void createClearCartDialog() {
-
-        for (Checkout c:checkoutList){
-            removeFromCart(String.valueOf(c.getProductId()));
-        }
-        listnewsData.clear();
-        myadapter.notifyDataSetChanged();
-
-
-
-    }
-
-    private void placeOrder() {
-        for (Checkout checkout:checkoutList){
-            postOrder(checkout);
-        }
-    }
-
-    private void postOrder(Checkout checkout) {
-        Date d = new Date();
-        SimpleDateFormat DateFor = new SimpleDateFormat("yyyy/MM/dd");
-        String date= DateFor.format(d);
-         if (deliveryAddress.length()==0)
-            deliveryAddress=session.getAddress();
-
-        Orders orders=new Orders(
-                checkout.getProductId(),
-                session.getUserId(),
-                checkout.getProductColor(),
-                checkout.getProductSize(),
-                checkout.getPrice(),
-                checkout.getQty(),
-                date,
-                "Not delivered yet",
-                deliveryAddress,
-                "waiting"
-
-        );
-
-        Call<JsonResponse> addOrder=SmartAPI.getApiService().addOrder(session.getJWT(),orders);
-        addOrder.enqueue(new Callback<JsonResponse>() {
-            @Override
-            public void onResponse(Call<JsonResponse> call, Response<JsonResponse> response) {
-                if (response.isSuccessful())
-                {
-                    if (response.body().getStatus().equalsIgnoreCase("200 OK"))
-
-                        Toasty.success(getApplicationContext(),"placed order").show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<JsonResponse> call, Throwable t) {
-
-            }
-        });
-
-
-
-    }
 }

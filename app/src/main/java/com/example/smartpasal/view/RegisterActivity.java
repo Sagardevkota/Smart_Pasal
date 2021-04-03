@@ -18,6 +18,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
+import android.view.MenuItem;
 import android.view.View;
 
 import android.widget.Toast;
@@ -44,12 +45,16 @@ import java.util.Locale;
 import java.util.regex.Pattern;
 
 import es.dmoral.toasty.Toasty;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class RegisterActivity extends AppCompatActivity {
     ActivityRegisterBinding binding;
+
+    private static final String TAG = "REGISTER_ACTIVITY";
 
     final private int REQUEST_CODE_ASK_PERMISSIONS = 123;
     FusedLocationProviderClient fusedLocationClient;
@@ -65,6 +70,16 @@ public class RegisterActivity extends AppCompatActivity {
                     "(?=\\S+$)" +           //no white spaces
                     ".{4,}" +               //at least 4 characters
                     "$");
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            overridePendingTransition(R.anim.fragment_fade_enter, R.anim.slide_out_right);
+            return true;
+        }
+        return false;
+    }
 
 
     @Override
@@ -261,38 +276,33 @@ public class RegisterActivity extends AppCompatActivity {
         String role="USER";
 
 
+
         User user = new User(email, password, delivery, phone,role,age,gender,latitude,longitude);
-        Call<JsonResponse> register = SmartAPI.getApiService().register(user);
-        register.enqueue(new Callback<JsonResponse>() {
-            @Override
-            public void onResponse(Call<JsonResponse> call, Response<JsonResponse> response) {
-                if (!response.isSuccessful()) {
-                    Log.d("response", response.body().toString());
+
+        SmartAPI.getApiService().register(user)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(response -> {
+
+                    String status = response.getStatus();
+                    String message = response.getMessage();
+                    Log.i(TAG, "uploadData: "+response.getMessage());
+
+                    if (message.equalsIgnoreCase("Registered Successfully") && status.equalsIgnoreCase("200 OK")) {
+                        Toasty.success(getApplicationContext(), message).show();
+                        hideProgressDialog();
+                        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                    } else
+                        Toasty.error(getApplicationContext(), message).show();
                     hideProgressDialog();
-                }
-                String status = response.body().getStatus();
-                String message = response.body().getMessage();
-                Log.d("response", response.body().getMessage());
-
-
-                if (message.equalsIgnoreCase("Registered Successfully") && status.equalsIgnoreCase("200 OK")) {
-                    Toasty.success(getApplicationContext(), message).show();
+                }, throwable -> {
+                    Log.e(TAG, "uploadData: "+throwable.getMessage());
                     hideProgressDialog();
-                    Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
-                } else
-                    Toasty.error(getApplicationContext(), message).show();
-                hideProgressDialog();
-            }
+                });
 
-            @Override
-            public void onFailure(Call<JsonResponse> call, Throwable t) {
-                Log.d("error in response", t.getMessage().toString());
-                hideProgressDialog();
 
-            }
-        });
 
 
     }

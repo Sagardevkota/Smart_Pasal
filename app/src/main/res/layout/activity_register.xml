@@ -76,7 +76,6 @@
 
                     android:textColor="#000"
 
-                    android:textAlignment="center"
                     app:passwordToggleTint="@color/colorPrimary"
                     android:hint="Email"
 
@@ -107,7 +106,6 @@
 
                     android:textColor="#000"
 
-                    android:textAlignment="center"
                     app:passwordToggleTint="@color/colorPrimary"
                     android:hint="Enter Password"
                     android:inputType="textPassword"
@@ -133,14 +131,9 @@
 
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
                     android:drawableStart="@drawable/ic_lock_24px"
-
                     android:textColor="#000"
                     android:drawablePadding="20dp"
-
-
-                    android:textAlignment="center"
                     android:maxLength="15"
                     app:passwordToggleTint="@color/colorPrimary"
                     android:hint="Confirm Password"
@@ -171,11 +164,7 @@
 
                     android:drawableStart="@drawable/ic_location_on_24px"
                     android:drawablePadding="20dp"
-
-
                     android:textColor="#000"
-
-                    android:textAlignment="center"
                     app:passwordToggleTint="@color/colorPrimary"
                     android:hint="Street Address"
                     android:inputType="textPostalAddress"
@@ -223,9 +212,7 @@
                     android:layout_height="wrap_content"
                     android:drawableStart="@drawable/ic_phone_24px"
                     android:drawablePadding="20dp"
-
                     android:textColor="#000"
-                    android:textAlignment="center"
                     app:passwordToggleTint="@color/colorPrimary"
                     android:hint="Phone"
                     android:maxLength="10"
@@ -251,9 +238,7 @@
                     android:layout_height="wrap_content"
                     android:drawableStart="@drawable/ic_age"
                     android:drawablePadding="20dp"
-
                     android:textColor="#000"
-                    android:textAlignment="center"
                     app:passwordToggleTint="@color/colorPrimary"
                     android:hint="Age"
                     android:maxLength="2"

@@ -48,8 +48,13 @@ import java.util.ArrayList;
 
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+import jp.wasabeef.recyclerview.animators.LandingAnimator;
+import jp.wasabeef.recyclerview.animators.SlideInRightAnimator;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -61,29 +66,24 @@ import retrofit2.Response;
 public class home extends Fragment {
     private FragmentHomeBinding binding;
     private Session session;
-    Context context;
+    private static final String TAG = "HOME";
+    private Context context;
 
-    private EndlessRecyclerViewScrollListener scrollListener;
-    ArrayList<ProductItems> listnewsData = new ArrayList<>();
-    ArrayList<ProductItems> productData=new ArrayList<>();
-
-
-    View v;
-    ListAdapterItems myadapter;
-    HorizontalListAdapter myadapter1;
-    GradientDrawable gd;
-
-
+    private final ArrayList<ProductItems> recommendedList = new ArrayList<>();
+    private final ArrayList<ProductItems> mostSellingList = new ArrayList<>();
+    private ListAdapterItems recommendedListAdapter;
+    private HorizontalListAdapter mostSellingListAdapter;
+    private GradientDrawable gd;
     public int page_number = 1;
-    public  boolean isLoaded = false;
+    public boolean isLoaded = false;
+    private int totalCurrentItems = 0;
 
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-
         this.context = context;
-        session=new Session(context);
+        session = new Session(context);
     }
 
     public home() {
@@ -100,13 +100,11 @@ public class home extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        binding=FragmentHomeBinding.inflate(getLayoutInflater());
-        v=binding.getRoot();
+        binding = FragmentHomeBinding.inflate(getLayoutInflater());
+        View v = binding.getRoot();
 
 
-
-
-        isLoaded=false;
+        isLoaded = false;
 
         SliderAdapterExample adapter = new SliderAdapterExample(getContext());
 
@@ -132,18 +130,18 @@ public class home extends Fragment {
         binding.imageSlider.startAutoCycle();
 
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        LinearLayoutManager linearLayoutManager=new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
 
         binding.endlessView.setLayoutManager(layoutManager);
-        myadapter = new ListAdapterItems(listnewsData, getContext());
-        myadapter1=new HorizontalListAdapter(productData,getContext());
+        recommendedListAdapter = new ListAdapterItems(recommendedList, getContext());
+        binding.endlessView.setItemAnimator(new SlideInRightAnimator());
+        mostSellingListAdapter = new HorizontalListAdapter(mostSellingList, getContext());
         binding.rvMostSelling.setLayoutManager(linearLayoutManager);
-        binding.endlessView.setHasFixedSize(true);
-        binding.endlessView.setAdapter(myadapter);
-        binding.rvMostSelling.setAdapter(myadapter1);
+        binding.endlessView.setAdapter(recommendedListAdapter);
+        binding.rvMostSelling.setAdapter(mostSellingListAdapter);
 
 
-        Handler mHandler=new Handler();
+        Handler mHandler = new Handler();
 
 
         Runnable mToastRunnable = new Runnable() {
@@ -155,25 +153,17 @@ public class home extends Fragment {
                 int color = Color.argb(153, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
                 int color1 = Color.argb(155, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
 
-                int[] colors={color,color1};
+                int[] colors = {color, color1};
                 //create a new gradient color
 
                 gd = new GradientDrawable(
                         GradientDrawable.Orientation.LEFT_RIGHT, colors);
                 gd.setCornerRadius(0f);
-
-
                 binding.dvHome.setBackground(gd);
-
-
-
                 mHandler.postDelayed(this, 5000);
             }
         };
         mToastRunnable.run();
-
-
-
 
 
         Intent intent = new Intent(context, categorizedActivity.class);
@@ -182,18 +172,18 @@ public class home extends Fragment {
             startActivity(intent);
 
         });
-       binding.tvBag.setOnClickListener(view -> {
-           intent.putExtra("category", "Bags");
-           startActivity(intent);
-       });
-       binding.tvJackets.setOnClickListener(view -> {
-           intent.putExtra("category", "Jackets");
-           startActivity(intent);
-       });
-       binding.tvWatch.setOnClickListener(view -> {
-           intent.putExtra("category", "Watches");
-           startActivity(intent);
-       });
+        binding.tvBag.setOnClickListener(view -> {
+            intent.putExtra("category", "Bags");
+            startActivity(intent);
+        });
+        binding.tvJackets.setOnClickListener(view -> {
+            intent.putExtra("category", "Jackets");
+            startActivity(intent);
+        });
+        binding.tvWatch.setOnClickListener(view -> {
+            intent.putExtra("category", "Watches");
+            startActivity(intent);
+        });
 
         binding.tvPhones.setOnClickListener(view -> {
             intent.putExtra("category", "Cell Phones And Accessories");
@@ -205,7 +195,7 @@ public class home extends Fragment {
             startActivity(intent);
         });
 
-       binding.tvLaptops.setOnClickListener((View view) -> {
+        binding.tvLaptops.setOnClickListener((View view) -> {
             intent.putExtra("category", "Computers And Accessories");
             startActivity(intent);
         });
@@ -216,16 +206,23 @@ public class home extends Fragment {
 
         getMostSellingProducts();
 
+        binding.progressAnimationView.setVisibility(View.VISIBLE);
+
         getRecommendedProducts(page_number);
 
         binding.endlessView.setNestedScrollingEnabled(false);
 
-        scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
+        binding.endlessView.setItemAnimator(new LandingAnimator());
+        binding.endlessView.getItemAnimator().setAddDuration(600);
+
+        // Triggered only when new data needs to be appended to the list
+        // Add whatever code is needed to append new items to the bottom of the list
+        EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 // Triggered only when new data needs to be appended to the list
                 // Add whatever code is needed to append new items to the bottom of the list
-                Log.d("page",String.valueOf(page));
+                Log.d("page", String.valueOf(page));
 
                 fetchData(page);
 
@@ -253,102 +250,59 @@ public class home extends Fragment {
 //        });
 
 
-
         return v;
     }
 
 
     private void fetchData(int page) {
-        if(!isLoaded){
+        if (!isLoaded) {
             page++;
 
             binding.progressAnimationView.setVisibility(View.VISIBLE);
             getRecommendedProducts(page);
 
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    binding.progressAnimationView.setVisibility(View.GONE);
-                }
-            },3000);
-
 
         }
 
 
-
     }
 
-    public void getMostSellingProducts(){
+    public void getMostSellingProducts() {
 
-        Call<List<ProductItems>> getNearByProduct=SmartAPI.getApiService().getNearByOrders(session.getJWT(),session.getUserId());
-        getNearByProduct.enqueue(new Callback<List<ProductItems>>() {
-            @Override
-            public void onResponse(Call<List<ProductItems>> call, Response<List<ProductItems>> response) {
-                if (response.isSuccessful()){
-                    for (ProductItems p:response.body()){
+        SmartAPI.getApiService().getNearByOrders(session.getJWT())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(productItems -> {
 
-                        productData.add(new ProductItems(p));
+                    mostSellingList.addAll(productItems);
+                    mostSellingListAdapter.notifyItemRangeInserted(0, productItems.size());
 
-                    }
-                    myadapter1.notifyDataSetChanged();
-                }
-            }
 
-            @Override
-            public void onFailure(Call<List<ProductItems>> call, Throwable t) {
-
-            }
-        });
+                }, throwable -> Log.e(TAG, "getMostSellingProducts has error: " + throwable.getMessage()));
 
     }
 
     public void getRecommendedProducts(int page_number) {
-        if (session.getJWT() != null) {
-            Call<List<ProductItems>> getProduct = SmartAPI.getApiService().getProducts(session.getJWT(), page_number);
-                    getProduct.enqueue(new Callback<List<ProductItems>>() {
-                        @Override
-                        public void onResponse(Call<List<ProductItems>> call, Response<List<ProductItems>> response) {
-                            if (!response.isSuccessful())
-                                Log.d("msg", "unsuccessfull");
-                            else {
-                                for (ProductItems p : response.body()) {
-                                    Log.d("products", p.toString());
-                                    listnewsData.add(new ProductItems(p));
 
 
-                                }
+        SmartAPI.getApiService().getProducts(session.getJWT(), page_number)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(productItems -> {
+                    int previousItems = recommendedList.size(); //calculate how many items are there in our list
+                    totalCurrentItems = previousItems + productItems.size(); // add current items + new incoming items
+                    recommendedList.addAll(productItems);
 
-                                myadapter.notifyDataSetChanged();
+                    recommendedListAdapter.notifyItemRangeInserted(previousItems, totalCurrentItems);
 
-                            }
-
-
-                        }
-
-                        @Override
-                        public void onFailure(Call<List<ProductItems>> call, Throwable t) {
-
-
-                            isLoaded=true;
-                            Log.e("error", t.getMessage());
-                        }
-                    });
-
-                }
+                }, throwable -> {
+                    Log.e(TAG, "getRecommendedProducts: " + throwable.getMessage());
+                    isLoaded = true;
+                });
+        binding.progressAnimationView.setVisibility(View.GONE);
 
 
-            }
-
-
-
-
-
-
-
-
-
-
+    }
 
 
 }

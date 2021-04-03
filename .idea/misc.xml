@@ -1,5 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/hp/AndroidStudioProjects/SmartPasal/app/src/main/res/drawable-v24/background_color_chip_state_list.xml" value="0.16354166666666667" />
+        <entry key="..\:/Users/hp/AndroidStudioProjects/SmartPasal/app/src/main/res/drawable-v24/text_color_chip_state_list.xml" value="0.15208333333333332" />
+        <entry key="..\:/Users/hp/AndroidStudioProjects/SmartPasal/app/src/main/res/drawable/background_color_chip_state_list.xml" value="0.22083333333333333" />
+        <entry key="..\:/Users/hp/AndroidStudioProjects/SmartPasal/app/src/main/res/drawable/bottom_navigation_colors.xml" value="0.16354166666666667" />
+        <entry key="..\:/Users/hp/AndroidStudioProjects/SmartPasal/app/src/main/res/drawable/ic_tick.xml" value="0.24427083333333333" />
+        <entry key="..\:/Users/hp/AndroidStudioProjects/SmartPasal/app/src/main/res/drawable/rounded_border.xml" value="0.23843416370106763" />
+        <entry key="..\:/Users/hp/AndroidStudioProjects/SmartPasal/app/src/main/res/drawable/text_color_chip_state_list.xml" value="0.22083333333333333" />
+        <entry key="..\:/Users/hp/AndroidStudioProjects/SmartPasal/app/src/main/res/layout/activity_cart.xml" value="0.25" />
+        <entry key="..\:/Users/hp/AndroidStudioProjects/SmartPasal/app/src/main/res/layout/activity_home.xml" value="0.1" />
+        <entry key="..\:/Users/hp/AndroidStudioProjects/SmartPasal/app/src/main/res/layout/activity_login.xml" value="0.21927083333333333" />
+        <entry key="..\:/Users/hp/AndroidStudioProjects/SmartPasal/app/src/main/res/layout/activity_main.xml" value="0.38802395209580837" />
+        <entry key="..\:/Users/hp/AndroidStudioProjects/SmartPasal/app/src/main/res/layout/activity_product_details.xml" value="0.4" />
+        <entry key="..\:/Users/hp/AndroidStudioProjects/SmartPasal/app/src/main/res/layout/activity_register.xml" value="0.21927083333333333" />
+        <entry key="..\:/Users/hp/AndroidStudioProjects/SmartPasal/app/src/main/res/layout/activity_search_list.xml" value="0.4" />
+        <entry key="..\:/Users/hp/AndroidStudioProjects/SmartPasal/app/src/main/res/layout/bg_chip_state_list.xml" value="0.10989583333333333" />
+        <entry key="..\:/Users/hp/AndroidStudioProjects/SmartPasal/app/src/main/res/layout/dialog_payment_option.xml" value="0.264" />
+        <entry key="..\:/Users/hp/AndroidStudioProjects/SmartPasal/app/src/main/res/layout/fragment_profile.xml" value="0.4" />
+        <entry key="..\:/Users/hp/AndroidStudioProjects/SmartPasal/app/src/main/res/layout/fragment_search.xml" value="0.264" />
+        <entry key="..\:/Users/hp/AndroidStudioProjects/SmartPasal/app/src/main/res/layout/layout_cart_lists.xml" value="0.47231833910034604" />
+        <entry key="..\:/Users/hp/AndroidStudioProjects/SmartPasal/app/src/main/res/layout/layout_dialog_order_list.xml" value="0.536" />
+        <entry key="..\:/Users/hp/AndroidStudioProjects/SmartPasal/app/src/main/res/layout/layout_horizontal_list.xml" value="0.21927083333333333" />
+        <entry key="..\:/Users/hp/AndroidStudioProjects/SmartPasal/app/src/main/res/layout/layout_order_list.xml" value="0.536" />
+        <entry key="..\:/Users/hp/AndroidStudioProjects/SmartPasal/app/src/main/res/layout/layout_product_lists.xml" value="0.2" />
+        <entry key="..\:/Users/hp/AndroidStudioProjects/SmartPasal/app/src/main/res/layout/order_dialog_context.xml" value="0.49214659685863876" />
+        <entry key="..\:/Users/hp/AndroidStudioProjects/SmartPasal/app/src/main/res/layout/placed_order_dialog.xml" value="0.4" />
+        <entry key="..\:/Users/hp/AndroidStudioProjects/SmartPasal/app/src/main/res/layout/search_list_item.xml" value="0.264" />
+        <entry key="..\:/Users/hp/AndroidStudioProjects/SmartPasal/app/src/main/res/layout/single_chip_layout.xml" value="0.2" />
+        <entry key="..\:/Users/hp/AndroidStudioProjects/SmartPasal/app/src/main/res/menu/app_bar_menu.xml" value="0.1" />
+        <entry key="..\:/Users/hp/AndroidStudioProjects/SmartPasal/app/src/main/res/menu/bottom_nav_menu.xml" value="0.1" />
+        <entry key="..\:/Users/hp/AndroidStudioProjects/SmartPasal/app/src/main/res/menu/setting_menu.xml" value="0.1" />
+      </map>
+    </option>
+  </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
       <profile-state>
@@ -304,7 +340,7 @@
       </profile-state>
     </entry>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

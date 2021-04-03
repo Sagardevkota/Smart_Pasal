@@ -4,6 +4,15 @@ package com.example.smartpasal.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class User implements Parcelable {
 
     private int id;
@@ -27,6 +36,8 @@ public class User implements Parcelable {
     private Double latitude;
 
     private Double longitude;
+
+    private int cartCount;
 
     public User(String userName, String password, String deliveryAddress, String phone,String role,String age,String gender,Double latitude,Double longitude) {
         this.userName = userName;
@@ -85,86 +96,7 @@ public class User implements Parcelable {
         }
     };
 
-    public String getDeliveryAddress() {
-        return deliveryAddress;
-    }
 
-    public void setDeliveryAddress(String deliveryAddress) {
-        this.deliveryAddress = deliveryAddress;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public String getAge() {
-        return age;
-    }
-
-    public void setAge(String age) {
-        this.age = age;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Boolean getVerified() {
-        return verified;
-    }
-
-    public void setVerified(Boolean verified) {
-        this.verified = verified;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", userName='" + userName + '\'' +
-                ", password='" + password + '\'' +
-                '}';
-    }
 
     @Override
     public int describeContents() {

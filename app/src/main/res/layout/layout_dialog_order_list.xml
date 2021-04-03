@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
 android:orientation="vertical"
-        android:padding="4dp"
+
 
         >
 
@@ -25,12 +25,12 @@ android:orientation="vertical"
 
         <ImageView
             android:id="@+id/ivImg"
-            android:layout_width="0dp"
-            android:layout_height="70dp"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
             android:src="@drawable/robot"
             android:layout_weight="0.3"
-
+            android:scaleType="fitXY"
 
             />
 
@@ -47,12 +47,13 @@ android:orientation="vertical"
                     android:id="@+id/tvProduct_Name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Gold Star shoe"
+                    android:text="Product Name"
                     android:textColor="@color/colorPrimary"
                     android:layout_margin="2dp"
                     android:textStyle="bold"
                     android:textSize="18sp"
                     android:layout_marginBottom="10dp"
+
                     />
 
                 <TextView
@@ -67,23 +68,52 @@ android:orientation="vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="2dp"
-                    android:text="Color: red"/>
+                    android:text="Color: "/>
 
                 <TextView
                     android:id="@+id/tvProductSize"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="2dp"
-                    android:text="Size: 41"/>
+                    android:text="Size: "/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    >
 
                 <TextView
                     android:id="@+id/tvPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="2dp"
+                    android:textSize="16sp"
+                    android:layout_alignParentStart="true"
+                    android:text="Rs."/>
+
+                    <TextView
+                        android:id="@+id/tvDiscount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="2dp"
+                        android:layout_alignParentEnd="true"
+                        android:textColor="@color/google_red"
+                        android:textStyle="bold"
+                        android:text="Rs."/>
+
+
+                </RelativeLayout>
+
+
+                <TextView
+                    android:id="@+id/tvDiscountedPrice"
                     android:textColor="@color/google_red"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="2dp"
                     android:textSize="16sp"
-                    android:text="Rs.2000"/>
+                    android:text="Rs."/>
 
 
             </LinearLayout>

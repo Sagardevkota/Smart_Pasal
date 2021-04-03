@@ -31,8 +31,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
                 android:padding="1dp"
+                android:src="@mipmap/ic_launcher_round"
                 android:scaleType="fitXY"
-                app:srcCompat="@color/colorAccent" />
+                />
 
 
 

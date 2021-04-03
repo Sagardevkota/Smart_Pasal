@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -24,11 +25,14 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 
 import es.dmoral.toasty.Toasty;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
+    private static final String TAG = "SETTINGS_FRAGMENT";
    SharedPreferences.OnSharedPreferenceChangeListener listener;
    Session session;
 
@@ -132,21 +136,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     private void sendFeedback(String subject,String message) {
         Feedback feedback=new Feedback(session.getUserId(),subject,message);
-        Call<JsonResponse> sendfeed= SmartAPI.getApiService().addFeedback(session.getJWT(),feedback);
-        sendfeed.enqueue(new Callback<JsonResponse>() {
-            @Override
-            public void onResponse(Call<JsonResponse> call, Response<JsonResponse> response) {
-                if (response.isSuccessful())
-                {
+        SmartAPI.getApiService().addFeedback(session.getJWT(),feedback)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(response -> Toasty.success(getContext(),response.getMessage()).show(),
+                        throwable -> Log.e(TAG, "sendFeedback: "+throwable.getMessage() ));
 
-                    Toasty.success(getContext(),response.body().getMessage()).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<JsonResponse> call, Throwable t) {
-
-            }
-        });
     }
 }

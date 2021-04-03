@@ -1,124 +1,117 @@
 package com.example.smartpasal.view;
 
-import androidx.annotation.VisibleForTesting;
-import androidx.appcompat.app.AppCompatActivity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.smartpasal.R;
-import com.example.smartpasal.SmartAPI.JsonResponse;
-import com.example.smartpasal.SmartAPI.JwtResponse;
+import com.example.smartpasal.Session.Session;
 import com.example.smartpasal.SmartAPI.SmartAPI;
 import com.example.smartpasal.databinding.ActivityLoginBinding;
 import com.example.smartpasal.model.User;
-import com.example.smartpasal.Session.Session;
 import com.example.smartpasal.repository.UserRepository;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.Objects;
 
 import es.dmoral.toasty.Toasty;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
-public class LoginActivity extends AppCompatActivity  {
+public class LoginActivity extends AppCompatActivity {
 
 
-
-    ActivityLoginBinding binding;
+    private static final String TAG = "LOGIN_ACTIVITY";
+    private ActivityLoginBinding binding;
     private Session session;
-    private UserRepository repository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding=ActivityLoginBinding.inflate(getLayoutInflater());
-        View view=binding.getRoot();
+        binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
         setContentView(view);
-        session=new Session(LoginActivity.this);
-        repository=new UserRepository(session,LoginActivity.this);
-
+        session = new Session(LoginActivity.this);
 
 
     }
 
-    public void regClick(View view){
-        Intent intent=new Intent(this, RegisterActivity.class);
+    public void regClick(View view) {
+        Intent intent = new Intent(this, RegisterActivity.class);
         startActivity(intent);
     }
 
-    public void buLogin(View view){
-        final String email=binding.etEmail.getEditText().getText().toString().trim();
-        final String password=binding.etPassword.getEditText().getText().toString().trim();;
-        if ((email.length()> 0)
-                && (password.length()> 0))
-          doLogin(email,password);
+    public void buLogin(View view) {
+        final String email = binding.etEmail.getEditText().getText().toString().trim();
+        final String password = binding.etPassword.getEditText().getText().toString().trim();
+        ;
+        if ((email.length() > 0)
+                && (password.length() > 0))
+            doLogin(email, password);
         else
-          Toasty.error(this, "You did not enter email or password").show();
+            Toasty.error(this, "You did not enter email or password").show();
 
     }
 
     private void doLogin(String email, String password) {
         showProgressDialog("Logging in");
-        Call<JwtResponse> login=SmartAPI.getApiService().login(new User(email,password));
-        login.enqueue(new Callback<JwtResponse>() {
-            @Override
-            public void onResponse(Call<JwtResponse> call, Response<JwtResponse> response) {
-                if (!response.isSuccessful())
-                    Log.d("response",response.message());
-                else{
-                    String status=response.body().getStatus();
-                    String message=response.body().getMessage();
-                    String role=response.body().getRole();
-                    Log.d("responseBody",response.body().getMessage());
-                    if (status.equalsIgnoreCase("200 OK")&&message.equalsIgnoreCase("login successfull"))
-                    {
-                        if (role.equalsIgnoreCase("USER")){
-                            Toasty.success(getApplicationContext(),message).show();
-                            String token=response.body().getJwt();
+         SmartAPI.getApiService().login(new User(email, password))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(response -> {
+                    String status = response.getStatus();
+                    String message = response.getMessage();
+                    String role = response.getRole();
+                    String[] roles = role
+                            .substring(1,role.length()-1)
+                            .split(","); //role can be "[ADMIN,USER]"
+
+
+                    Log.d("responseBody", response.toString());
+                    if (status.equalsIgnoreCase("200 OK") && message.equalsIgnoreCase("login successful")) {
+                        if (Arrays.stream(roles)
+                                .anyMatch(role1->role1.equalsIgnoreCase("USER"))) {
+                            Toasty.success(getApplicationContext(), message).show();
+                            String token = response.getJwt();
                             session.setToken(token);
-                            String jwt="Bearer "+response.body().getJwt();
+                            String jwt = "Bearer " + response.getJwt();
                             session.setJWT(jwt);
-                            getUserDetails( getUserName(jwt));
-                            hideProgressDialog();
+                            goToHomeActivity();
 
-                        }
-                        else
-                        {
-                            Toasty.error(getApplicationContext(),"Please login via user id not seller id!!!").show();
+                        } else {
+                            Toasty.error(getApplicationContext(), "Please login via user id not seller or admin id!!!").show();
                             hideProgressDialog();
                         }
-
-
                     }
 
-                    else{
-                        Toasty.error(getApplicationContext(),message).show();
+                    else {
+                        Toasty.error(getApplicationContext(), message).show();
                         hideProgressDialog();
                     }
 
-                }
-            }
+                }, throwable -> {
+                    Log.e(TAG, "doLogin: " + throwable.getMessage());
+                    Toasty.error(getApplicationContext(), Objects.requireNonNull(throwable.getMessage())).show();
 
-            @Override
-            public void onFailure(Call<JwtResponse> call, Throwable t) {
-                Log.d("JwtResponse",t.getMessage());
+                    hideProgressDialog();
+                });
 
-            }
-        });
     }
+
 
     @VisibleForTesting
     public ProgressDialog mProgressDialog;
@@ -140,109 +133,28 @@ public class LoginActivity extends AppCompatActivity  {
     }
 
 
-
-
     @Override
     public void onBackPressed() {
 
-        MaterialAlertDialogBuilder alert=new MaterialAlertDialogBuilder(this,R.style.AlertDialog);
+        MaterialAlertDialogBuilder alert = new MaterialAlertDialogBuilder(this, R.style.AlertDialog);
         alert.setMessage("Are you sure you want to exit?").setTitle("Confirmation").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 finishAffinity();
             }
-        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+        }).setNegativeButton("No", (dialog, which) -> {
 
-            }
         }).show();
 
 
     }
 
 
-
-
-
-
     public void goToHomeActivity() {
         hideProgressDialog();
-
         Intent i = new Intent(this, HomeActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
         startActivity(i);
-    }
-
-    public void getUserDetails(String userName) {
-        Call<User> getUserId = SmartAPI.getApiService().getUserDetails(session.getJWT(), userName);
-        getUserId.enqueue(new retrofit2.Callback<User>() {
-            @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-                if (response.isSuccessful()) {
-                    session.setUserId(response.body().getId());
-                    session.setAddress(response.body().getDeliveryAddress());
-
-                    getBadgeCount();
-
-
-                }
-
-
-            }
-
-            @Override
-            public void onFailure(Call<User> call, Throwable t) {
-                Log.e("error", t.getMessage());
-
-            }
-        });
-
-
-
-
-    }
-
-    private void getBadgeCount() {
-        SmartAPI.getApiService().getBadgeCount(session.getJWT(),session.getUserId())
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(jsonResponse -> {
-            if (jsonResponse.getStatus().equalsIgnoreCase("200 OK"))
-            {
-                int message= Integer.parseInt(jsonResponse.getMessage());
-                if (message>0)
-                    session.setBadgeCount(message);
-                goToHomeActivity();
-            }
-
-            else
-                Toasty.error(getApplicationContext(),jsonResponse.getMessage()).show();
-
-
-        },throwable -> {});
-        ;
-
-    }
-
-    private String getUserName(String jwt){
-        String token = jwt;
-        String[] split_string = token.split("\\.");
-        String payload = split_string[1];
-        String body="";
-
-        if (Build.VERSION.SDK_INT >= 26) {
-            body = new String(Base64.getDecoder().decode(payload));
-        } else {
-            body = new String(android.util.Base64.decode(payload, android.util.Base64.DEFAULT));
-        }
-        HashMap<String, String> map = new Gson().fromJson(body, new TypeToken<HashMap<String, String>>() {
-        }.getType());
-        session.setUsername(map.get("sub"));
-
-        return map.get("sub");
-
     }
 
 
