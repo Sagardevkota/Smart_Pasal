@@ -3,6 +3,7 @@ package com.example.smartpasal.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -29,8 +30,8 @@ public class ProductItems implements Parcelable {
     private int seller_id;
 
     private String rating;
-    private List<String> colors;
-    private List<String> sizes;
+    private List<String> colors = new ArrayList<>();
+    private List<String> sizes = new ArrayList<>();
 
 
     protected ProductItems(Parcel in) {
