@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
@@ -63,13 +64,13 @@ public class cartActivity extends AppCompatActivity {
 
     private int grandTotalPrice = 0;
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.cart_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
-
 
 
     @Override
@@ -86,15 +87,13 @@ public class cartActivity extends AppCompatActivity {
                 Toasty.warning(getApplicationContext(), "No item selected to delete").show();
                 return super.onOptionsItemSelected(item);
             }
-            Log.i(TAG, "onOptionsItemSelected: "+cartUtil.getItemPositionMap());
+            Log.i(TAG, "onOptionsItemSelected: " + cartUtil.getItemPositionMap());
 
             MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(this);
             alertDialogBuilder.setMessage("Do you want to remove the item from cart?")
                     .setPositiveButton("Yes", (dialog, which) -> {
 
-
-
-                        for(Map.Entry<Integer,Integer>entry:cartUtil.getItemPositionMap().entrySet()){
+                        for (Map.Entry<Integer, Integer> entry : cartUtil.getItemPositionMap().entrySet()) {
                             int productId = entry.getKey();
                             int position = entry.getValue();
                             removeFromCart(productId);
@@ -108,11 +107,6 @@ public class cartActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
-
-
-
-
 
 
     @Override
@@ -132,31 +126,28 @@ public class cartActivity extends AppCompatActivity {
 
         //listener
         cartBinding.buContinueShopping.setOnClickListener(v -> {
-            Intent intent = new Intent(this,HomeActivity.class);
+            Intent intent = new Intent(this, HomeActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         });
 
         cartBinding.buCheckOut.setOnClickListener(v -> createCheckOutDialog());
 
-
-
-
     }
 
     private void createCheckOutDialog() {
         //no item checked
-        if (cartUtil.getItemPositionMap().size()==0)  {
-            Toasty.warning(getApplicationContext(),"Nothing selected to checkout").show();
+        if (cartUtil.getItemPositionMap().size() == 0) {
+            Toasty.warning(getApplicationContext(), "Nothing selected to checkout").show();
             return;
         }
-       initCheckOutDialogView();
+        initCheckOutDialogView();
 
     }
 
-    private void initCheckOutDialogView(){
+    private void initCheckOutDialogView() {
         checkoutList.clear();
-        final Dialog dialog = new Dialog(this,android.R.style.Theme_Light_NoTitleBar_Fullscreen);
+        final Dialog dialog = new Dialog(this, android.R.style.Theme_Light_NoTitleBar_Fullscreen);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         dialog.setContentView(R.layout.order_dialog_context);
@@ -177,21 +168,9 @@ public class cartActivity extends AppCompatActivity {
         buCancel.setOnClickListener(v -> dialog.dismiss());
         buContinue.setOnClickListener(v -> showPaymentOptionDialog());
 
-        Log.i(TAG, "initCheckOutDialogView: "+cartUtil.getItemPositionMap().toString());
 
-
-        for (Map.Entry<Integer,Integer> orderSet:cartUtil.getItemPositionMap().entrySet()){
-            int productId = orderSet.getKey();
-            int position = orderSet.getValue();
-            Orders orders = cartUtil.getOrderList().stream()
-                    .filter(order -> order.getProductId().equals(productId))
-                    .reduce((a, b) -> {
-                        throw new IllegalStateException("Multiple elements: " + a + ", " + b);
-                    })
-                    .get();
-            checkoutList.add(orders);
-
-        }
+        Log.i(TAG, "initCheckOutDialogView: "+cartUtil.getOrderList());
+        checkoutList.addAll(cartUtil.getOrderList());
 
         etCoupon.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
@@ -208,7 +187,7 @@ public class cartActivity extends AppCompatActivity {
             }
         });
 
-        dialogAdapter = new DialogAdapter(checkoutList,getApplicationContext());
+        dialogAdapter = new DialogAdapter(checkoutList, getApplicationContext());
 
 
         rvDialog.setLayoutManager(new LinearLayoutManager(cartActivity.this));
@@ -219,20 +198,18 @@ public class cartActivity extends AppCompatActivity {
             Integer totalPrice = dialogAdapter.getTotal();
             Integer CouponedAmount = totalPrice * discount / 100;
             int PriceAfterCoupon = totalPrice - CouponedAmount;
-            tvTotal.setText("Rs. "+PriceAfterCoupon);
-            if (discount!=0){
+            tvTotal.setText("Rs. " + PriceAfterCoupon);
+            if (discount != 0) {
                 tvDiscountApplied.setVisibility(View.VISIBLE);
-                tvDiscountApplied.setText(discount+ "% Discount applied after promo code");
+                tvDiscountApplied.setText(discount + "% Discount applied after promo code");
                 grandTotalPrice = PriceAfterCoupon;
-            }
-            else tvDiscountApplied.setText("Invalid Coupon Code");
+            } else tvDiscountApplied.setText("Invalid Coupon Code");
 
         });
 
 
-
         tvTotal.setText("Rs. " + grandTotalPrice);
-        tvSubTotal.setText("SubTotal("+checkoutList.size()+" items)");
+        tvSubTotal.setText("SubTotal(" + checkoutList.size() + " items)");
         rvDialog.setAdapter(dialogAdapter);
         dialog.create();
         dialog.show();
@@ -240,7 +217,7 @@ public class cartActivity extends AppCompatActivity {
     }
 
     private void showPaymentOptionDialog() {
-        final Dialog dialog = new Dialog(this,android.R.style.Theme_Light_NoTitleBar_Fullscreen);
+        final Dialog dialog = new Dialog(this, android.R.style.Theme_Light_NoTitleBar_Fullscreen);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         dialog.setContentView(R.layout.dialog_payment_option);
@@ -268,23 +245,23 @@ public class cartActivity extends AppCompatActivity {
         showProgressDialog("Loading");
 
         int total = dialogAdapter.getTotal();
-        int discount = total-grandTotalPrice;
-        int discountPerItem = discount/checkoutList.size();
+        int discount = total - grandTotalPrice;
+        int discountPerItem = discount / checkoutList.size();
 
-        checkoutList.forEach(orders -> {
+        checkoutList.stream().forEach(orders -> {
             String pattern = "MM-dd-yyyy";
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern, Locale.US);
             String date = simpleDateFormat.format(new Date());
             orders.setOrderedDate(date);//set today's date
             orders.setDeliveryAddress(deliveryAddress);//if user selects delivery address different
-             int finalPrice = orders.getPrice()-discountPerItem;
+            int finalPrice = orders.getPrice() - discountPerItem;
             orders.setPrice(finalPrice); //discount for every item from overall discount
 
-            SmartAPI.getApiService().addOrder(session.getJWT(),orders)
+            SmartAPI.getApiService().addOrder(session.getJWT(), orders)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(response -> Log.i(TAG, "postOrders: "+response.getMessage()),
-                            throwable -> Log.e(TAG, "postOrders: "+throwable.getMessage()));
+                    .subscribe(response -> Log.i(TAG, "postOrders: " + response.getMessage()),
+                            throwable -> Log.e(TAG, "postOrders: " + throwable.getMessage()));
         });
 
         hideProgressDialog();
@@ -294,13 +271,13 @@ public class cartActivity extends AppCompatActivity {
     }
 
     private void showFinishingDialog() {
-        final Dialog dialog = new Dialog(this,android.R.style.Theme_Light_NoTitleBar_Fullscreen);
+        final Dialog dialog = new Dialog(this, android.R.style.Theme_Light_NoTitleBar_Fullscreen);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         dialog.setContentView(R.layout.placed_order_dialog);
         dialog.create();
         dialog.findViewById(R.id.tvContinueShopping).setOnClickListener(v -> {
-            Intent intent = new Intent(getApplicationContext(),HomeActivity.class);
+            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         });
@@ -344,7 +321,6 @@ public class cartActivity extends AppCompatActivity {
 //                }, throwable -> Log.e(TAG, "applyCoupon: " + throwable.getMessage()));
 
 
-
     }
 
     private void initRecyclerView() {
@@ -353,6 +329,7 @@ public class cartActivity extends AppCompatActivity {
         cartBinding.rvCart.setItemAnimator(new SlideInRightAnimator());
         cartBinding.rvCart.getItemAnimator().setAddDuration(300);
         cartBinding.rvCart.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+
     }
 
 
@@ -365,26 +342,26 @@ public class cartActivity extends AppCompatActivity {
                             if (cartResponses.size() == 0) {
                                 cartBinding.noItemLinearLayout.setVisibility(View.VISIBLE);
                                 return;
-                            }for (CartResponse cartResponse:cartResponses){
-                                if (cartResponse.getStock()!=0) //check if the cart item has stock
+                            }
+                            for (CartResponse cartResponse : cartResponses) {
+                                if (cartResponse.getStock() != 0) //check if the cart item has stock
                                     cartList.add(cartResponse);
                                 else {
                                     removeFromCart(cartResponse.getProductId());  //if item is not in stock remove from cart
-                                     Snackbar
+                                    Snackbar
                                             .make(cartBinding.rootLayout, "Some of the items were removed due to out of stock ", Snackbar.LENGTH_INDEFINITE)
-                                    .setAction("OK", view -> { }).show();
+                                            .setAction("OK", view -> {
+                                            }).show();
 
                                 }
 
                             }
-                            cartAdapter.notifyItemRangeInserted(0,cartResponses.size());
+                            cartAdapter.notifyItemRangeInserted(0, cartResponses.size());
                             hideProgressDialog();
                         },
                         throwable -> Log.e(TAG, "getCartItems: " + throwable.getMessage()));
 
     }
-
-
 
 
     public void removeFromCart(int productId) {
@@ -399,7 +376,7 @@ public class cartActivity extends AppCompatActivity {
                             if (status.equalsIgnoreCase("200 OK") && message.equalsIgnoreCase("Item is removed from cart")) {
                                 Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
                                 cartAdapter.removeData(productId);
-                                if (cartAdapter.getItemCount()==0)
+                                if (cartAdapter.getItemCount() == 0)
                                     cartBinding.noItemLinearLayout.setVisibility(View.VISIBLE);
                             }
                         },
@@ -426,7 +403,6 @@ public class cartActivity extends AppCompatActivity {
             mProgressDialog.dismiss();
         }
     }
-
 
 
 }

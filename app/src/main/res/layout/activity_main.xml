@@ -18,7 +18,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-           android:layout_marginTop="100dp"
+        android:layout_marginTop="100dp"
         android:src="@drawable/robot"
         android:visibility="visible"
         />
@@ -27,24 +27,22 @@
         android:id="@+id/logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
         android:fontFamily="@font/fauna_one"
         android:text="S-Mart"
         android:textColor="#fff"
         android:textSize="60sp"
         android:textStyle="bold"
-        android:layout_marginStart="60dp"
+        android:layout_marginTop="50dp"
+        android:layout_gravity="center"
         />
 
     <TextView
         android:id="@+id/slogan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="170dp"
-
+        android:layout_gravity="center"
         android:text="Shop Smart"
         android:fontFamily="@font/actor"
-        android:textAlignment="textStart"
         android:textColor="@color/design_default_color_background"
         android:textSize="24sp"
          />

@@ -120,6 +120,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.MyViewholder
             Picasso.get()
                     .load(url)
                     .fit()
+                    .centerCrop()
                     .into(holder.ivImg, new Callback() {
                         @Override
                         public void onSuccess() {

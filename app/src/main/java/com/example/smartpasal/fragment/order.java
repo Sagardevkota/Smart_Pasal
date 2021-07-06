@@ -24,6 +24,7 @@ import com.example.smartpasal.Session.Session;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import es.dmoral.toasty.Toasty;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -47,8 +48,9 @@ import retrofit2.Response;
 public class order extends Fragment {
     private FragmentOrderBinding binding;
     private OrderAdapter adapter;
-    private ArrayList<OrderResponse> orderResponseList = new ArrayList<>();
+    private final ArrayList<OrderResponse> orderResponseList = new ArrayList<>();
     private Session session;
+    private static final String TAG = "ORDER";
 
     public order() {
         // Required empty public constructor
@@ -62,7 +64,7 @@ public class order extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentOrderBinding.inflate(getLayoutInflater());
@@ -74,24 +76,15 @@ public class order extends Fragment {
     }
 
     private void initSpinner() {
-        List<String> arr = new ArrayList<>();
-        arr.add("Waiting");
-        arr.add("Dispatched");
-        arr.add("Completed");
-        arr.add("Cancelled");
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, arr);
+        String[] arr = {"Waiting","Dispatched","Completed","Cancelled"};
+
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, arr);
         binding.spSort.setAdapter(arrayAdapter);
         binding.spSort.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                if (arr.get(position).equalsIgnoreCase("Waiting"))
-                    getOrders("waiting");
-                if (arr.get(position).equalsIgnoreCase("Dispatched"))
-                    getOrders("dispatched");
-                if (arr.get(position).equalsIgnoreCase("Completed"))
-                    getOrders("completed");
-                if (arr.get(position).equalsIgnoreCase("Cancelled"))
-                    getOrders("cancelled");
+                //Waiting to waiting and so on
+                getOrders(arr[position].toLowerCase(Locale.ROOT));
             }
 
             @Override
@@ -112,7 +105,7 @@ public class order extends Fragment {
                     orderResponseList.clear();
                     orderResponseList.addAll(orderResponses);
                     adapter.notifyItemRangeInserted(0,orderResponses.size());
-                });
+                },throwable -> Log.e(TAG, "getOrders: "+throwable.getMessage() ));
 
     }
 

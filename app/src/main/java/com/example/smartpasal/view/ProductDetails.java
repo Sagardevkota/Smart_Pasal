@@ -218,10 +218,11 @@ public class ProductDetails extends AppCompatActivity {
             Picasso.get()
                     .load(url)
                     .fit()
+                    .centerCrop()
                     .into(binding.ivProductImage, new Callback() {
                         @Override
                         public void onSuccess() {
-                            Log.d("Load", "Successfull");
+                            Log.d("Load", "Successful");
                         }
 
                         @Override

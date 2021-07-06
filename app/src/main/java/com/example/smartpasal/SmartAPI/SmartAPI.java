@@ -18,6 +18,7 @@ import com.example.smartpasal.model.User;
 import java.util.List;
 
 
+import io.reactivex.Completable;
 import io.reactivex.rxjava3.core.Observable;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -43,7 +44,8 @@ public class SmartAPI {
     public static apiService apiService = null;
     //    public static String base_url="http://52.171.61.18:8080";
 //    public static String BASE_URL = "http://10.0.2.2:8081";
-    public static final String BASE_URL = "http://23.101.181.211:8080";
+    public static final String BASE_URL = "http://157.55.181.67:8080";//newest
+//    public static final String BASE_URL = "http://23.101.181.211:8080";
     public static final String IMG_BASE_URL = "https://bese2016smartstore.blob.core.windows.net/bese2016blob/";
 
 
@@ -101,6 +103,9 @@ public class SmartAPI {
         //Product Services
         @GET(value = "/api/products/{pageNumber}")
         Observable<List<ProductItems>> getProducts(@Header("Authorization") String jwt, @Path("pageNumber") int pageNumber);
+
+        @GET(value = "/api/products/hot-deals/{pageNumber}")
+        Observable<List<ProductItems>> getHotDeals(@Header("Authorization") String jwt, @Path("pageNumber") int pageNumber);
 
         @GET(value = "/api/products/id/{id}")
         Call<ProductItems> getOneProduct(@Header("Authorization") String jwt, @Path("id") int id);
@@ -175,6 +180,7 @@ public class SmartAPI {
 
         @PUT(value = "/api/reviews")
         Observable<JsonResponse> updateReview(@Header("Authorization") String jwt, @Body ReviewResponse reviews);
+
 
 
     }

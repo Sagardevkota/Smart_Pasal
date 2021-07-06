@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -146,6 +147,7 @@ public class ListAdapterItems extends RecyclerView.Adapter<ListAdapterItems.Myvi
             Picasso.get()
                     .load(url)
                     .fit()
+                    .centerCrop()
                     .into(holder.binding.ivImg, new Callback() {
                         @Override
                         public void onSuccess() {

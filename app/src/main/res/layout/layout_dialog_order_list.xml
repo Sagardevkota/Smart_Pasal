@@ -30,7 +30,7 @@ android:orientation="vertical"
             android:layout_gravity="center"
             android:src="@drawable/robot"
             android:layout_weight="0.3"
-            android:scaleType="fitXY"
+            android:scaleType="centerCrop"
 
             />
 

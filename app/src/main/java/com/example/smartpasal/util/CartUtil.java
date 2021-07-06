@@ -17,6 +17,7 @@ public class CartUtil {
     private final Map<Integer, Integer> itemPositionMap = new HashMap<>(); //{productId,position}
     private List<Orders> orderList = new ArrayList<>();
 
+
     public void putItem(int productId, int position) {
         itemPositionMap.put(productId, position);
     }
@@ -30,9 +31,15 @@ public class CartUtil {
         return itemPositionMap;
     }
 
+
+
     public void addOrders(Orders orders) {
+        //check if present then first remove it
+        removeOrderFromList(orders.getProductId());
         this.orderList.add(orders);
     }
+
+
 
     public void updateOrders(int productId, int qty) {
         orderList.stream().filter(orders -> orders.getProductId() == productId)
@@ -42,6 +49,7 @@ public class CartUtil {
 
     public void removeOrderFromList(int productId) {
         orderList.removeIf(orders -> orders.getProductId() == productId);
+        Log.i(TAG, "removeOrderFromList: Removed "+productId);
     }
 
     public List<Orders> getOrderList() {
@@ -51,7 +59,7 @@ public class CartUtil {
     public String getTotalPrice() {
 
         this.orderList = new ArrayList<>(new LinkedHashSet<>(this.orderList)); //to remove any duplicate
-        Log.i(TAG, "getTotalPrice: " + orderList.toString());
+
         int totalPrice = 0;
         for (Orders o : orderList) {
             int quantity = o.getQuantity();
@@ -64,6 +72,12 @@ public class CartUtil {
         }
 
         return String.valueOf(totalPrice);
+    }
+
+
+
+    public void removeAll(){
+        orderList.clear();
     }
 
 

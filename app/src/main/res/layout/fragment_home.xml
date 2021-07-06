@@ -83,6 +83,73 @@
 
 
         <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hot Deals"
+            android:fontFamily="@font/actor"
+            android:gravity="start"
+            android:layout_marginStart="10dp"
+            android:textColor="@color/design_default_color_on_secondary"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:drawablePadding="8dp"
+            app:drawableEndCompat="@drawable/ic_fire" />
+
+        <View
+            android:layout_width="120dp"
+            android:layout_height="5dp"
+            android:background="@color/colorAccent"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+
+            />
+
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                >
+
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvHotDeals"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+
+                    />
+
+
+        <ProgressBar
+            android:id="@+id/hProgress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            />
+
+                <ImageView
+                    android:id="@+id/IvHShowMore"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/cardview_dark_background"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentEnd="true"
+                    android:src="@drawable/ic_right_arrow"
+                    app:tint="@color/colorAccent"
+                    />
+
+            </RelativeLayout>
+
+
+
+
+
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Most Sold Products Near You"
@@ -109,19 +176,42 @@
 
 
 
-
-
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvMostSelling"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
-
                 android:layout_gravity="center"
-
-
                 />
+
+
+            <ProgressBar
+                android:id="@+id/spProgress_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                />
+
+            <ImageView
+                android:id="@+id/IvSpShowMore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/cardview_dark_background"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/ic_right_arrow"
+                app:tint="@color/colorAccent"
+                />
+        </RelativeLayout>
+
+
+
 
 
 
@@ -359,8 +449,6 @@
                 android:layout_marginBottom="50dp"
 
 
-
-
                 />
 
 
@@ -373,18 +461,10 @@
             android:layout_height="100dp"
             android:layout_gravity="center"
             android:layout_marginBottom="50dp"
-
-
-
-
             app:lottie_rawRes="@raw/loading"
-
-
-            android:visibility="gone"
-
-
-        app:lottie_loop="true"
-        app:lottie_autoPlay="true" />
+            android:visibility="visible"
+            app:lottie_loop="true"
+            app:lottie_autoPlay="true" />
 
 
 

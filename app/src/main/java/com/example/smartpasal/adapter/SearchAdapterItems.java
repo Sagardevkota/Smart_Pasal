@@ -45,7 +45,6 @@ public class SearchAdapterItems extends RecyclerView.Adapter<SearchAdapterItems.
     public void onBindViewHolder(@NonNull Myviewholder holder, int position) {
 
         final ProductItems currentItem = productItems.get(position);
-
         holder.tvProduct_Name.setText(currentItem.getProductName());
         holder.tvMarked_Price.setText("Rs. " + currentItem.getPrice());
 
@@ -64,6 +63,7 @@ public class SearchAdapterItems extends RecyclerView.Adapter<SearchAdapterItems.
             Picasso.get()
                     .load(url)
                     .fit()
+                    .centerCrop()
                     .into(holder.ivImg, new Callback() {
                         @Override
                         public void onSuccess() {

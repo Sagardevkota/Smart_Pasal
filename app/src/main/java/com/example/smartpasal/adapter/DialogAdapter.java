@@ -72,6 +72,7 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.MyViewhold
             Picasso.get()
                     .load(url)
                     .fit()
+                    .centerCrop()
                     .into(holder.ivImg, new Callback() {
                         @Override
                         public void onSuccess() {

@@ -66,7 +66,6 @@ public class HorizontalListAdapter extends RecyclerView.Adapter<HorizontalListAd
             holder.tvMarked_Price.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
             holder.tvMarked_Price.setText("Rs. "+marked_price);
 
-
         }
 
         else
@@ -78,14 +77,6 @@ public class HorizontalListAdapter extends RecyclerView.Adapter<HorizontalListAd
             holder.tvMarked_Price.setTextColor(Color.parseColor("#ff5252"));
             holder.tvMarked_Price.setTypeface(Typeface.DEFAULT_BOLD);
         }
-
-        if (currentItem.getStock()==0)
-        {
-            holder.tvIsStock.setVisibility(View.VISIBLE);
-            holder.ivImg.setAlpha(240);
-        }
-        else
-            holder.tvIsStock.setVisibility(View.GONE);
 
 
 
@@ -105,6 +96,7 @@ public class HorizontalListAdapter extends RecyclerView.Adapter<HorizontalListAd
             Picasso.get()
                     .load(url)
                     .fit()
+                    .centerCrop()
                     .into(holder.ivImg, new Callback() {
                         @Override
                         public void onSuccess() {
@@ -133,15 +125,12 @@ public class HorizontalListAdapter extends RecyclerView.Adapter<HorizontalListAd
         TextView tvMarked_Price;
         ImageView ivImg;
         TextView tvDiscount;
-        Context context;
-        TextView tvIsStock;
 
         public Myviewholder(@NonNull View itemView) {
             super(itemView);
 
             tvProduct_Name=itemView.findViewById(R.id.tvProduct_Name);
             tvFixed_Price=itemView.findViewById(R.id.tvFixed_Price);
-            tvIsStock=itemView.findViewById(R.id.tvIsStock);
             tvMarked_Price=itemView.findViewById(R.id.tvMarked_Price);
             tvDiscount=itemView.findViewById(R.id.tvDiscount);
             tvMarked_Price.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);

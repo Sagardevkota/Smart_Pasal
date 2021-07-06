@@ -33,8 +33,8 @@ import retrofit2.Response;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
     private static final String TAG = "SETTINGS_FRAGMENT";
-   SharedPreferences.OnSharedPreferenceChangeListener listener;
-   Session session;
+    private SharedPreferences.OnSharedPreferenceChangeListener listener;
+    private Session session;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -43,7 +43,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     @Override
     public void onResume() {
-
         super.onResume();
         getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(listener);
 
@@ -52,95 +51,69 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, final String rootKey) {
         addPreferencesFromResource(R.xml.preferences);
-        session=new Session(getContext());
+        session = new Session(getContext());
 
 
-        listener=new SharedPreferences.OnSharedPreferenceChangeListener() {
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+        listener = (sharedPreferences, s) -> {
 
 
-                if (s.equals("notifications")){
-                    Preference notiPref=findPreference(s);
-                    notiPref.setDefaultValue(sharedPreferences.getBoolean(s,true));
-                    if (sharedPreferences.getBoolean(s,true)){
-                        Toast.makeText(getContext(),"Enabled message notifications",Toast.LENGTH_SHORT).show();
-                        notiPref.setSummary("Message notifications is on");
-                        notiPref.setIcon(R.drawable.ic_notifications_24px);
-                         MyFirebaseMessagingService.subscribeTopic("general");
-                    }
-                    else {
-                        Toast.makeText(getContext(), "Disabled message notifications", Toast.LENGTH_SHORT).show();
-                        notiPref.setIcon(R.drawable.ic_notifications_off_24px);
-                        notiPref.setSummary("Message notifications is off");
-                        MyFirebaseMessagingService.unsubscribeAllTopics();
-
-                    }
-
-
-
+            if (s.equals("notifications")) {
+                Preference notiPref = findPreference(s);
+                notiPref.setDefaultValue(sharedPreferences.getBoolean(s, true));
+                if (sharedPreferences.getBoolean(s, true)) {
+                    Toast.makeText(getContext(), "Enabled message notifications", Toast.LENGTH_SHORT).show();
+                    notiPref.setSummary("Message notifications is on");
+                    notiPref.setIcon(R.drawable.ic_notifications_24px);
+                    MyFirebaseMessagingService.subscribeTopic("general");
+                } else {
+                    Toast.makeText(getContext(), "Disabled message notifications", Toast.LENGTH_SHORT).show();
+                    notiPref.setIcon(R.drawable.ic_notifications_off_24px);
+                    notiPref.setSummary("Message notifications is off");
+                    MyFirebaseMessagingService.unsubscribeAllTopics();
                 }
 
-
-
-                sharedPreferences.registerOnSharedPreferenceChangeListener(listener);
             }
+
+            sharedPreferences.registerOnSharedPreferenceChangeListener(listener);
         };
 
 
-
-
-
-        Preference myPref = (Preference) findPreference("feedback");
-        myPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                showFeedbackDialog();
-                return true;
-            }
+        Preference myPref = findPreference("feedback");
+        myPref.setOnPreferenceClickListener(preference -> {
+            showFeedbackDialog();
+            return true;
         });
-
 
 
     }
 
     private void showFeedbackDialog() {
-        MaterialAlertDialogBuilder alertDialogBuilder=new MaterialAlertDialogBuilder(getContext(),R.style.AlertDialog);
+        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(getContext(), R.style.AlertDialog);
         LayoutInflater inflater = this.getLayoutInflater();
-        View dialogView= inflater.inflate(R.layout.feedback_dialog, null);
-
-        TextInputEditText etSubject=dialogView.findViewById(R.id.etSubject);
-        TextInputEditText etMessage=dialogView.findViewById(R.id.etMessage);
-
+        View dialogView = inflater.inflate(R.layout.feedback_dialog, null);
+        TextInputEditText etSubject = dialogView.findViewById(R.id.etSubject);
+        TextInputEditText etMessage = dialogView.findViewById(R.id.etMessage);
 
 
-       alertDialogBuilder.setView(dialogView)
-               .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                   @Override
-                   public void onClick(DialogInterface dialogInterface, int i) {
-                       dialogInterface.dismiss();
+        alertDialogBuilder.setView(dialogView)
+                .setNegativeButton("Cancel", (dialogInterface, i) -> dialogInterface.dismiss())
+                .setPositiveButton("Send", (dialogInterface, i) -> {
+                    String subject = etSubject.getText().toString().trim();
+                    String message = etMessage.getText().toString().trim();
+                    sendFeedback(subject, message);
 
-                   }
-               })
-               .setPositiveButton("Send", new DialogInterface.OnClickListener() {
-                   @Override
-                   public void onClick(DialogInterface dialogInterface, int i) {
-                       String subject=etSubject.getText().toString().trim();
-                       String message=etMessage.getText().toString().trim();
-                       sendFeedback(subject,message);
-
-                   }
-               })
-               .create()
-               .show();
+                })
+                .create()
+                .show();
     }
 
-    private void sendFeedback(String subject,String message) {
-        Feedback feedback=new Feedback(session.getUserId(),subject,message);
-        SmartAPI.getApiService().addFeedback(session.getJWT(),feedback)
+    private void sendFeedback(String subject, String message) {
+        Feedback feedback = new Feedback(session.getUserId(), subject, message);
+        SmartAPI.getApiService().addFeedback(session.getJWT(), feedback)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(response -> Toasty.success(getContext(),response.getMessage()).show(),
-                        throwable -> Log.e(TAG, "sendFeedback: "+throwable.getMessage() ));
+                .subscribe(response -> Toasty.success(getContext(), response.getMessage()).show(),
+                        throwable -> Log.e(TAG, "sendFeedback: " + throwable.getMessage()));
 
     }
 }

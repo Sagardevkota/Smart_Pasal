@@ -4,10 +4,13 @@ package com.example.smartpasal.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-
-
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -15,15 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
-import android.os.Handler;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
-
-
-import com.example.smartpasal.R;
+import com.example.smartpasal.Session.Session;
 import com.example.smartpasal.SmartAPI.SmartAPI;
 import com.example.smartpasal.adapter.EndlessRecyclerViewScrollListener;
 import com.example.smartpasal.adapter.HorizontalListAdapter;
@@ -32,32 +27,19 @@ import com.example.smartpasal.adapter.SliderAdapterExample;
 import com.example.smartpasal.databinding.FragmentHomeBinding;
 import com.example.smartpasal.model.ProductItems;
 import com.example.smartpasal.model.SliderItems;
-
-import com.example.smartpasal.Session.Session;
-
-import com.example.smartpasal.view.HomeActivity;
 import com.example.smartpasal.view.categorizedActivity;
-
-import com.google.android.material.appbar.AppBarLayout;
 import com.smarteist.autoimageslider.IndicatorAnimations;
 import com.smarteist.autoimageslider.SliderAnimations;
 import com.smarteist.autoimageslider.SliderView;
 
-
 import java.util.ArrayList;
-
-import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
-
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
 import jp.wasabeef.recyclerview.animators.SlideInRightAnimator;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 
 /**
@@ -71,10 +53,13 @@ public class home extends Fragment {
 
     private final ArrayList<ProductItems> recommendedList = new ArrayList<>();
     private final ArrayList<ProductItems> mostSellingList = new ArrayList<>();
+    private final ArrayList<ProductItems> hotDealsList = new ArrayList<>();
     private ListAdapterItems recommendedListAdapter;
-    private HorizontalListAdapter mostSellingListAdapter;
+    private HorizontalListAdapter mostSellingListAdapter, hotDealsListAdapter;
     private GradientDrawable gd;
     public int page_number = 1;
+    private int hdealPage = 1;
+    private int mSpPage = 1;
     public boolean isLoaded = false;
     private int totalCurrentItems = 0;
 
@@ -130,15 +115,21 @@ public class home extends Fragment {
         binding.imageSlider.startAutoCycle();
 
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager mostSellingLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+
+        LinearLayoutManager hotDealsLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
 
         binding.endlessView.setLayoutManager(layoutManager);
         recommendedListAdapter = new ListAdapterItems(recommendedList, getContext());
         binding.endlessView.setItemAnimator(new SlideInRightAnimator());
         mostSellingListAdapter = new HorizontalListAdapter(mostSellingList, getContext());
-        binding.rvMostSelling.setLayoutManager(linearLayoutManager);
+        hotDealsListAdapter = new HorizontalListAdapter(hotDealsList, getContext());
+
+        binding.rvMostSelling.setLayoutManager(mostSellingLayoutManager);
+        binding.rvHotDeals.setLayoutManager(hotDealsLayoutManager);
         binding.endlessView.setAdapter(recommendedListAdapter);
         binding.rvMostSelling.setAdapter(mostSellingListAdapter);
+        binding.rvHotDeals.setAdapter(hotDealsListAdapter);
 
 
         Handler mHandler = new Handler();
@@ -204,10 +195,9 @@ public class home extends Fragment {
             startActivity(intent);
         });
 
-        getMostSellingProducts();
+        getMostSellingProducts(mSpPage);
 
         binding.progressAnimationView.setVisibility(View.VISIBLE);
-
         getRecommendedProducts(page_number);
 
         binding.endlessView.setNestedScrollingEnabled(false);
@@ -223,34 +213,54 @@ public class home extends Fragment {
                 // Triggered only when new data needs to be appended to the list
                 // Add whatever code is needed to append new items to the bottom of the list
                 Log.d("page", String.valueOf(page));
-
                 fetchData(page);
 
             }
         };
+
+        fetchHotDeals(hdealPage);
+
         // Adds the scroll listener to RecyclerView
         binding.endlessView.addOnScrollListener(scrollListener);
 
+        binding.IvHShowMore.setOnClickListener(v1 -> {
+            hdealPage++;
+            fetchHotDeals(hdealPage);
+        });
 
-//        mScrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
-//            @Override
-//            public void onScrollChanged() {
-//                View view = (View) mScrollView.getChildAt(mScrollView.getChildCount() - 1);
-//
-//                int diff = (view.getBottom() - (mScrollView.getHeight() + mScrollView
-//                        .getScrollY()));
-//
-//                if (diff == 0) {
-//
-//                    fetchData();
-//
-//                }
-//
-//            }
-//        });
+
+        binding.IvSpShowMore.setOnClickListener(v1 -> {
+            mSpPage++;
+            getMostSellingProducts(mSpPage);
+        });
 
 
         return v;
+    }
+
+    private void fetchHotDeals(int page) {
+        binding.hProgressBar.setVisibility(View.VISIBLE);
+        binding.IvHShowMore.setVisibility(View.GONE);
+        SmartAPI.getApiService().getHotDeals(session.getJWT(), page)
+                .subscribeOn(Schedulers.io())
+                .delay(3, TimeUnit.SECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(productItems -> {
+                            int previousItems = hotDealsList.size(); //calculate how many items are there in our list
+                            int totalCurrentItems = previousItems + productItems.size(); // add current items + new incoming items
+                            hotDealsList.addAll(productItems);
+                            binding.hProgressBar.setVisibility(View.GONE);
+                            binding.IvHShowMore.setVisibility(View.VISIBLE);
+                            hotDealsListAdapter.notifyItemRangeInserted(previousItems, totalCurrentItems);
+
+                        }, throwable -> {
+                            Log.e(TAG, "getHotDeals has error: " + throwable.getMessage());
+                            binding.hProgressBar.setVisibility(View.GONE);
+                            binding.IvHShowMore.setVisibility(View.VISIBLE);
+                        }
+                );
+
+
     }
 
 
@@ -261,24 +271,33 @@ public class home extends Fragment {
             binding.progressAnimationView.setVisibility(View.VISIBLE);
             getRecommendedProducts(page);
 
-
         }
 
 
     }
 
-    public void getMostSellingProducts() {
 
+    public void getMostSellingProducts(int page) {
+
+        binding.spProgressBar.setVisibility(View.VISIBLE);
+        binding.IvSpShowMore.setVisibility(View.GONE);
         SmartAPI.getApiService().getNearByOrders(session.getJWT())
                 .subscribeOn(Schedulers.io())
+                .delay(3, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(productItems -> {
+                            mostSellingList.addAll(productItems);
+                            mostSellingListAdapter.notifyItemRangeInserted(0, productItems.size());
+                            binding.spProgressBar.setVisibility(View.GONE);
+                            binding.IvSpShowMore.setVisibility(View.VISIBLE);
 
-                    mostSellingList.addAll(productItems);
-                    mostSellingListAdapter.notifyItemRangeInserted(0, productItems.size());
+                        }, throwable -> {
+                            Log.e(TAG, "getMostSellingProducts has error: " + throwable.getMessage());
+                            binding.spProgressBar.setVisibility(View.GONE);
+                            binding.IvSpShowMore.setVisibility(View.VISIBLE);
+                        }
+                );
 
-
-                }, throwable -> Log.e(TAG, "getMostSellingProducts has error: " + throwable.getMessage()));
 
     }
 
@@ -287,19 +306,19 @@ public class home extends Fragment {
 
         SmartAPI.getApiService().getProducts(session.getJWT(), page_number)
                 .subscribeOn(Schedulers.io())
+                .delay(2, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(productItems -> {
                     int previousItems = recommendedList.size(); //calculate how many items are there in our list
                     totalCurrentItems = previousItems + productItems.size(); // add current items + new incoming items
                     recommendedList.addAll(productItems);
-
                     recommendedListAdapter.notifyItemRangeInserted(previousItems, totalCurrentItems);
 
                 }, throwable -> {
                     Log.e(TAG, "getRecommendedProducts: " + throwable.getMessage());
                     isLoaded = true;
+                    binding.progressAnimationView.setVisibility(View.GONE);
                 });
-        binding.progressAnimationView.setVisibility(View.GONE);
 
 
     }

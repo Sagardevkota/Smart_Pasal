@@ -67,6 +67,7 @@ public class SliderAdapterExample extends
             Picasso.get()
                     .load(url)
                     .fit()
+                    .centerCrop()
                     .into(viewHolder.imageViewBackground, new Callback() {
                         @Override
                         public void onSuccess() {

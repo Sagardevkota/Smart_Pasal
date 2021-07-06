@@ -34,7 +34,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.Myviewholder> 
     private final CartUtil cartUtil;
     private final TextView tvTotalPrice;
 
-
     public CartAdapter(List<CartResponse> productItems, Context context, CartUtil cartUtil, TextView tvTotalPrice) {
         this.productItems = productItems;
         this.context = context;
@@ -81,7 +80,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.Myviewholder> 
                 .deliveryAddress(session.getAddress())
                 .build();
 
-        cartUtil.addOrders(orders);
 
 
         //set views
@@ -100,8 +98,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.Myviewholder> 
         holder.numberPicker.setMaxValue(currentItem.getStock());
         if (markedPrice.equals(newPrice))
             holder.tvPrice.setVisibility(View.GONE);
-        updateTextView();
-
 
         holder.numberPicker.setOnValueChangedListener((NumberPicker picker, int oldVal, int newVal) -> {
                     cartUtil.updateOrders(productId, newVal);
@@ -113,15 +109,18 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.Myviewholder> 
 
         );
 
-
         holder.checkBox.setOnCheckedChangeListener((compoundButton, b) -> {
 
             if (compoundButton.isChecked()) {
                 cartUtil.putItem(productId, holder.getAbsoluteAdapterPosition());
+                cartUtil.addOrders(orders);
+
             } else if (!compoundButton.isChecked()) {
                 cartUtil.removeItemFromMap(productId);
                 cartUtil.removeOrderFromList(productId);
+
             }
+            updateTextView();
 
         });
 
@@ -131,6 +130,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.Myviewholder> 
             Picasso.get()
                     .load(url)
                     .fit()
+                    .centerCrop()
                     .into(holder.ivImg, new Callback() {
                         @Override
                         public void onSuccess() {
