@@ -81,7 +81,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.Myviewholder> 
                 .build();
 
 
-
         //set views
         holder.tvProduct_Name.setText(productName);
         holder.tvPrice.setText("Rs. " + price);
@@ -125,7 +124,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.Myviewholder> 
         });
 
         try {
-            String url = SmartAPI.IMG_BASE_URL+currentItem.getPicturePath();
+            String url = SmartAPI.IMG_BASE_URL + currentItem.getPicturePath();
 
             Picasso.get()
                     .load(url)
