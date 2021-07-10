@@ -88,23 +88,10 @@ public class RegisterActivity extends AppCompatActivity {
         binding = ActivityRegisterBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
-        init();
-
-        binding.getLocation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                checkPermission();
-            }
-        });
-
-
-
-
+        binding.getLocation.setOnClickListener(view1 -> checkPermission());
 
     }
 
-    private void init() {
-    }
 
     private boolean validateEmail() {
         String emailInput = binding.etEmail.getEditText().getText().toString().trim();
@@ -256,8 +243,8 @@ public class RegisterActivity extends AppCompatActivity {
 
 
        LatLng location=null;
-       Double latitude=0.0;
-       Double longitude=0.0;
+       double latitude=0.0;
+       double longitude=0.0;
 
 
         if (mylocation.getLatitude()==0)
@@ -380,31 +367,23 @@ public class RegisterActivity extends AppCompatActivity {
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        fusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                if (location!=null){
-                    Double latitude = location.getLatitude();
-                    Double longitude = location.getLongitude();
+        fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
+            if (location!=null){
+                double latitude = location.getLatitude();
+                double longitude = location.getLongitude();
 
-                    mylocation.setLatitude(latitude);
-                    mylocation.setLongitude(longitude);
-                    getCompleteAddressString(latitude, longitude);
-
-                }
-
-                else
-                    Toasty.error(getApplicationContext(),"Please visit google map and come back").show();
-
-
+                mylocation.setLatitude(latitude);
+                mylocation.setLongitude(longitude);
+                getCompleteAddressString(latitude, longitude);
 
             }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toasty.error(getApplicationContext(), e.getMessage()).show();
-            }
-        })
+
+            else
+                Toasty.error(getApplicationContext(),"Please visit google map and come back").show();
+
+
+
+        }).addOnFailureListener(e -> Toasty.error(getApplicationContext(), e.getMessage()).show())
 
         ;
     }

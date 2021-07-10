@@ -75,13 +75,12 @@ public class LoginActivity extends AppCompatActivity {
                     String status = response.getStatus();
                     String message = response.getMessage();
                     String role = response.getRole();
-                    String[] roles = role
-                            .substring(1,role.length()-1)
-                            .split(","); //role can be "[ADMIN,USER]"
 
-
-                    Log.d("responseBody", response.toString());
                     if (status.equalsIgnoreCase("200 OK") && message.equalsIgnoreCase("login successful")) {
+                        String[] roles = role
+                                .substring(1,role.length()-1)
+                                .split(","); //role can be "[ADMIN,USER]"
+
                         if (Arrays.stream(roles)
                                 .anyMatch(role1->role1.equalsIgnoreCase("USER"))) {
                             Toasty.success(getApplicationContext(), message).show();

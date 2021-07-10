@@ -1,14 +1,17 @@
 package com.example.smartpasal.adapter;
 
+import android.util.Log;
+
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnScrollListener {
+    private static final String TAG = "ENDLESS_RV_SCROLL_LISTENER";
     // The minimum amount of items to have below your current scroll position
     // before loading more.
-    private int visibleThreshold = 5;
+    private int visibleThreshold = 2;
     // The current offset index of data you have loaded
     private int currentPage = 0;
     // The total number of items in the dataset after the last load
@@ -64,6 +67,8 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
         } else if (mLayoutManager instanceof LinearLayoutManager) {
             lastVisibleItemPosition = ((LinearLayoutManager) mLayoutManager).findLastVisibleItemPosition();
         }
+
+        Log.i(TAG, "onScrolled: "+lastVisibleItemPosition);
 
         // If the total item count is zero and the previous isn't, assume the
         // list is invalidated and should be reset back to initial state

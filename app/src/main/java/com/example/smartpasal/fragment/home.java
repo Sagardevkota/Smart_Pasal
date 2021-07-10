@@ -60,7 +60,7 @@ public class home extends Fragment {
     public int page_number = 1;
     private int hdealPage = 1;
     private int mSpPage = 1;
-    public boolean isLoaded = false;
+    public boolean isLoading = false;
     private int totalCurrentItems = 0;
 
 
@@ -89,8 +89,6 @@ public class home extends Fragment {
         View v = binding.getRoot();
 
 
-        isLoaded = false;
-
         SliderAdapterExample adapter = new SliderAdapterExample(getContext());
 
         binding.imageSlider.setSliderAdapter(adapter);
@@ -114,12 +112,12 @@ public class home extends Fragment {
         binding.imageSlider.setScrollTimeInSec(5); //set scroll delay in seconds :
         binding.imageSlider.startAutoCycle();
 
-        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         LinearLayoutManager mostSellingLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
 
         LinearLayoutManager hotDealsLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
 
-        binding.endlessView.setLayoutManager(layoutManager);
+        binding.endlessView.setLayoutManager(staggeredGridLayoutManager);
         recommendedListAdapter = new ListAdapterItems(recommendedList, getContext());
         binding.endlessView.setItemAnimator(new SlideInRightAnimator());
         mostSellingListAdapter = new HorizontalListAdapter(mostSellingList, getContext());
@@ -205,18 +203,22 @@ public class home extends Fragment {
         binding.endlessView.setItemAnimator(new LandingAnimator());
         binding.endlessView.getItemAnimator().setAddDuration(600);
 
+        fetchData(1);
+
         // Triggered only when new data needs to be appended to the list
         // Add whatever code is needed to append new items to the bottom of the list
-        EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
+        EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(staggeredGridLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 // Triggered only when new data needs to be appended to the list
                 // Add whatever code is needed to append new items to the bottom of the list
-                Log.d("page", String.valueOf(page));
+                Log.d(TAG, "onLoadMore: "+page);
                 fetchData(page);
 
             }
         };
+
+
 
         fetchHotDeals(hdealPage);
 
@@ -265,14 +267,8 @@ public class home extends Fragment {
 
 
     private void fetchData(int page) {
-        if (!isLoaded) {
-            page++;
-
-            binding.progressAnimationView.setVisibility(View.VISIBLE);
-            getRecommendedProducts(page);
-
-        }
-
+        binding.progressAnimationView.setVisibility(View.VISIBLE);
+        getRecommendedProducts(page);
 
     }
 
@@ -303,7 +299,6 @@ public class home extends Fragment {
 
     public void getRecommendedProducts(int page_number) {
 
-
         SmartAPI.getApiService().getProducts(session.getJWT(), page_number)
                 .subscribeOn(Schedulers.io())
                 .delay(2, TimeUnit.SECONDS)
@@ -313,10 +308,11 @@ public class home extends Fragment {
                     totalCurrentItems = previousItems + productItems.size(); // add current items + new incoming items
                     recommendedList.addAll(productItems);
                     recommendedListAdapter.notifyItemRangeInserted(previousItems, totalCurrentItems);
+                    isLoading = false;
 
                 }, throwable -> {
                     Log.e(TAG, "getRecommendedProducts: " + throwable.getMessage());
-                    isLoaded = true;
+                    isLoading = false;
                     binding.progressAnimationView.setVisibility(View.GONE);
                 });
 
