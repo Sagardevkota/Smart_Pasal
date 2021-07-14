@@ -86,7 +86,7 @@ public class ConversationActivity extends AppCompatActivity {
 
     private void addConversation(String message, Integer productId) {
         Date d = new Date();
-        SimpleDateFormat DateFor = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat DateFor = new SimpleDateFormat("yyyy-MM-dd");
         String date = DateFor.format(d);
 
         Conversation conversation = new Conversation(message, session.getUserId(), date, productId);

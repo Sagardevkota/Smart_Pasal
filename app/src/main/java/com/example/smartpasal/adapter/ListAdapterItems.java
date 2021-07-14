@@ -22,6 +22,7 @@ import com.example.smartpasal.SmartAPI.SmartAPI;
 import com.example.smartpasal.databinding.LayoutProductListsBinding;
 import com.example.smartpasal.model.Carts;
 import com.example.smartpasal.model.ProductItems;
+import com.example.smartpasal.view.HomeActivity;
 import com.example.smartpasal.view.ProductDetails;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -171,14 +172,11 @@ public class ListAdapterItems extends RecyclerView.Adapter<ListAdapterItems.Myvi
     }
 
     public static class Myviewholder extends RecyclerView.ViewHolder {
-        private LayoutProductListsBinding binding;
-
-
+        private final LayoutProductListsBinding binding;
+        
         public Myviewholder(LayoutProductListsBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
-
-
         }
     }
 
@@ -186,7 +184,6 @@ public class ListAdapterItems extends RecyclerView.Adapter<ListAdapterItems.Myvi
         productItems.remove(position);
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, productItems.size());
-
     }
 
     private void addToCart(Integer product_id, String newPrice) {
@@ -198,8 +195,12 @@ public class ListAdapterItems extends RecyclerView.Adapter<ListAdapterItems.Myvi
                 .subscribe(response -> {
                     String status = response.getStatus();
                     String message = response.getMessage();
-                    if (status.equalsIgnoreCase("200 OK") && message.equalsIgnoreCase("Added to cart"))
+                    if (status.equalsIgnoreCase("200 OK") && message.equalsIgnoreCase("Added to cart")){
                         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                        session.setBadgeCount(session.getBadgeCount()+1);
+                        ((HomeActivity)context.getApplicationContext()).updateCartCount();
+                    }
+
 
                     if (status.equalsIgnoreCase("401 Conflict") && message.equalsIgnoreCase("Item is already in cart"))
                         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();

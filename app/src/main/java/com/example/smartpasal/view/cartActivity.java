@@ -357,6 +357,7 @@ public class cartActivity extends AppCompatActivity {
 
                             }
                             cartAdapter.notifyItemRangeInserted(0, cartResponses.size());
+                            session.setBadgeCount(cartResponses.size());
                             hideProgressDialog();
                         },
                         throwable -> Log.e(TAG, "getCartItems: " + throwable.getMessage()));

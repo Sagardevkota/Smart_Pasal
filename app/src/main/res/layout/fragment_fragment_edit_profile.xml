@@ -35,25 +35,19 @@
             android:layout_weight="0.2"
             android:layout_gravity="center"
             android:layout_marginRight="20dp"
-            android:tint="@color/colorPrimary"
+            app:tint="@color/colorPrimary"
             android:src="@drawable/ic_close" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
             android:fontFamily="@font/roboto_slab_light"
             android:layout_gravity="center"
-
-
             android:text="Update  Details"
             android:textStyle="bold"
-
             android:layout_weight="0.8"
             android:textColor="@color/colorPrimary"
             android:textSize="22sp" />
-
-
 
 
     </LinearLayout>
@@ -79,14 +73,8 @@
             android:drawableTint="@color/colorPrimary"
             android:textColor="@color/colorPrimary"
             android:fontFamily="@font/roboto_slab_light"
-
-
             android:textSize="16sp" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            >
 
             <EditText
                 android:id="@+id/etEmail"
@@ -100,21 +88,7 @@
                 android:textColor="@color/design_default_color_on_secondary"
                 android:textSize="14sp" />
 
-            <Button
-                android:id="@+id/buSaveEmail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"
-                android:text="Save"
-                android:textStyle="bold"
-                android:fontFamily="@font/roboto_slab_light"
-                android:textColor="@color/colorPrimary"
-                android:background="@color/transparentColor"
-                />
 
-
-        </RelativeLayout>
 
 
 
@@ -139,10 +113,6 @@
 
             android:textSize="16sp" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
             <EditText
                 android:id="@+id/etPhone"
                 android:layout_width="match_parent"
@@ -153,29 +123,8 @@
                 android:layout_marginTop="10dp"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentStart="true"
-
-
                 android:textColor="@color/design_default_color_on_secondary"
                 android:textSize="14sp" />
-
-
-            <Button
-                android:id="@+id/buSavePhone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"
-                android:textColor="@color/colorPrimary"
-                android:background="@color/transparentColor"
-
-                android:textStyle="bold"
-                android:fontFamily="@font/roboto_slab_light"
-
-                android:text="Save"
-                />
-
-
-        </RelativeLayout>
 
 
         <View
@@ -186,7 +135,7 @@
             android:background="#eee" />
 
         <TextView
-            android:id="@+id/tvtext1"
+            android:id="@+id/tvtext8"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -199,10 +148,6 @@
             android:drawablePadding="10dp"
             android:textSize="16sp" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            >
             <EditText
                 android:id="@+id/etDelivery"
                 android:layout_width="match_parent"
@@ -214,26 +159,6 @@
                 android:layout_alignParentStart="true"
                 android:textColor="@color/design_default_color_on_secondary"
                 android:textSize="14sp" />
-
-            <Button
-                android:id="@+id/buSaveDelivery"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Save"
-                android:textColor="@color/colorPrimary"
-                android:background="@color/transparentColor"
-
-                android:textStyle="bold"
-                android:fontFamily="@font/roboto_slab_light"
-
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"/>
-
-
-        </RelativeLayout>
-
-
-
 
         <TextView
                android:id="@+id/getLocation"
@@ -252,9 +177,51 @@
                />
 
 
+        <TextView
+            android:id="@+id/tvtext1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:drawableStart="@drawable/ic_lock_24px"
+            android:text="Password"
+            android:drawableTint="@color/colorPrimary"
+            android:textColor="@color/colorPrimary"
+            android:fontFamily="@font/roboto_slab_light"
+            android:drawablePadding="10dp"
+            android:textSize="16sp" />
+
+
+        <EditText
+            android:id="@+id/etPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:cursorVisible="true"
+            android:hint="Enter current password"
+            android:layout_marginTop="10dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:textColor="@color/design_default_color_on_secondary"
+            android:textSize="14sp" />
 
 
     </LinearLayout>
+
+        <Button
+            android:id="@+id/buSave"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SAVE"
+            android:layout_gravity="center"
+            />
+
+        <TextView
+            android:id="@+id/tvChangePassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:textColor="@color/google_red"
+            android:text="Click here to change password"
+            />
         <TextView
             android:id="@+id/tvNote"
             android:layout_width="match_parent"
@@ -262,11 +229,7 @@
             android:layout_marginTop="20dp"
             android:fontFamily="@font/roboto_slab_light"
             android:padding="16dp"
-
-
             android:text="Note: Our Officials will contact you in this number for ORDER CONFIRMATION or during DELIVERY"
-
-
             android:textColor="#ff00"
             android:textSize="14sp" />
 

@@ -3,8 +3,8 @@ package com.example.smartpasal.fragment;
 
 import android.Manifest;
 
+import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -25,10 +25,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.view.Window;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.smartpasal.R;
-import com.example.smartpasal.SmartAPI.JsonResponse;
 import com.example.smartpasal.SmartAPI.SmartAPI;
 import com.example.smartpasal.databinding.FragmentFragmentEditProfileBinding;
 import com.example.smartpasal.Session.Session;
@@ -38,7 +40,6 @@ import com.example.smartpasal.view.LoginActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 
 import java.util.List;
@@ -47,9 +48,6 @@ import java.util.Locale;
 import es.dmoral.toasty.Toasty;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 
 /**
@@ -61,6 +59,7 @@ public class fragment_edit_profile extends Fragment {
     private static final int REQUEST_CODE_ASK_PERMISSIONS = 123;
     private FusedLocationProviderClient fusedLocationClient;
     private Session session;
+    private User myUser;
 
 
     public fragment_edit_profile() {
@@ -82,6 +81,7 @@ public class fragment_edit_profile extends Fragment {
         getPassedValues();
 
         binding.getLocation.setOnClickListener((View.OnClickListener) view -> checkPermission());
+        binding.buSave.setEnabled(false);
 
         binding.ivCancel.setOnClickListener((View.OnClickListener) view -> getActivity()
                 .getSupportFragmentManager()
@@ -89,113 +89,167 @@ public class fragment_edit_profile extends Fragment {
                 .replace(R.id.fragment_container, new Profile(), "findThisFragment")
                 .addToBackStack(null)
                 .commit());
-        binding.buSaveEmail.setOnClickListener((View.OnClickListener) view -> {
-            String email = binding.etEmail.getText().toString();
-            if (email.isEmpty())
-                Toasty.error(getContext(), "Field cant be empty").show();
-            else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches())
-                Toasty.error(getContext(), "Please enter valid email address").show();
-            else if (email.equals(session.getusername()))
-                Toasty.error(getContext(), "No changes made").show();
-            else
-                updateEmail(email);
 
+        binding.buSave.setOnClickListener(v1 -> updateUserAccount());
 
-        });
-        binding.buSavePhone.setOnClickListener((View.OnClickListener) view -> {
-            String phone = binding.etPhone.getText().toString();
-            if (phone.isEmpty())
-                Toasty.error(getContext(), "Field cant be empty").show();
-            else if (phone.length() != 10)
-                Toasty.error(getContext(), "Please enter valid phone number").show();
-            else
-                updatePhone(phone);
-        });
-        binding.buSaveDelivery.setOnClickListener((View.OnClickListener) view -> {
-            String delivery = binding.etDelivery.getText().toString();
-            if (!delivery.isEmpty())
-                updateDelivery(delivery);
-            else
-                Toasty.error(getContext(), "Field cant be empty").show();
-
-        });
-
-
+        binding.tvChangePassword.setOnClickListener(v12 -> createChangePasswordDialog());
         return v;
+    }
+
+    private void createChangePasswordDialog() {
+        final Dialog dialog = new Dialog(getContext(), android.R.style.Theme_Light_NoTitleBar_Fullscreen);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        dialog.setContentView(R.layout.change_password_dialog);
+        dialog.create();
+        dialog.show();
+
+        TextView tvCurrentPassword = dialog.findViewById(R.id.etCurrentPassword);
+        TextView tvNewPassword = dialog.findViewById(R.id.etNewPassword);
+        TextView tvRePassword = dialog.findViewById(R.id.etRePassword);
+        Button buSave = dialog.findViewById(R.id.buSave);
+
+
+
+        buSave.setOnClickListener(v -> {
+            String currentPassword = tvCurrentPassword.getText().toString();
+            String newPassword = tvNewPassword.getText().toString();
+            String rePassword = tvRePassword.getText().toString();
+
+            if (!validateText(currentPassword) || !validateText(newPassword) ||
+                    !validateText(rePassword) || !validateEqualPassword(newPassword, rePassword)) {
+            }
+            else {
+                SmartAPI.getApiService()
+                        .updatePassword(session.getJWT(),
+                                currentPassword,
+                                newPassword)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(response -> {
+                            if (response.getStatus().equalsIgnoreCase("200 OK")) {
+                                Toasty.success(getContext(), response.getMessage()).show();
+                                startActivity(new Intent(getContext(), LoginActivity.class));
+                                requireActivity().finish();
+                            }
+                            else Toasty.error(getContext(),response.getMessage()).show();
+
+                        }, throwable -> Log.e(TAG, "createChangePasswordDialog: " + throwable.getMessage()));
+
+            }
+        });
+
+
+    }
+
+    private boolean validateEqualPassword(String newPassword, String rePassword) {
+        if (!newPassword.equalsIgnoreCase(rePassword))
+            Toasty.error(getContext(), "Password doesn't match").show();
+        else return true;
+        return false;
+    }
+
+    private boolean validateText(String text) {
+        Log.i(TAG, "validateText: "+text);
+        if (text.length() < 5)
+            Toasty.error(getContext(), "Characters cant be less than 5").show();
+        else return true;
+        return false;
+    }
+
+    private void updateUserAccount() {
+
+        if (!validateEmail() || !validatePhone() || !validatePassword() || !validateDelivery())
+            Toasty.error(getContext(), "Please fill up valid info").show();
+        else {
+            binding.buSave.setEnabled(true);
+            String email = binding.etEmail.getText().toString();
+            String phone = binding.etPhone.getText().toString();
+            String delivery = binding.etDelivery.getText().toString();
+            String password = binding.etPassword.getText().toString();
+
+            myUser.setUserName(email);
+            myUser.setPassword(password);
+            myUser.setPhone(phone);
+            myUser.setDeliveryAddress(delivery);
+
+            SmartAPI.getApiService()
+                    .updateAccount(session.getJWT(), myUser)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(response -> {
+
+                        if (response.getStatus().equalsIgnoreCase("200 Ok")) {
+                            Intent intent = new Intent(getActivity(), LoginActivity.class);
+                            session.destroy();
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+
+                            Toasty.success(getContext(), response.getMessage()).show();
+                        } else
+                            Toasty.error(getContext(), response.getMessage()).show();
+                    }, throwable -> Log.e(TAG, "updateUserAccount: " + throwable.getMessage()));
+        }
+    }
+
+    private boolean validateEmail() {
+        String email = binding.etEmail.getText().toString();
+        if (email.isEmpty())
+            Toasty.error(getContext(), "Field cant be empty").show();
+        else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches())
+            Toasty.error(getContext(), "Please enter valid email address").show();
+        else if (email.equals(session.getusername()))
+            Toasty.error(getContext(), "No changes made").show();
+        else
+            return true;
+
+        return false;
+
+    }
+
+    private boolean validatePassword() {
+
+        String password = binding.etPassword.getText().toString();
+        if (password.isEmpty())
+            Toasty.error(getContext(), "Field cant be empty").show();
+        else if (password.length() < 5)
+            Toasty.error(getContext(), "Please enter at least 5 characters").show();
+        else
+            return true;
+        return false;
+
+    }
+
+    private boolean validatePhone() {
+        String phone = binding.etPhone.getText().toString();
+        if (phone.isEmpty())
+            Toasty.error(getContext(), "Field cant be empty").show();
+        else if (phone.length() != 10)
+            Toasty.error(getContext(), "Please enter valid phone number").show();
+        else
+            return true;
+        return false;
+
+    }
+
+    private boolean validateDelivery() {
+        String delivery = binding.etDelivery.getText().toString();
+        if (!delivery.isEmpty())
+            return true;
+        else
+            Toasty.error(getContext(), "Field cant be empty").show();
+        return false;
+
     }
 
     private void getPassedValues() {
         Bundle b = getArguments();
         if (b != null) {
-            User user = b.getParcelable("userObj");
-            binding.etEmail.setText(user.getUserName());
-            binding.etDelivery.setText(user.getDeliveryAddress());
-            binding.etPhone.setText(user.getPhone());
+            myUser = b.getParcelable("userObj");
+            binding.etEmail.setText(myUser.getUserName());
+            binding.etDelivery.setText(myUser.getDeliveryAddress());
+            binding.etPhone.setText(myUser.getPhone());
         }
-    }
-
-    private void updateEmail(String email) {
-        MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(getContext());
-        alertDialogBuilder.setTitle("Logout Confirmation")
-                .setMessage("You will be logged out after changing your email address")
-                .setPositiveButton("Ok", (dialogInterface, i) -> {
-
-                    SmartAPI.getApiService().updateEmail(session.getJWT(), email)
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(response -> {
-                                String status = response.getStatus();
-                                String message = response.getMessage();
-                                if (status.equalsIgnoreCase("200 Ok")) {
-                                    Intent intent = new Intent(getActivity(), LoginActivity.class);
-                                    session.destroy();
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    startActivity(intent);
-
-                                    Toasty.success(getContext(), message).show();
-                                } else
-                                    Toasty.error(getContext(), message).show();
-                            }, throwable -> {
-                                Log.e(TAG, "updateEmail: " + throwable.getMessage());
-                            });
-                })
-
-                .setNegativeButton("Cancel", (DialogInterface.OnClickListener) (dialogInterface, i) -> dialogInterface.dismiss())
-                .create().show();
-
-
-    }
-
-    private void updatePhone(String phone) {
-        SmartAPI.getApiService().updatePhone(session.getJWT(), phone)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(response -> {
-                    String status = response.getStatus();
-                    String message = response.getMessage();
-                    if (status.equalsIgnoreCase("200 Ok"))
-                        Toasty.success(getContext(), message).show();
-                    else
-                        Toasty.error(getContext(), message).show();
-                });
-
-
-    }
-
-    private void updateDelivery(String delivery) {
-        SmartAPI.getApiService().updateDelivery(session.getJWT(), delivery)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(response -> {
-                    String status = response.getStatus();
-                    String message = response.getMessage();
-                    if (status.equalsIgnoreCase("200 Ok"))
-                        Toasty.success(getContext(), message).show();
-                    else
-                        Toasty.error(getContext(), message).show();
-                }, throwable ->
-                        Log.e(TAG, "updateDelivery: " + throwable.getMessage()));
-
     }
 
 
@@ -240,16 +294,14 @@ public class fragment_edit_profile extends Fragment {
             @Override
             public void onSuccess(Location location) {
                 if (location != null) {
-                    Double latitude = location.getLatitude();
-                    Double longitude = location.getLongitude();
+                    double latitude = location.getLatitude();
+                    double longitude = location.getLongitude();
                     getCompleteAddressString(latitude, longitude);
                 }
 
             }
         });
     }
-
-
 
 
     private String getCompleteAddressString(double LATITUDE, double LONGITUDE) {
@@ -265,20 +317,19 @@ public class fragment_edit_profile extends Fragment {
                     strReturnedAddress.append(returnedAddress.getAddressLine(i)).append("\n");
                 }
                 strAdd = strReturnedAddress.toString();
-               binding.etDelivery.setText(strAdd);
-                Toast.makeText(getContext(),strAdd,Toast.LENGTH_LONG).show();
+                binding.etDelivery.setText(strAdd);
+                Toast.makeText(getContext(), strAdd, Toast.LENGTH_LONG).show();
                 Log.d("My Current location", strReturnedAddress.toString());
             } else {
                 Log.d("My Current loction ", "No Address returned!");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(getContext(),e.getMessage(),Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
             Log.d("My Current loction ", "Canont get Address!");
         }
         return strAdd;
     }
-
 
 
 }

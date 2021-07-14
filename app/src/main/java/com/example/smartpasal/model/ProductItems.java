@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -86,6 +87,19 @@ public class ProductItems implements Parcelable {
         dest.writeString(rating);
         dest.writeStringList(colors);
         dest.writeStringList(sizes);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ProductItems)) return false;
+        ProductItems that = (ProductItems) o;
+        return getProductId() == that.getProductId() && getDiscount() == that.getDiscount() && getStock() == that.getStock() && getSeller_id() == that.getSeller_id() && Objects.equals(getProductName(), that.getProductName()) && Objects.equals(getPicturePath(), that.getPicturePath()) && Objects.equals(getPrice(), that.getPrice()) && Objects.equals(getBrand(), that.getBrand()) && Objects.equals(getDesc(), that.getDesc()) && Objects.equals(getSku(), that.getSku()) && Objects.equals(getCategory(), that.getCategory()) && Objects.equals(getType(), that.getType()) && Objects.equals(getRating(), that.getRating()) && Objects.equals(getColors(), that.getColors()) && Objects.equals(getSizes(), that.getSizes());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getProductName(), getPicturePath(), getProductId(), getPrice(), getBrand(), getDesc(), getSku(), getDiscount(), getCategory(), getType(), getStock(), getSeller_id(), getRating(), getColors(), getSizes());
     }
 }
 

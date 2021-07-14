@@ -9,6 +9,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -41,6 +42,7 @@ import com.example.smartpasal.fragment.scan;
 
 import com.example.smartpasal.Session.Session;
 
+import com.example.smartpasal.viewmodel.HomeViewModel;
 import com.google.android.material.badge.BadgeDrawable;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -49,6 +51,7 @@ import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -65,6 +68,7 @@ public class HomeActivity extends AppCompatActivity {
     private Session session;
     private BottomNavigationView bottomNavigationView;
     private BadgeDrawable badge;
+    private HomeViewModel homeViewModel;
 
     @Override
     public void onAttachFragment(@NonNull Fragment fragment) {
@@ -109,11 +113,13 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         session = new Session(HomeActivity.this);
+
         com.example.smartpasal.databinding.ActivityHomeBinding binding = ActivityHomeBinding.inflate(getLayoutInflater());
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         setContentView(R.layout.nav_drawer_layout);
-        Bundle b = getIntent().getExtras();
 
+         homeViewModel = new ViewModelProvider(this)
+                .get(HomeViewModel.class);
 
         if (!new UserRepository(session, getApplicationContext()).checkIfLoggedIn()){
             Toasty.error(getApplicationContext(),"Session expired").show();
@@ -150,27 +156,13 @@ public class HomeActivity extends AppCompatActivity {
         String l6[] = getResources().getStringArray(R.array.h6_items);
 
 
-        for (String title : heading_items) {
-            headings.add(title);
-        }
-        for (String title : l1) {
-            L1.add(title);
-        }
-        for (String title : l2) {
-            L2.add(title);
-        }
-        for (String title : l3) {
-            L3.add(title);
-        }
-        for (String title : l4) {
-            L4.add(title);
-        }
-        for (String title : l5) {
-            L5.add(title);
-        }
-        for (String title : l6) {
-            L6.add(title);
-        }
+        Collections.addAll(headings, heading_items);
+        Collections.addAll(L1, l1);
+        Collections.addAll(L2, l2);
+        Collections.addAll(L3, l3);
+        Collections.addAll(L4, l4);
+        Collections.addAll(L5, l5);
+        Collections.addAll(L6, l6);
         childList.put(headings.get(0), L1);
         childList.put(headings.get(1), L2);
         childList.put(headings.get(2), L3);
@@ -368,6 +360,20 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+    public void updateCartCount(){
+        badge = bottomNavigationView.getOrCreateBadge(R.id.bottom_nav_cart);
+        int cartCount = session.getBadgeCount();
+        Log.i(TAG, "updateCartCount: "+cartCount);
+
+        if (cartCount > 0) {
+            badge.setVisible(true);
+            badge.setNumber(cartCount);
+        } else {
+            badge.setVisible(false);
+        }
+
+    }
+
 
     private void getUserDetails() {
         SmartAPI.getApiService().getUserDetails(session.getJWT())
@@ -380,14 +386,7 @@ public class HomeActivity extends AppCompatActivity {
                         session.setAddress(user.getDeliveryAddress());
                         session.setBadgeCount(user.getCartCount());
                         session.setUserId(user.getId());
-                        int cartCount = user.getCartCount();
-                        if (cartCount > 0) {
-                            badge.setNumber(cartCount);
-                            badge.setVisible(true);
-
-                        } else
-                            badge.setVisible(false);
-
+                        updateCartCount();
 
                     }
 

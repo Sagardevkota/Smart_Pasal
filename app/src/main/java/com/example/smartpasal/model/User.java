@@ -16,43 +16,32 @@ import lombok.NoArgsConstructor;
 public class User implements Parcelable {
 
     private int id;
-
     private String userName;
-
     private String password;
-
     private String deliveryAddress;
-
     private String role;
-
     private String age;
-
     private String gender;
-
     private String phone;
-
     private Boolean verified;
-
     private Double latitude;
-
     private Double longitude;
-
     private int cartCount;
 
-    public User(String userName, String password, String deliveryAddress, String phone,String role,String age,String gender,Double latitude,Double longitude) {
+    public User(String userName, String password, String deliveryAddress, String phone, String role, String age, String gender, Double latitude, Double longitude) {
         this.userName = userName;
         this.password = password;
         this.deliveryAddress = deliveryAddress;
         this.phone = phone;
-        this.role=role;
-        this.age=age;
-        this.gender=gender;
-        this.latitude=latitude;
-        this.longitude=longitude;
+        this.role = role;
+        this.age = age;
+        this.gender = gender;
+        this.latitude = latitude;
+        this.longitude = longitude;
 
     }
 
-    public User(String userName,String deliveryAddress,String phone){
+    public User(String userName, String deliveryAddress, String phone) {
         this.userName = userName;
         this.deliveryAddress = deliveryAddress;
         this.phone = phone;
@@ -95,7 +84,6 @@ public class User implements Parcelable {
             return new User[size];
         }
     };
-
 
 
     @Override

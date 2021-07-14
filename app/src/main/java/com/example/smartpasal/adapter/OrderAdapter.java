@@ -27,6 +27,8 @@ import com.squareup.picasso.Picasso;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import es.dmoral.toasty.Toasty;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -83,6 +85,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.MyViewholder
             case "completed":
                 holder.tvStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_circle_green, 0, 0, 0);
                 getOneReview(orderResponse.getProductId(), holder);
+                holder.tvRateProduct.setVisibility(View.VISIBLE);
                 break;
 
         }
@@ -187,17 +190,18 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.MyViewholder
     private void getOneReview(Integer productId, MyViewholder myViewholder) {
         Session session = new Session(activity);
         myViewholder.tvRateProduct.setVisibility(View.VISIBLE);
-        myViewholder.tvRateProduct.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showAddReviewDialog(productId, myViewholder);
-            }
-        });
-        SmartAPI.getApiService().getOneReview(session.getJWT(), productId)
+        myViewholder.tvRateProduct.setOnClickListener(view -> showAddReviewDialog(productId, myViewholder));
+        SmartAPI.getApiService().getReviews(session.getJWT(), productId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(reviewResponse -> {
-                    if (reviewResponse.getMessage().length() > 0) {
+                .subscribe(reviewResponses -> {
+
+                    List<ReviewResponse> reviewResponseList = reviewResponses.stream().filter(reviewResponse ->
+                            reviewResponse.getProduct_id().equals(productId) && reviewResponse.getUser_name().equals(session.getusername()))
+                            .collect(Collectors.toList());
+
+                    if (reviewResponseList.size() > 0) {
+                        ReviewResponse reviewResponse = reviewResponseList.get(0);
                         myViewholder.tvRateProduct.setVisibility(View.GONE);
                         myViewholder.ratingLayout.setVisibility(View.VISIBLE);
                         myViewholder.tvRating.setText(reviewResponse.getMessage());

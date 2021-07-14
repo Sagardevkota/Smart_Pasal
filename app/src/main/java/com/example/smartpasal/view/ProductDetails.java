@@ -55,6 +55,7 @@ public class ProductDetails extends AppCompatActivity {
     private Float selectedSize = 0f;
 
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
@@ -72,10 +73,12 @@ public class ProductDetails extends AppCompatActivity {
         return false;
     }
 
+    private ImageBadgeView badgeView;
+
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         final MenuItem menuItem = menu.findItem(R.id.cart);
-        ImageBadgeView badgeView = menuItem.getActionView().findViewById(R.id.ibv_icon);
+        badgeView = menuItem.getActionView().findViewById(R.id.ibv_icon);
         badgeView.setBadgeValue(session.getBadgeCount());
         badgeView.setOnClickListener(view -> {
             Intent intent = new Intent(getApplicationContext(), cartActivity.class);
@@ -113,6 +116,7 @@ public class ProductDetails extends AppCompatActivity {
         });
         getSellerName(productItems.getSeller_id());
         getSupportActionBar().setTitle(productItems.getProductName());
+        binding.buBuy.setOnClickListener(v -> buBuyNow());
 
     }
 
@@ -338,13 +342,27 @@ public class ProductDetails extends AppCompatActivity {
 
 
     public void buAdd(View view) {
+        addToCartList(initCarts());
+    }
+
+    private Carts initCarts(){
         Bundle b = getIntent().getExtras();
         ProductItems productItems = b.getParcelable("product");
         int product_id = productItems.getProductId();
         String newprice = productItems.getPrice();
         String color = selectedColor;
         Float size = selectedSize;
-        Carts carts = new Carts(session.getUserId(), product_id, newprice, color, size);
+        return new Carts(session.getUserId(), product_id, newprice, color, size);
+
+    }
+
+    private void buBuyNow(){
+        addToCartList(initCarts());
+        goToCartActivity();
+
+    }
+
+    private void addToCartList(Carts carts){
 
         SmartAPI.getApiService().addToCartList(session.getJWT(), carts)
                 .subscribeOn(Schedulers.io())
@@ -353,13 +371,16 @@ public class ProductDetails extends AppCompatActivity {
                     String status = response.getStatus();
                     String message = response.getMessage();
                     if (status.equalsIgnoreCase("200 OK") && message.equalsIgnoreCase("Added to cart")) {
-                        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-                        goToCartActivity();
+                        {Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                        badgeView.setBadgeValue(badgeView.getBadgeValue()+1);
+                        }
+
                     }
                     if (status.equalsIgnoreCase("401 Conflict") && message.equalsIgnoreCase("Item is already in cart"))
                         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
                 }, throwable -> {
                 });
+
     }
 
 

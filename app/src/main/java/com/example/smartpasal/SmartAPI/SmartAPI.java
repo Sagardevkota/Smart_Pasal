@@ -20,6 +20,7 @@ import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Single;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
@@ -36,6 +37,7 @@ import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 
 public class SmartAPI {
@@ -43,8 +45,8 @@ public class SmartAPI {
 
     public static apiService apiService = null;
     //    public static String base_url="http://52.171.61.18:8080";
-//    public static String BASE_URL = "http://10.0.2.2:8081";
-    public static final String BASE_URL = "http://157.55.181.67:8080";//newest
+    public static String BASE_URL = "http://10.0.2.2:8081";
+//    public static final String BASE_URL = "http://157.55.181.67:8080";//newest
 //    public static final String BASE_URL = "http://23.101.181.211:8080";
     public static final String IMG_BASE_URL = "https://bese2016smartstore.blob.core.windows.net/bese2016blob/";
 
@@ -52,7 +54,7 @@ public class SmartAPI {
     public static apiService getApiService() {
         if (apiService == null) {
             HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
-            loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
+            loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
             OkHttpClient okHttpClient = new OkHttpClient()
                     .newBuilder()
                     .addInterceptor(loggingInterceptor)
@@ -102,7 +104,7 @@ public class SmartAPI {
 
         //Product Services
         @GET(value = "/api/products/{pageNumber}")
-        Observable<List<ProductItems>> getProducts(@Header("Authorization") String jwt, @Path("pageNumber") int pageNumber);
+        Single<List<ProductItems>> getProducts(@Header("Authorization") String jwt, @Path("pageNumber") int pageNumber);
 
         @GET(value = "/api/products/hot-deals/{pageNumber}")
         Observable<List<ProductItems>> getHotDeals(@Header("Authorization") String jwt, @Path("pageNumber") int pageNumber);
@@ -143,10 +145,10 @@ public class SmartAPI {
 
 
         //conversation services
-        @GET(value = "/api/conversations/{productId}")
+        @GET(value = "/api/user/conversations/{productId}")
         Observable<List<ConversationResponse>> getConversations(@Header("Authorization") String jwt, @Path("productId") Integer productId);
 
-        @POST(value = "/api/conversations")
+        @POST(value = "/api/user/conversations")
         Observable<JsonResponse> addConversation(@Header("Authorization") String jwt, @Body Conversation conversation);
 
 
@@ -182,7 +184,13 @@ public class SmartAPI {
         Observable<JsonResponse> updateReview(@Header("Authorization") String jwt, @Body ReviewResponse reviews);
 
 
+        @PUT(value = "/api/user")
+        Observable<JsonResponse> updateAccount(@Header("Authorization") String jwt,@Body User user);
 
+        @PUT(value = "/api/user/change-password")
+        Observable<JsonResponse> updatePassword(@Header("Authorization")String jwt,
+                                                @Query("currentPassword") String currentPassword,
+                                                @Query("newPassword")String newPassword);
     }
 
 }

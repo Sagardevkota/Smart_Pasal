@@ -153,6 +153,7 @@
                 android:fontFamily="@font/roboto_slab_light"
                 android:text="Rate this product"
                 android:textColor="@color/colorPrimary"
+                android:visibility="gone"
                 android:textStyle="bold" />
 
             <LinearLayout

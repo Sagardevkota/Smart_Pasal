@@ -14,20 +14,23 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.example.smartpasal.Session.Session;
 import com.example.smartpasal.SmartAPI.SmartAPI;
-import com.example.smartpasal.adapter.EndlessRecyclerViewScrollListener;
 import com.example.smartpasal.adapter.HorizontalListAdapter;
-import com.example.smartpasal.adapter.ListAdapterItems;
+import com.example.smartpasal.adapter.ProductAdapter;
 import com.example.smartpasal.adapter.SliderAdapterExample;
 import com.example.smartpasal.databinding.FragmentHomeBinding;
 import com.example.smartpasal.model.ProductItems;
 import com.example.smartpasal.model.SliderItems;
+import com.example.smartpasal.paging.ProductComparator;
+import com.example.smartpasal.paging.ProductLoadStateAdapter;
+import com.example.smartpasal.view.HomeActivity;
 import com.example.smartpasal.view.categorizedActivity;
+import com.example.smartpasal.viewmodel.HomeViewModel;
 import com.smarteist.autoimageslider.IndicatorAnimations;
 import com.smarteist.autoimageslider.SliderAnimations;
 import com.smarteist.autoimageslider.SliderView;
@@ -50,18 +53,14 @@ public class home extends Fragment {
     private Session session;
     private static final String TAG = "HOME";
     private Context context;
-
-    private final ArrayList<ProductItems> recommendedList = new ArrayList<>();
+    private HomeViewModel homeViewModel;
     private final ArrayList<ProductItems> mostSellingList = new ArrayList<>();
     private final ArrayList<ProductItems> hotDealsList = new ArrayList<>();
-    private ListAdapterItems recommendedListAdapter;
     private HorizontalListAdapter mostSellingListAdapter, hotDealsListAdapter;
     private GradientDrawable gd;
-    public int page_number = 1;
     private int hdealPage = 1;
     private int mSpPage = 1;
-    public boolean isLoading = false;
-    private int totalCurrentItems = 0;
+
 
 
     @Override
@@ -82,77 +81,41 @@ public class home extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentHomeBinding.inflate(getLayoutInflater());
         View v = binding.getRoot();
+        // Create ViewModel
+        homeViewModel = new ViewModelProvider(requireActivity())
+                .get(HomeViewModel.class);
+        homeViewModel.init(session);
+        initImageSlider();
+        initHotDeals();
+        fetchHotDeals(hdealPage);
+        initMostSelling();
+        getMostSellingProducts(mSpPage);
+        initRecommended();
+
+        setCallBacks();
+
+        binding.IvHShowMore.setOnClickListener(v1 -> {
+            hdealPage++;
+            fetchHotDeals(hdealPage);
+        });
 
 
-        SliderAdapterExample adapter = new SliderAdapterExample(getContext());
+        binding.IvSpShowMore.setOnClickListener(v1 -> {
+            mSpPage++;
+            getMostSellingProducts(mSpPage);
+        });
 
-        binding.imageSlider.setSliderAdapter(adapter);
-        adapter.addItem(new SliderItems("first_image",
-                "https://shoppingrechargeoffers.com/wp-content/uploads/2019/06/Fashion-Wardrobe-Sale-Amazon.png",
-                "2"));
-        adapter.addItem(new SliderItems("second_image",
-                "https://c8.alamy.com/comp/2AKGT2Y/electronics-and-devices-promotional-sale-banner-with-full-shopping-cart-technology-and-online-shopping-concept-2AKGT2Y.jpg",
-                "2"));
+        ((HomeActivity) requireActivity()).updateCartCount();
 
-        adapter.addItem(new SliderItems("third_image",
-                "https://i.pinimg.com/600x315/d9/0f/f9/d90ff988ec7db9e7d50d166cc670360c.jpg",
-                "2"));
+        return v;
+    }
 
-
-        binding.imageSlider.setIndicatorAnimation(IndicatorAnimations.WORM); //set indicator animation by using SliderLayout.IndicatorAnimations. :WORM or THIN_WORM or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!
-        binding.imageSlider.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
-        binding.imageSlider.setAutoCycleDirection(SliderView.AUTO_CYCLE_DIRECTION_BACK_AND_FORTH);
-        binding.imageSlider.setIndicatorSelectedColor(Color.WHITE);
-        binding.imageSlider.setIndicatorUnselectedColor(Color.GRAY);
-        binding.imageSlider.setScrollTimeInSec(5); //set scroll delay in seconds :
-        binding.imageSlider.startAutoCycle();
-
-        StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        LinearLayoutManager mostSellingLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
-
-        LinearLayoutManager hotDealsLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
-
-        binding.endlessView.setLayoutManager(staggeredGridLayoutManager);
-        recommendedListAdapter = new ListAdapterItems(recommendedList, getContext());
-        binding.endlessView.setItemAnimator(new SlideInRightAnimator());
-        mostSellingListAdapter = new HorizontalListAdapter(mostSellingList, getContext());
-        hotDealsListAdapter = new HorizontalListAdapter(hotDealsList, getContext());
-
-        binding.rvMostSelling.setLayoutManager(mostSellingLayoutManager);
-        binding.rvHotDeals.setLayoutManager(hotDealsLayoutManager);
-        binding.endlessView.setAdapter(recommendedListAdapter);
-        binding.rvMostSelling.setAdapter(mostSellingListAdapter);
-        binding.rvHotDeals.setAdapter(hotDealsListAdapter);
-
-
-        Handler mHandler = new Handler();
-
-
-        Runnable mToastRunnable = new Runnable() {
-            @Override
-            public void run() {
-
-
-                Random rnd = new Random();
-                int color = Color.argb(153, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
-                int color1 = Color.argb(155, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
-
-                int[] colors = {color, color1};
-                //create a new gradient color
-
-                gd = new GradientDrawable(
-                        GradientDrawable.Orientation.LEFT_RIGHT, colors);
-                gd.setCornerRadius(0f);
-                binding.dvHome.setBackground(gd);
-                mHandler.postDelayed(this, 5000);
-            }
-        };
-        mToastRunnable.run();
+    private void setCallBacks() {
 
 
         Intent intent = new Intent(context, categorizedActivity.class);
@@ -192,52 +155,105 @@ public class home extends Fragment {
             intent.putExtra("category", "Television And Video");
             startActivity(intent);
         });
+    }
 
-        getMostSellingProducts(mSpPage);
+    private void initMostSelling() {
 
-        binding.progressAnimationView.setVisibility(View.VISIBLE);
-        getRecommendedProducts(page_number);
+        LinearLayoutManager mostSellingLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+        mostSellingListAdapter = new HorizontalListAdapter(mostSellingList, getContext());
+        binding.rvMostSelling.setLayoutManager(mostSellingLayoutManager);
+        binding.rvMostSelling.setAdapter(mostSellingListAdapter);
 
+    }
+
+    private void initRecommended() {
+        StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        binding.endlessView.setLayoutManager(staggeredGridLayoutManager);
+        binding.endlessView.setItemAnimator(new SlideInRightAnimator());
         binding.endlessView.setNestedScrollingEnabled(false);
+
+        ProductAdapter productAdapter = new ProductAdapter(new ProductComparator(),getContext());
+
+        // Subscribe to to paging data
+        homeViewModel.pagingDataFlow.subscribe(moviePagingData -> {
+            // submit new data to recyclerview adapter
+            productAdapter.submitData(getLifecycle(), moviePagingData);
+        });
 
         binding.endlessView.setItemAnimator(new LandingAnimator());
         binding.endlessView.getItemAnimator().setAddDuration(600);
 
-        fetchData(1);
+        binding.endlessView.setAdapter(
+                // concat movies adapter with header and footer loading view
+                // This will show end user a progress bar while pages are being requested from server
+                productAdapter.withLoadStateFooter(
+                        // Pass footer load state adapter.
+                        // When we will scroll down and next page request will be sent
+                        // while we get response form server Progress bar will show to end user
+                        // If request success Progress bar will hide and next page of movies
+                        // will be shown to end user or if request will fail error message and
+                        // retry button will be shown to resend the request
+                        new ProductLoadStateAdapter(view0 -> productAdapter.retry())));
+    }
 
-        // Triggered only when new data needs to be appended to the list
-        // Add whatever code is needed to append new items to the bottom of the list
-        EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(staggeredGridLayoutManager) {
+    private void initHotDeals() {
+        hotDealsListAdapter = new HorizontalListAdapter(hotDealsList, getContext());
+        binding.rvHotDeals.setAdapter(hotDealsListAdapter);
+        LinearLayoutManager hotDealsLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+        binding.rvHotDeals.setLayoutManager(hotDealsLayoutManager);
+
+    }
+
+    private void initImageSlider() {
+
+        SliderAdapterExample adapter = new SliderAdapterExample(getContext());
+
+        binding.imageSlider.setSliderAdapter(adapter);
+        adapter.addItem(new SliderItems("first_image",
+                "https://shoppingrechargeoffers.com/wp-content/uploads/2019/06/Fashion-Wardrobe-Sale-Amazon.png",
+                "2"));
+        adapter.addItem(new SliderItems("second_image",
+                "https://c8.alamy.com/comp/2AKGT2Y/electronics-and-devices-promotional-sale-banner-with-full-shopping-cart-technology-and-online-shopping-concept-2AKGT2Y.jpg",
+                "2"));
+
+        adapter.addItem(new SliderItems("third_image",
+                "https://i.pinimg.com/600x315/d9/0f/f9/d90ff988ec7db9e7d50d166cc670360c.jpg",
+                "2"));
+
+
+        binding.imageSlider.setIndicatorAnimation(IndicatorAnimations.WORM); //set indicator animation by using SliderLayout.IndicatorAnimations. :WORM or THIN_WORM or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!
+        binding.imageSlider.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
+        binding.imageSlider.setAutoCycleDirection(SliderView.AUTO_CYCLE_DIRECTION_BACK_AND_FORTH);
+        binding.imageSlider.setIndicatorSelectedColor(Color.WHITE);
+        binding.imageSlider.setIndicatorUnselectedColor(Color.GRAY);
+        binding.imageSlider.setScrollTimeInSec(5); //set scroll delay in seconds :
+        binding.imageSlider.startAutoCycle();
+
+
+
+        Handler mHandler = new Handler();
+
+
+        Runnable mToastRunnable = new Runnable() {
             @Override
-            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                // Triggered only when new data needs to be appended to the list
-                // Add whatever code is needed to append new items to the bottom of the list
-                Log.d(TAG, "onLoadMore: "+page);
-                fetchData(page);
+            public void run() {
 
+
+                Random rnd = new Random();
+                int color = Color.argb(153, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
+                int color1 = Color.argb(155, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
+
+                int[] colors = {color, color1};
+                //create a new gradient color
+
+                gd = new GradientDrawable(
+                        GradientDrawable.Orientation.LEFT_RIGHT, colors);
+                gd.setCornerRadius(0f);
+                binding.dvHome.setBackground(gd);
+                mHandler.postDelayed(this, 5000);
             }
         };
-
-
-
-        fetchHotDeals(hdealPage);
-
-        // Adds the scroll listener to RecyclerView
-        binding.endlessView.addOnScrollListener(scrollListener);
-
-        binding.IvHShowMore.setOnClickListener(v1 -> {
-            hdealPage++;
-            fetchHotDeals(hdealPage);
-        });
-
-
-        binding.IvSpShowMore.setOnClickListener(v1 -> {
-            mSpPage++;
-            getMostSellingProducts(mSpPage);
-        });
-
-
-        return v;
+        mToastRunnable.run();
     }
 
     private void fetchHotDeals(int page) {
@@ -266,20 +282,12 @@ public class home extends Fragment {
     }
 
 
-    private void fetchData(int page) {
-        binding.progressAnimationView.setVisibility(View.VISIBLE);
-        getRecommendedProducts(page);
-
-    }
-
-
     public void getMostSellingProducts(int page) {
 
         binding.spProgressBar.setVisibility(View.VISIBLE);
         binding.IvSpShowMore.setVisibility(View.GONE);
         SmartAPI.getApiService().getNearByOrders(session.getJWT())
                 .subscribeOn(Schedulers.io())
-                .delay(3, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(productItems -> {
                             mostSellingList.addAll(productItems);
@@ -296,29 +304,6 @@ public class home extends Fragment {
 
 
     }
-
-    public void getRecommendedProducts(int page_number) {
-
-        SmartAPI.getApiService().getProducts(session.getJWT(), page_number)
-                .subscribeOn(Schedulers.io())
-                .delay(2, TimeUnit.SECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(productItems -> {
-                    int previousItems = recommendedList.size(); //calculate how many items are there in our list
-                    totalCurrentItems = previousItems + productItems.size(); // add current items + new incoming items
-                    recommendedList.addAll(productItems);
-                    recommendedListAdapter.notifyItemRangeInserted(previousItems, totalCurrentItems);
-                    isLoading = false;
-
-                }, throwable -> {
-                    Log.e(TAG, "getRecommendedProducts: " + throwable.getMessage());
-                    isLoading = false;
-                    binding.progressAnimationView.setVisibility(View.GONE);
-                });
-
-
-    }
-
 
 }
 

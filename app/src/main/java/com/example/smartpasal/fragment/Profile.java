@@ -40,16 +40,6 @@ public class Profile extends Fragment {
         // Required empty public constructor
     }
 
-    public interface IOnBackPressed {
-
-        /**
-         * If you return true the back press will not be taken into account, otherwise the activity will act naturally
-         *
-         * @return true if your processing has priority if not false
-         */
-        boolean onBackPressed();
-    }
-
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -69,8 +59,8 @@ public class Profile extends Fragment {
 
     private void getUserDetails(String userName) {
         SmartAPI.getApiService().getUserDetails(session.getJWT())
-                .observeOn(Schedulers.io())
-                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
                 .subscribe(user -> {
                     String user_name = user.getUserName();
                     String delivery_address = user.getDeliveryAddress();
@@ -90,33 +80,15 @@ public class Profile extends Fragment {
                         User user1 = new User(userName, delivery_address, phone);
                         args.putParcelable("userObj", user1);
                         fragmentEditProfile.setArguments(args);
-
-                        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragmentEditProfile).commit();
+                        getActivity().getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.fragment_container, fragmentEditProfile)
+                                .commit();
 
                     });
                 });
 
 
-    }
-
-
-    @VisibleForTesting
-    public ProgressDialog mProgressDialog;
-
-    public void showProgressDialog(String msg) {
-        if (mProgressDialog == null) {
-            mProgressDialog = new ProgressDialog(getContext(), R.style.AlertDialog);
-            mProgressDialog.setMessage(msg);
-            mProgressDialog.setIndeterminate(true);
-        }
-
-        mProgressDialog.show();
-    }
-
-    public void hideProgressDialog() {
-        if (mProgressDialog != null && mProgressDialog.isShowing()) {
-            mProgressDialog.dismiss();
-        }
     }
 
 
