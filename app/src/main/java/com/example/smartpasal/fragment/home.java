@@ -112,6 +112,8 @@ public class home extends Fragment {
 
         ((HomeActivity) requireActivity()).updateCartCount();
 
+
+
         return v;
     }
 
@@ -174,6 +176,7 @@ public class home extends Fragment {
 
         ProductAdapter productAdapter = new ProductAdapter(new ProductComparator(),getContext());
 
+
         // Subscribe to to paging data
         homeViewModel.pagingDataFlow.subscribe(moviePagingData -> {
             // submit new data to recyclerview adapter
@@ -184,13 +187,13 @@ public class home extends Fragment {
         binding.endlessView.getItemAnimator().setAddDuration(600);
 
         binding.endlessView.setAdapter(
-                // concat movies adapter with header and footer loading view
+                // concat product adapter with header and footer loading view
                 // This will show end user a progress bar while pages are being requested from server
                 productAdapter.withLoadStateFooter(
                         // Pass footer load state adapter.
                         // When we will scroll down and next page request will be sent
                         // while we get response form server Progress bar will show to end user
-                        // If request success Progress bar will hide and next page of movies
+                        // If request success Progress bar will hide and next page of products
                         // will be shown to end user or if request will fail error message and
                         // retry button will be shown to resend the request
                         new ProductLoadStateAdapter(view0 -> productAdapter.retry())));

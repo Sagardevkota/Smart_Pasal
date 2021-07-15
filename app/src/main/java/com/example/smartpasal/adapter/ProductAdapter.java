@@ -52,11 +52,11 @@ public class ProductAdapter extends PagingDataAdapter<ProductItems, ProductAdapt
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        // Get current movie
+        // Get current product
         ProductItems currentItem = getItem(position);
         // Check for null
         if (currentItem != null) {
-            // Set Image of Movie using Picasso Library
+
 
             String marked_price = currentItem.getPrice();
             int discount = currentItem.getDiscount();
@@ -151,6 +151,7 @@ public class ProductAdapter extends PagingDataAdapter<ProductItems, ProductAdapt
 
 
     }
+
 
     @Override
     public int getItemViewType(int position) {

@@ -8,7 +8,7 @@ import com.example.smartpasal.model.ProductItems;
 public class ProductComparator extends DiffUtil.ItemCallback<ProductItems> {
     @Override
     public boolean areItemsTheSame(@NonNull ProductItems oldItem, @NonNull ProductItems newItem) {
-        return oldItem.equals(newItem);
+        return oldItem.getProductId() == newItem.getProductId();
     }
 
     @Override

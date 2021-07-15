@@ -50,6 +50,8 @@ public class ProductPagingDataSource extends RxPagingSource<Integer, ProductItem
 
     // Method to map Movies to LoadResult object
     private LoadResult<Integer, ProductItems> toLoadResult(List<ProductItems> productItems, int page) {
+
+
         return new LoadResult.Page(productItems, page == 1 ? null : page - 1, page + 1);
     }
 

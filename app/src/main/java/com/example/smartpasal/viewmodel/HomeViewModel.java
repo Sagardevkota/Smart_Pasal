@@ -44,7 +44,7 @@ public class HomeViewModel extends ViewModel {
                         20 * 499),// maxSize - Count of total items to be shown in recyclerview
                 () -> productPagingDataSource); // set paging source
 
-        // inti Flowable
+        // init Flowable
         pagingDataFlow = PagingRx.getFlowable(pager);
         CoroutineScope coroutineScope = ViewModelKt.getViewModelScope(this);
         PagingRx.cachedIn(pagingDataFlow, coroutineScope);

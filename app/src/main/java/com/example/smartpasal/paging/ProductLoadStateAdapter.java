@@ -19,7 +19,7 @@ import com.example.smartpasal.databinding.LoadStateItemBinding;
 public class ProductLoadStateAdapter extends LoadStateAdapter<ProductLoadStateAdapter.LoadStateViewHolder> {
 
     // Define Retry Callback
-    private View.OnClickListener mRetryCallback;
+    private final View.OnClickListener mRetryCallback;
 
     public ProductLoadStateAdapter(View.OnClickListener retryCallback) {
         // Init Retry Callback
