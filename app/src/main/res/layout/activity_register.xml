@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/linearLayout"
@@ -10,10 +10,6 @@
     android:elevation="4dp"
 
     tools:context=".view.RegisterActivity">
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -22,20 +18,16 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="160dp"
-            android:layout_marginTop="-15dp"
             android:layout_marginBottom="0dp"
+            android:scaleType="fitXY"
             android:src="@drawable/ic_toolbar" />
 
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
-            android:layout_marginTop="80dp"
-
-
+            android:layout_marginTop="100dp"
             android:background="@drawable/rounded_border"
-
             android:elevation="4dp"
             android:orientation="vertical"
             android:padding="20dp">
@@ -318,4 +310,3 @@
     </RelativeLayout>
     </ScrollView>
 
-</LinearLayout>

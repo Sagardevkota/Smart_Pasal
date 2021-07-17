@@ -11,7 +11,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
@@ -29,6 +28,7 @@ import com.example.smartpasal.Session.Session;
 import com.example.smartpasal.SmartAPI.SmartAPI;
 import com.example.smartpasal.adapter.CartAdapter;
 import com.example.smartpasal.adapter.DialogAdapter;
+import com.example.smartpasal.model.OrderWrapper;
 import com.example.smartpasal.databinding.ActivityCartBinding;
 import com.example.smartpasal.model.CartResponse;
 import com.example.smartpasal.model.Carts;
@@ -44,6 +44,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import es.dmoral.toasty.Toasty;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -242,7 +243,7 @@ public class cartActivity extends AppCompatActivity {
     }
 
     private void postOrders(String deliveryAddress) {
-        showProgressDialog("Loading");
+        showProgressDialog("Checking Out");
 
         int total = dialogAdapter.getTotal();
         int discount = total - grandTotalPrice;
@@ -257,16 +258,27 @@ public class cartActivity extends AppCompatActivity {
             int finalPrice = orders.getPrice() - discountPerItem;
             orders.setPrice(finalPrice); //discount for every item from overall discount
 
-            SmartAPI.getApiService().addOrder(session.getJWT(), orders)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(response -> Log.i(TAG, "postOrders: " + response.getMessage()),
-                            throwable -> Log.e(TAG, "postOrders: " + throwable.getMessage()));
+            //clear the items from cart
+            removeFromCart(orders.getProductId());
+
         });
 
-        hideProgressDialog();
+        OrderWrapper orderWrapper = new OrderWrapper();
+        orderWrapper.setOrders(checkoutList);
 
-        showFinishingDialog();
+        SmartAPI.getApiService().checkOut(session.getJWT(),orderWrapper)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .timeout(4, TimeUnit.MINUTES)
+                .subscribe(response -> {
+                    if (response.getStatus().equalsIgnoreCase("200 OK"))
+                    {
+                        Toasty.success(getApplicationContext(),response.getMessage(),Toasty.LENGTH_SHORT).show();
+                        hideProgressDialog();
+                        showFinishingDialog();
+                    }
+                },throwable -> Log.e(TAG, "postOrders: "+throwable.getMessage() ));
+
 
     }
 
@@ -286,7 +298,7 @@ public class cartActivity extends AppCompatActivity {
     }
 
 
-    private Integer applyCoupon(String coupon_code) {
+    private int applyCoupon(String coupon_code) {
 
         if (coupon_code.equalsIgnoreCase("GCES2016"))
             return 15;

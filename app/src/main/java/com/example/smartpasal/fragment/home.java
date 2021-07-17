@@ -264,15 +264,17 @@ public class home extends Fragment {
         binding.IvHShowMore.setVisibility(View.GONE);
         SmartAPI.getApiService().getHotDeals(session.getJWT(), page)
                 .subscribeOn(Schedulers.io())
-                .delay(3, TimeUnit.SECONDS)
+                .delay(2, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(productItems -> {
                             int previousItems = hotDealsList.size(); //calculate how many items are there in our list
-                            int totalCurrentItems = previousItems + productItems.size(); // add current items + new incoming items
-                            hotDealsList.addAll(productItems);
+                            productItems.stream().forEach(productItems1 -> {
+                                if (!hotDealsList.contains(productItems1))
+                                    hotDealsList.add(productItems1);
+                            });
                             binding.hProgressBar.setVisibility(View.GONE);
                             binding.IvHShowMore.setVisibility(View.VISIBLE);
-                            hotDealsListAdapter.notifyItemRangeInserted(previousItems, totalCurrentItems);
+                            hotDealsListAdapter.notifyItemRangeInserted(previousItems, hotDealsList.size());
 
                         }, throwable -> {
                             Log.e(TAG, "getHotDeals has error: " + throwable.getMessage());
@@ -291,12 +293,19 @@ public class home extends Fragment {
         binding.IvSpShowMore.setVisibility(View.GONE);
         SmartAPI.getApiService().getNearByOrders(session.getJWT())
                 .subscribeOn(Schedulers.io())
+                .delay(2,TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(productItems -> {
-                            mostSellingList.addAll(productItems);
-                            mostSellingListAdapter.notifyItemRangeInserted(0, productItems.size());
-                            binding.spProgressBar.setVisibility(View.GONE);
-                            binding.IvSpShowMore.setVisibility(View.VISIBLE);
+                    int prevSize = mostSellingList.size();
+                    productItems.stream().forEach(productItems1 -> {
+                        if (!mostSellingList.contains(productItems1))
+                            mostSellingList.add(productItems1);
+                    });
+
+                    mostSellingListAdapter.notifyItemRangeInserted(prevSize, mostSellingList.size());
+                    binding.spProgressBar.setVisibility(View.GONE);
+                    binding.IvSpShowMore.setVisibility(View.VISIBLE);
+
 
                         }, throwable -> {
                             Log.e(TAG, "getMostSellingProducts has error: " + throwable.getMessage());

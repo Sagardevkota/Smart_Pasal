@@ -22,6 +22,7 @@ import com.example.smartpasal.SmartAPI.SmartAPI;
 import com.example.smartpasal.databinding.LayoutProductListsBinding;
 import com.example.smartpasal.model.Carts;
 import com.example.smartpasal.model.ProductItems;
+import com.example.smartpasal.view.HomeActivity;
 import com.example.smartpasal.view.ProductDetails;
 import com.squareup.picasso.Picasso;
 

@@ -1,6 +1,7 @@
 package com.example.smartpasal.SmartAPI;
 
 
+import com.example.smartpasal.model.OrderWrapper;
 import com.example.smartpasal.model.CartResponse;
 import com.example.smartpasal.model.Carts;
 
@@ -16,9 +17,9 @@ import com.example.smartpasal.model.User;
 
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
-import io.reactivex.Completable;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 import okhttp3.OkHttpClient;
@@ -45,8 +46,8 @@ public class SmartAPI {
 
     public static apiService apiService = null;
     //    public static String base_url="http://52.171.61.18:8080";
-    public static String BASE_URL = "http://10.0.2.2:8081";
-//    public static final String BASE_URL = "http://157.55.181.67:8080";//newest
+//    public static String BASE_URL = "http://10.0.2.2:8081";
+    public static final String BASE_URL = "http://157.55.181.67:8080";//newest
 //    public static final String BASE_URL = "http://23.101.181.211:8080";
     public static final String IMG_BASE_URL = "https://bese2016smartstore.blob.core.windows.net/bese2016blob/";
 
@@ -151,7 +152,6 @@ public class SmartAPI {
         @POST(value = "/api/user/conversations")
         Observable<JsonResponse> addConversation(@Header("Authorization") String jwt, @Body Conversation conversation);
 
-
         //order services
         @GET(value = "/api/orders/status/{status}")
         Observable<List<OrderResponse>> getOrders(@Header("Authorization") String jwt, @Path("status") String status);
@@ -191,6 +191,10 @@ public class SmartAPI {
         Observable<JsonResponse> updatePassword(@Header("Authorization")String jwt,
                                                 @Query("currentPassword") String currentPassword,
                                                 @Query("newPassword")String newPassword);
+
+
+        @POST(value = "/api/multiple-orders")
+        Observable<JsonResponse> checkOut(@Header("Authorization") String jwt, @Body OrderWrapper orderWrapper);
     }
 
 }

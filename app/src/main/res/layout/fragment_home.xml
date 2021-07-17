@@ -193,34 +193,18 @@
                         android:layout_marginTop="10dp"
                         android:orientation="vertical">
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
+                        <TextView
+                            android:id="@+id/textView"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal">
+                            android:layout_marginStart="10dp"
 
-                            <TextView
-                                android:id="@+id/textView"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="10dp"
-
-                                android:fontFamily="@font/actor"
-                                android:gravity="start"
-                                android:text="Categories"
-                                android:textColor="@color/design_default_color_on_secondary"
-                                android:textSize="20sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:id="@+id/tvShopMore"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginEnd="10dp"
-                                android:layout_weight="1"
-                                android:gravity="end"
-                                android:text="SHOP MORE>>"
-                                android:textColor="@color/colorPrimary" />
-                        </LinearLayout>
+                            android:fontFamily="@font/actor"
+                            android:gravity="start"
+                            android:text="Categories"
+                            android:textColor="@color/design_default_color_on_secondary"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
 
                         <View
                             android:layout_width="120dp"

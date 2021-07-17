@@ -6,12 +6,12 @@ import lombok.Data;
 public class OrderResponse {
 
 
-    private Integer orderId;
-    private Integer productId;
-    private String color;
-    private Float size;
-    private Integer price;
-    private Integer quantity;
+    private int orderId;
+    private int productId;
+    private String productColor;
+    private float productSize;
+    private int price;
+    private int quantity;
     private String orderedDate;
     private String deliveredDate;
     private String deliveryAddress;
@@ -19,7 +19,7 @@ public class OrderResponse {
 
     //productsInfo
     private String productName;
-    private Integer discount;
+    private int discount;
     private String picturePath;
 
 

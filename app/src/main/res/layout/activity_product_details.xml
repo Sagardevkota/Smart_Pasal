@@ -437,6 +437,7 @@
                 android:text="Questions about this product"/>
 
                     <TextView
+                        android:id="@+id/tvMoreQuestions"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/colorPrimary"

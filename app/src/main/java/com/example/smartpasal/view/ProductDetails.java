@@ -178,6 +178,12 @@ public class ProductDetails extends AppCompatActivity {
             startActivity(intent);
         });
 
+        binding.tvMoreQuestions.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), ConversationActivity.class);
+            intent.putExtra("product_id", productItems.getProductId());
+            startActivity(intent);
+        });
+
         int discount = productItems.getDiscount();
         String Price = productItems.getPrice();
         String rating = productItems.getRating();
@@ -189,10 +195,10 @@ public class ProductDetails extends AppCompatActivity {
         binding.ratingBar.setRating(Float.valueOf(rating));
 
 
-        Integer newPrice = 0;
+        int newPrice = 0;
         if (discount > 0) {
             binding.tvDiscount.setText("Discount: " + discount+ "%");
-            Integer price = Integer.valueOf(Price);
+            int price = Integer.parseInt(Price);
             Integer discountedAmount = price * discount / 100;
             newPrice = price - discountedAmount;
             binding.tvDiscountedPrice.setVisibility(View.VISIBLE);
@@ -205,7 +211,7 @@ public class ProductDetails extends AppCompatActivity {
             binding.tvPrice.setText("Rs. " + Price);
             binding.tvPrice.setTextColor(Color.RED);
             binding.tvPrice.setPaintFlags(0);
-            newPrice = Integer.valueOf(Price);
+            newPrice = Integer.parseInt(Price);
             binding.tvPrice.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24f);
         }
 

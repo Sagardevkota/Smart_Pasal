@@ -242,9 +242,9 @@ public class RegisterActivity extends AppCompatActivity {
             gender="other";
 
 
-       LatLng location=null;
-       double latitude=0.0;
-       double longitude=0.0;
+       LatLng location;
+       double latitude;
+       double longitude;
 
 
         if (mylocation.getLatitude()==0)
@@ -261,8 +261,6 @@ public class RegisterActivity extends AppCompatActivity {
 
         }
         String role="USER";
-
-
 
         User user = new User(email, password, delivery, phone,role,age,gender,latitude,longitude);
 
@@ -302,6 +300,7 @@ public class RegisterActivity extends AppCompatActivity {
             mProgressDialog = new ProgressDialog(this);
             mProgressDialog.setMessage(msg);
             mProgressDialog.setIndeterminate(true);
+            mProgressDialog.setCancelable(false);
         }
 
         mProgressDialog.show();
